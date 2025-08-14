@@ -2724,7 +2724,91 @@
                                                        }
                              },
                    "Chest":  {
-                                 "Mystwalker Shroud":  {
+                                 "Aegis of Ice Protection":  {
+                                                           "effects":  {
+                                                                           "Health":  "395+",
+                                                                           "Toughness":  "10%",
+                                                                           "Iceward":  "10%",
+                                                                           "Icecurse":  "10%",
+                                                                           "Bloodward":  "10%",
+                                                                           "Wolfward":  "10%",
+                                                                           "Stun":  "8%",
+                                                                           "XP-losion":  "9%",
+                                                                           "Megalomania":  "7%"
+                                                                       },
+                                                           "source":  "Purchase"
+                                                       },
+					   			 "Aegis of Fire Protection":  {
+                                                           "effects":  {
+                                                                           "Health":  "395+",
+                                                                           "Toughness":  "10%",
+                                                                           "Fireward":  "10%",
+                                                                           "Firecurse":  "10%",
+                                                                           "Bloodward":  "10%",
+                                                                           "Wolfward":  "10%",
+                                                                           "Stun":  "8%",
+                                                                           "XP-losion":  "9%",
+                                                                           "Megalomania":  "7%"
+                                                                       },
+                                                           "source":  "Purchase"
+                                                       },
+					   			 "Aegis of Poison Protection":  {
+                                                           "effects":  {
+                                                                           "Health":  "395+",
+                                                                           "Toughness":  "10%",
+                                                                           "Poisonward":  "10%",
+                                                                           "Poisoncurse":  "10%",
+                                                                           "Bloodward":  "10%",
+                                                                           "Wolfward":  "10%",
+                                                                           "Stun":  "8%",
+                                                                           "XP-losion":  "9%",
+                                                                           "Megalomania":  "7%"
+                                                                       },
+                                                           "source":  "Purchase"
+                                                       },
+					   			 "Aegis of Mystic Protection":  {
+                                                           "effects":  {
+                                                                           "Health":  "395+",
+                                                                           "Toughness":  "10%",
+                                                                           "Manaward":  "10%",
+                                                                           "Manacurse":  "10%",
+                                                                           "Bloodward":  "10%",
+                                                                           "Wolfward":  "10%",
+                                                                           "Stun":  "8%",
+                                                                           "XP-losion":  "9%",
+                                                                           "Megalomania":  "7%"
+                                                                       },
+                                                           "source":  "Purchase"
+                                                       },
+					   			 "Aegis of Psychic Protection":  {
+                                                           "effects":  {
+                                                                           "Health":  "395+",
+                                                                           "Toughness":  "10%",
+                                                                           "Nerves of Steel":  "10%",
+                                                                           "Paranoia":  "10%",
+                                                                           "Bloodward":  "10%",
+                                                                           "Wolfward":  "10%",
+                                                                           "Stun":  "8%",
+                                                                           "XP-losion":  "9%",
+                                                                           "Megalomania":  "7%"
+                                                                       },
+                                                           "source":  "Purchase"
+                                                       },
+					   			 "Aegis of Shadow Protection":  {
+                                                           "effects":  {
+                                                                           "Health":  "395+",
+                                                                           "Toughness":  "10%",
+                                                                           "Nightward":  "10%",
+                                                                           "Shadowcurse":  "10%",
+                                                                           "Bloodward":  "10%",
+                                                                           "Wolfward":  "10%",
+                                                                           "Stun":  "8%",
+                                                                           "XP-losion":  "9%",
+                                                                           "Megalomania":  "7%"
+                                                                       },
+                                                           "source":  "Purchase"
+                                                       },
+					   			 "Mystwalker Shroud":  {
                                                            "effects":  {
                                                                            "Manaburn":  "20-26",
                                                                            "Cloning":  "5%",
@@ -8849,3 +8933,4 @@
                          }
             }
 }
+
