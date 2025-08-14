@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Item Glossary Viewer</title>
+	<style>
+		:root { color-scheme: dark light; }
+		body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 16px; }
+		h1 { margin: 0 0 12px; font-size: 20px; }
+		#controls { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+		#q { flex: 1 1 420px; padding: 8px 10px; font-size: 14px; }
+		#status { font-size: 12px; opacity: 0.8; }
+			.tabs { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; flex-wrap: wrap; }
+		.tab { padding: 6px 10px; border: 1px solid #888; border-radius: 6px; cursor: pointer; user-select: none; }
+		.tab.active { background: rgba(128,128,128,0.2); }
+		.toggles { display: inline-flex; gap: 10px; align-items: center; margin-left: 8px; }
+		.section { margin: 18px 0; }
+		.section h2 { font-size: 16px; margin: 0 0 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+		.item { position: relative; display: flex; gap: 8px; align-items: baseline; padding: 6px 0; border-bottom: 1px dashed rgba(128,128,128,0.3); cursor: pointer; }
+		.item.equipped { background: rgba(0,128,0,0.08); }
+		.item.neg-item { color: #c62828; }
+		.item .meta { font-size: 12px; opacity: 0.8; }
+		.muted { opacity: 0.7; }
+		#fallback { display:none; }
+		.controls-inline { display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+		.btn { padding: 2px 6px; border: 1px solid #888; border-radius: 4px; cursor: pointer; }
+		.btn:disabled { opacity: 0.5; cursor: default; }
+		.kv { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; }
+		.badge { display:inline-block; padding: 0 6px; border: 1px solid #888; border-radius: 999px; font-size: 11px; }
+		#toast { position: fixed; bottom: 12px; left: 12px; right: 12px; text-align: center; pointer-events: none; }
+		#toast .msg { display: inline-block; background: rgba(0,0,0,0.8); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 13px; }
+		/* Aggregated effects layout */
+		.agg-list { display: flex; flex-direction: column; gap: 8px; }
+		.agg-effect { border: 1px solid rgba(128,128,128,0.35); border-radius: 8px; padding: 8px 10px; }
+		.agg-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+		.agg-name { font-weight: 700; font-size: 14px; }
+		.agg-total { font-weight: 800; font-variant-numeric: tabular-nums; }
+		.agg-details { margin-top: 4px; font-size: 12px; }
+		/* Saved builds */
+		.saved-builds { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+		.build-btn { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border: 1px solid #888; border-radius: 16px; cursor: pointer; background: rgba(128,128,128,0.12); }
+		.build-name { font-weight: 600; }
+		.build-del { padding: 0 6px; border: 1px solid #888; border-radius: 8px; cursor: pointer; background: rgba(255,0,0,0.1); }
+		/* Help bubble */
+		.help-btn { position: fixed; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 50%; background: rgba(128,128,128,0.2); border: 1px solid #888; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; }
+		.help-panel { position: fixed; top: 50px; right: 12px; width: min(480px, 92vw); max-height: 70vh; overflow:auto; padding: 12px 14px; border: 1px solid #888; border-radius: 12px; background: rgba(0,0,0,0.9); color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+		.help-panel h3 { margin: 0 0 8px; font-size: 16px; }
+		.help-panel p, .help-panel li { font-size: 13px; line-height: 1.35; }
+		.help-close { float: right; margin-left: 8px; }
+		/* Missing types banner */
+		.missing-banner { border: 1px solid #b00020; background: rgba(176,0,32,0.1); color: #b00020; padding: 8px 10px; border-radius: 8px; margin-bottom: 10px; font-weight: 600; }
+	</style>
+</head>
+<body>
+	<h1>Item Glossary Viewer</h1>
+	<div id="controls">
+		<input id="q" type="search" placeholder="Search: effect, name, region (e.g. R01), source (e.g. Purchase). Comma-separated. Use -term to exclude by region/source or -event to exclude events; use event to include only events." autocomplete="off" />
+		<span id="status" class="muted">Loading item_glossary.json…</span>
+		<label id="fallback" class="muted">or open file: <input id="fileInput" type="file" accept="application/json,.json" /></label>
+	</div>
+	<div class="tabs">
+		<div id="tabBrowse" class="tab active">Browse</div>
+		<div id="tabEquipped" class="tab">Equipped <span id="eqCount" class="badge">0</span></div>
+		<div class="toggles">
+			<label><input type="checkbox" id="toggleAcc3" checked /> 3rd acc.</label>
+			<label><input type="checkbox" id="toggleRet3" checked /> 3rd ret.</label>
+		</div>
+	</div>
+	<div id="browseView">
+		<div id="results"></div>
+	</div>
+	<div id="equippedView" style="display:none">
+		<div style="margin-bottom:10px" class="controls-inline">
+			<button id="clearAll" class="btn">Clear all</button>
+			<button id="toggleEqVis" class="btn">Show equipped items</button>
+			<button id="saveBuild" class="btn">Save current build</button>
+			<span class="muted">Click item to equip/unequip. Use remove buttons to unequip from list.</span>
+		</div>
+		<div class="section">
+			<h2>Saved Builds</h2>
+			<div id="savedBuilds" class="saved-builds"></div>
+		</div>
+		<div id="missingTypes" style="display:none" class="missing-banner"></div>
+		<div id="equippedLists" data-hidden="1" style="display:none"></div>
+		<div class="section">
+			<h2>Aggregated Effects</h2>
+			<div id="aggEffects"></div>
+		</div>
+	</div>
+	<div id="toast" style="display:none"><span class="msg"></span></div>
+	<div id="helpBtn" class="help-btn">?</div>
+	<div id="helpPanel" class="help-panel" style="display:none">
+		<button class="btn help-close" id="helpClose">Close</button>
+		<h3>Search rules</h3>
+		<ul>
+			<li>Comma-separated terms (ALL have to be satisfied); effect, name, region or source : e.g., R07, drop, lifebane.</li>
+			<li>Prefix with '!' to search by type: e.g. !weapon, !retainer, !accessory (has to be full type name, not just a part of it).</li>
+			<li>Prefix with '-' to exclude by region/source/event (AT LEAST ONE has to be satisfied): e.g., -R01.3, -purch, -event.</li>
+			<li>Use 'event' to include only event regions (like R01.3, RAA). Use '-event' to exclude event regions.</li>
+			<li>Multiple effects allowed; results sorted by the first effect term's numeric value (then second, etc.).</li>
+			<li>Negative values for any searched effect are highlighted red (Temperance excluded).</li>
+			<li>Examples: "blood cr, summ, -R01.3, -purch"; "event, lifebane"; "R04, Purchase, Blood Craze"</li>
+		</ul>
+		<h3>Equip rules</h3>
+		<ul>
+			<li>1 per type, except: Accessory (2, or 3 when "3rd acc." checked), Retainer (2, or 3 when "3rd ret." checked), Collection (unlimited singles).</li>
+			<li>No item can be equipped more than once.</li>
+		</ul>
+	</div>
+
+	<script>
+	(function(){
+		const ORDERED_TYPES = [
+			'weapon','head','chest','hand','feet','mount','accessory','retainer','coffin','power','emblem','collection','hex','bait','coin'
+		];
+		const CACHE_KEY = 'itemGlossaryJsonTextV1';
+		const BUILDS_KEY = 'itemGlossarySavedBuildsV1';
+		let allowAccThird = true;
+		let allowRetThird = true;
+
+		function normalizeType(raw) {
+			if (!raw) return '';
+			const s = String(raw).trim().toLowerCase();
+			const map = {
+				'weapon':'weapon','weapons':'weapon',
+				'head':'head','helmet':'head','helm':'head','heads':'head',
+				'chest':'chest','armor':'chest','armour':'chest','chests':'chest',
+				'hand':'hand','hands':'hand','gloves':'hand',
+				'feet':'feet','boots':'feet',
+				'mount':'mount','mounts':'mount',
+				'accessory':'accessory','accessories':'accessory','ring':'accessory','amulet':'accessory',
+				'retainer':'retainer','retainers':'retainer',
+				'coffin':'coffin','coffins':'coffin',
+				'power':'power','powers':'power',
+				'emblem':'emblem','emblems':'emblem',
+				'collection':'collection','collections':'collection',
+				'hex':'hex','bait':'bait',
+				'coin':'coin','coins':'coin'
+			};
+			return map[s] || s;
+		}
+
+		function normalizeKey(k){ return String(k||'').toLowerCase(); }
+		function includesEffectKey(effects, query){
+			if (!effects) return false;
+			const q = normalizeKey(query);
+			for (const key of Object.keys(effects)){
+				if (normalizeKey(key).includes(q)) return true;
+			}
+			return false;
+		}
+		function includesRegion(region, query){
+			if (!region) return false;
+			return normalizeKey(region).includes(normalizeKey(query));
+		}
+		function includesSource(source, query){
+			if (!source) return false;
+			const q = normalizeKey(query);
+			if (Array.isArray(source)) return source.some(s => normalizeKey(s).includes(q));
+			return normalizeKey(source).includes(q);
+		}
+		function includesName(name, query){
+			if (!name) return false;
+			return normalizeKey(name).includes(normalizeKey(query));
+		}
+		function formatSource(source){
+			if (!source) return '';
+			if (Array.isArray(source)) return source.join(', ');
+			return String(source);
+		}
+		function maxNumericFromValue(value){
+			if (value == null) return 0;
+			if (Array.isArray(value)){
+				let m = 0; for (const v of value) m = Math.max(m, maxNumericFromValue(v)); return m;
+			}
+			let s = String(value).replace(/,/g,'.');
+			const arr = [];
+			const rangeRe = /([+-]?\d+(?:\.\d+)?)\s*-\s*([+-]?\d+(?:\.\d+)?)/g;
+			let copy = s;
+			let rm;
+			while ((rm = rangeRe.exec(s))){
+				arr.push(parseFloat(rm[1]), parseFloat(rm[2]));
+				copy = copy.replace(rm[0], ' ');
+			}
+			const numMatches = copy.match(/[+-]?\d+(?:\.\d+)?/g);
+			if (numMatches) for (const n of numMatches) arr.push(parseFloat(n));
+			const nums = arr.filter(n => !Number.isNaN(n));
+			if (nums.length === 0) return 0;
+			return Math.max(...nums);
+		}
+		function minNumericFromValue(value){
+			if (value == null) return 0;
+			if (Array.isArray(value)){
+				let m = Infinity; let seen=false; for (const v of value){ const mn=minNumericFromValue(v); if (!Number.isNaN(mn)){ m=Math.min(m,mn); seen=true; } } return seen?m:0;
+			}
+			let s = String(value).replace(/,/g,'.');
+			const arr = [];
+			const rangeRe = /([+-]?\d+(?:\.\d+)?)\s*-\s*([+-]?\d+(?:\.\d+)?)/g;
+			let copy = s; let rm;
+			while ((rm = rangeRe.exec(s))){ arr.push(parseFloat(rm[1]), parseFloat(rm[2])); copy = copy.replace(rm[0],' '); }
+			const numMatches = copy.match(/[+-]?\d+(?:\.\d+)?/g);
+			if (numMatches) for (const n of numMatches) arr.push(parseFloat(n));
+			const nums = arr.filter(n => !Number.isNaN(n));
+			if (nums.length === 0) return 0;
+			return Math.min(...nums);
+		}
+		function rangeFromValue(value){
+			if (value == null) return {min:0, max:0};
+			if (Array.isArray(value)){
+				return value.map(rangeFromValue).reduce((acc,r)=>({min:acc.min+r.min, max:acc.max+r.max}), {min:0,max:0});
+			}
+			let s = String(value).replace(/,/g,'.');
+			let minSum = 0, maxSum = 0;
+			const rangeRe = /([+-]?\d+(?:\.\d+)?)\s*-\s*([+-]?\d+(?:\.\d+)?)/g;
+			let rm;
+			while ((rm = rangeRe.exec(s))){
+				minSum += parseFloat(rm[1]);
+				maxSum += parseFloat(rm[2]);
+				s = s.replace(rm[0], ' ');
+			}
+			const singles = s.match(/[+-]?\d+(?:\.\d+)?/g);
+			if (singles){
+				for (const n of singles){ const v = parseFloat(n); minSum += v; maxSum += v; }
+			}
+			return {min:minSum, max:maxSum};
+		}
+		function sanitizeEffectValue(key, val){
+			const k = normalizeKey(key);
+			function cleanOne(v){
+				let out = String(v);
+				if (k.includes('timewalker')) out = out.replace(/\s*-s\s*$/i, '');
+				if (k.includes('coolness')) out = out.replace(/\s*!+\s*$/i, '');
+				if (k.includes('health')) out = out.replace(/\+\s*$/i, '');
+				return out;
+			}
+			if (Array.isArray(val)) return val.map(cleanOne);
+			return cleanOne(val);
+		}
+		function collectEffectDisplayAll(effects, effectTokens){
+			const tokens = (effectTokens||[]).map(normalizeKey);
+			const matchedByToken = tokens.map(()=>[]);
+			const matchedOther = [];
+			const others = [];
+			for (const [key,rawVal] of Object.entries(effects||{})){
+				const val = sanitizeEffectValue(key, rawVal);
+				const valueStr = Array.isArray(val) ? val.join(', ') : String(val);
+				const line = `${key}: ${valueStr}`;
+				const k = normalizeKey(key);
+				let placed=false;
+				for (let i=0;i<tokens.length;i++){
+					if (k.includes(tokens[i])){ matchedByToken[i].push(line); placed=true; break; }
+				}
+				if (!placed){
+					if (tokens.length>0 && k.includes(tokens[0])) matchedOther.push(line); else others.push(line);
+				}
+			}
+			return matchedByToken.flat().concat(matchedOther).concat(others).join(' | ');
+		}
+		function maxNumericAcrossMatched(effects, effectQuery){
+			if (!effectQuery) return 0;
+			const q = normalizeKey(effectQuery);
+			let best = -Infinity; let found=false;
+			for (const [key,val] of Object.entries(effects||{})){
+				if (normalizeKey(key).includes(q)){
+					found=true; best = Math.max(best, maxNumericFromValue(val));
+				}
+			}
+			return found ? best : 0;
+		}
+		function minNumericAcrossMatched(effects, effectQuery){
+			if (!effectQuery) return 0;
+			const q = normalizeKey(effectQuery);
+			let worst = Infinity; let found=false;
+			for (const [key,val] of Object.entries(effects||{})){
+				if (normalizeKey(key).includes(q)){
+					found=true; worst = Math.min(worst, minNumericFromValue(val));
+				}
+			}
+			return found ? worst : 0;
+		}
+		function anyNegativeForEffects(effects, effectTokens){
+			for (const tok of effectTokens||[]){
+				let hasTemp=false; for (const k of Object.keys(effects||{})){ if (normalizeKey(k).includes('temperance') && normalizeKey(k).includes(tok)) { hasTemp=true; break; } }
+				if (hasTemp) continue;
+				const mn = minNumericAcrossMatched(effects, tok);
+				if (mn < 0) return true;
+			}
+			return false;
+		}
+
+		function isEventRegion(region){
+			const s = String(region||'').toUpperCase();
+			if (!s.startsWith('R')) return false;
+			return !/^R\d+$/.test(s);
+		}
+
+		function flatten(data){
+			const items = [];
+			for (const region of Object.keys(data||{})){
+				const regionObj = data[region] || {};
+				for (const typeKey of Object.keys(regionObj)){
+					const typeObj = regionObj[typeKey] || {};
+					for (const name of Object.keys(typeObj)){
+						const item = typeObj[name] || {};
+						const tags = [];
+						if (isEventRegion(region)) tags.push('event');
+						items.push({ region, rawType: typeKey, type: normalizeType(typeKey), name, effects: item.effects || {}, source: item.source, tags });
+					}
+				}
+			}
+			return items;
+		}
+
+		function groupByTypeOrdered(items){
+			const groups = new Map();
+			for (const t of ORDERED_TYPES) groups.set(t, []);
+			for (const it of items){
+				const key = groups.has(it.type) ? it.type : it.rawType.toLowerCase();
+				if (!groups.has(key)) groups.set(key, []);
+				groups.get(key).push(it);
+			}
+			return groups;
+		}
+
+		function parseQuery(q){
+			const raw = q.split(',').map(s => s.trim()).filter(Boolean);
+			const pos = [], neg = [], types = [];
+			for (const r of raw){
+				if (r.startsWith('-')) neg.push(normalizeKey(r.slice(1)));
+				else if (r.startsWith('!')) types.push(normalizeType(r.slice(1)));
+				else pos.push(normalizeKey(r));
+			}
+			return { pos, neg, types };
+		}
+		function itemMatchesPositive(it, token){
+			if (token === 'event') return (it.tags||[]).includes('event');
+			return includesEffectKey(it.effects, token) || includesName(it.name, token) || includesRegion(it.region, token) || includesSource(it.source, token);
+		}
+		function itemMatchesNegative(it, token){
+			if (token === 'event') return (it.tags||[]).includes('event');
+			return includesRegion(it.region, token) || includesSource(it.source, token);
+		}
+		function effectTokensFromPos(posTokens){
+			const out = [];
+			for (const t of posTokens){
+				if (t === 'event') continue;
+				for (const k of ALL_EFFECT_KEYS){ if (k.includes(t)) { out.push(t); break; } }
+			}
+			return out;
+		}
+
+		let ALL_ITEMS = [];
+		let ALL_EFFECT_KEYS = new Set();
+
+		function findFirstEffectToken(tokens){
+			for (const t of tokens){
+				for (const k of ALL_EFFECT_KEYS){ if (k.includes(t)) return t; }
+			}
+			return null;
+		}
+
+		const EQUIPPED = new Map();
+		for (const t of ORDERED_TYPES) EQUIPPED.set(t, new Map());
+
+		function toast(msg){
+			const el = document.getElementById('toast');
+			el.querySelector('.msg').textContent = msg;
+			el.style.display = 'block';
+			clearTimeout(window.__toastTimer);
+			window.__toastTimer = setTimeout(()=>{ el.style.display = 'none'; }, 2000);
+		}
+
+		function getEquippedEntry(type, name){
+			const perType = EQUIPPED.get(type) || new Map();
+			return perType.get(name);
+		}
+		function getEquippedCountForType(type){
+			const perType = EQUIPPED.get(type) || new Map();
+			return perType.size;
+		}
+
+		function canEquip(it){
+			const type = it.type;
+			const perType = EQUIPPED.get(type) || new Map();
+			if (perType.has(it.name)) return {ok:false,reason:'Already equipped'};
+			if (type === 'collection') return {ok:true};
+			if (type === 'accessory') {
+				const limit = allowAccThird ? 3 : 2;
+				if (perType.size >= limit) return {ok:false,reason:`Max ${limit} accessories`};
+				return {ok:true};
+			}
+			if (type === 'retainer') {
+				const limit = allowRetThird ? 3 : 2;
+				if (perType.size >= limit) return {ok:false,reason:`Max ${limit} retainers`};
+				return {ok:true};
+			}
+			// all other types: only 1
+			if (perType.size >= 1) return {ok:false,reason:`Only 1 ${type}`};
+			return {ok:true};
+		}
+		function equip(it){
+			const type = it.type;
+			const perType = EQUIPPED.get(type) || new Map();
+			const check = canEquip(it);
+			if (!check.ok){ toast(check.reason); return false; }
+			perType.set(it.name, { it });
+			EQUIPPED.set(type, perType);
+			updateEqCount();
+			renderEquipped();
+			onQuery();
+			return true;
+		}
+		function unequip(type, name){
+			const perType = EQUIPPED.get(type) || new Map();
+			perType.delete(name);
+			EQUIPPED.set(type, perType);
+			updateEqCount();
+			renderEquipped();
+			onQuery();
+		}
+		function clearAll(){
+			for (const t of EQUIPPED.keys()) EQUIPPED.set(t, new Map());
+			updateEqCount();
+			renderEquipped();
+			onQuery();
+		}
+		function updateEqCount(){
+			let total = 0;
+			for (const t of EQUIPPED.keys()) total += getEquippedCountForType(t);
+			document.getElementById('eqCount').textContent = total;
+		}
+
+		function aggregateEffectsRanges(){
+			const totals = new Map();
+			function containsPercentInValue(value){
+				if (value == null) return false;
+				if (Array.isArray(value)) return value.some(v => containsPercentInValue(v));
+				return String(value).includes('%');
+			}
+			for (const [type, perType] of EQUIPPED.entries()){
+				for (const {it} of perType.values()){
+					for (const [effKey, effVal] of Object.entries(it.effects||{})){
+						const r = rangeFromValue(effVal);
+						const rec = totals.get(effKey) || { min: 0, max: 0, details: [], percent: false };
+						rec.min += r.min;
+						rec.max += r.max;
+						rec.percent = rec.percent || containsPercentInValue(effVal);
+						const singleVal = (r.min === r.max) ? `${r.min}` : `${r.min}-${r.max}`;
+						const singleValWithUnit = rec.percent ? `${singleVal}%` : singleVal;
+						rec.details.push(`${it.name}: ${singleValWithUnit}`);
+						totals.set(effKey, rec);
+					}
+				}
+			}
+			return totals;
+		}
+		function effectSortPriority(name){
+			const n = String(name||'');
+			const low = n.toLowerCase();
+			if (low === 'health') return 0;
+			if (low.includes('weapon') && low.includes('damage')) return 1;
+			return 2;
+		}
+		function renderAggregatedEffects(){
+			const agg = aggregateEffectsRanges();
+			const container = document.getElementById('aggEffects');
+			container.innerHTML = '';
+			if (agg.size === 0){ container.innerHTML = '<div class="muted">No items equipped.</div>'; return; }
+			const entries = Array.from(agg.entries());
+			entries.sort((a,b)=>{
+				const pa = effectSortPriority(a[0]);
+				const pb = effectSortPriority(b[0]);
+				if (pa !== pb) return pa - pb;
+				return a[0].localeCompare(b[0]);
+			});
+			const list = document.createElement('div');
+			list.className = 'agg-list';
+			for (const [k,v] of entries){
+				const row = document.createElement('div');
+				row.className = 'agg-effect';
+				const head = document.createElement('div');
+				head.className = 'agg-head';
+				const nameEl = document.createElement('div'); nameEl.className = 'agg-name'; nameEl.textContent = k;
+				const totalEl = document.createElement('div'); totalEl.className = 'agg-total';
+				const totalVal = (v.min===v.max) ? `${v.min}` : `${v.min}-${v.max}`;
+				totalEl.textContent = v.percent ? `${totalVal}%` : totalVal;
+				head.appendChild(nameEl); head.appendChild(totalEl);
+				row.appendChild(head);
+				const details = document.createElement('div'); details.className = 'agg-details muted'; details.textContent = v.details.join(' | ');
+				row.appendChild(details);
+				list.appendChild(row);
+			}
+			container.appendChild(list);
+		}
+
+		function renderMissingTypesBanner(){
+			const banner = document.getElementById('missingTypes');
+			const listEl = document.getElementById('equippedLists');
+			if (listEl.dataset.hidden === '1') { banner.style.display='none'; banner.textContent=''; return; }
+			const parts = [];
+			// Single-slot expectations for all types except accessory/retainer/collection
+			for (const t of ORDERED_TYPES){
+				if (t === 'collection' || t === 'accessory' || t === 'retainer') continue;
+				const perType = EQUIPPED.get(t) || new Map();
+				const missing = Math.max(0, 1 - perType.size);
+				if (missing > 0){
+					const label = t.charAt(0).toUpperCase()+t.slice(1);
+					parts.push(label + (missing===1 ? '' : ` x${missing}`));
+				}
+			}
+			// Accessory and Retainer totals based on toggles
+			const accLimit = allowAccThird ? 3 : 2;
+			const retLimit = allowRetThird ? 3 : 2;
+			const accMissing = Math.max(0, accLimit - (EQUIPPED.get('accessory')||new Map()).size);
+			if (accMissing>0) parts.push('Accessory' + (accMissing===1?'':` x${accMissing}`));
+			const retMissing = Math.max(0, retLimit - (EQUIPPED.get('retainer')||new Map()).size);
+			if (retMissing>0) parts.push('Retainer' + (retMissing===1?'':` x${retMissing}`));
+			if (parts.length === 0){ banner.style.display='none'; banner.textContent=''; return; }
+			banner.textContent = 'Missing types: ' + parts.join(', ');
+			banner.style.display = 'block';
+		}
+
+		function renderEquipped(){
+			const container = document.getElementById('equippedLists');
+			if (container.dataset.hidden === '1'){
+				document.getElementById('aggEffects').innerHTML = '';
+				renderAggregatedEffects();
+				document.getElementById('missingTypes').style.display='none';
+				return;
+			}
+			container.innerHTML = '';
+			let any = false;
+			for (const type of ORDERED_TYPES){
+				const perType = EQUIPPED.get(type);
+				if (!perType || perType.size === 0) continue;
+				any = true;
+				const sec = document.createElement('div');
+				sec.className = 'section';
+				const title = document.createElement('h2');
+				title.textContent = type.charAt(0).toUpperCase()+type.slice(1);
+				sec.appendChild(title);
+				for (const {it} of perType.values()){
+					const row = document.createElement('div');
+					row.className = 'item';
+					const main = document.createElement('div');
+					const srcTxt = formatSource(it.source);
+					const srcSpan = srcTxt ? ` <span class=\"meta\">src: ${srcTxt}</span>` : '';
+					main.innerHTML = `<strong>${it.name}</strong> <span class=\"meta\">[${it.region}]</span>${srcSpan}<div class=\"muted\">${collectEffectDisplayAll(it.effects, [])}</div>`;
+					row.appendChild(main);
+					const ctrls = document.createElement('div');
+					ctrls.className = 'controls-inline';
+					const btnRemove = document.createElement('button'); btnRemove.className='btn'; btnRemove.textContent='remove'; btnRemove.onclick=()=>unequip(type, it.name);
+					ctrls.appendChild(btnRemove);
+					row.appendChild(ctrls);
+					sec.appendChild(row);
+				}
+				container.appendChild(sec);
+			}
+			if (!any) container.innerHTML = '<div class="muted">No items equipped.</div>';
+			renderAggregatedEffects();
+			renderMissingTypesBanner();
+		}
+
+		function render(items, query){
+			const container = document.getElementById('results');
+			container.innerHTML = '';
+			const {pos, neg, types} = parseQuery(query);
+			if (pos.length === 0 && neg.length === 0 && types.length===0){ container.innerHTML = '<div class="muted">Type terms separated by commas… Use -term to exclude by region/source or -event to exclude events. Use !type to filter by item type.</div>'; return; }
+
+			const filtered = items.filter(it => (
+				(types.length===0 || types.includes(it.type)) &&
+				(pos.length===0 || pos.every(tok => itemMatchesPositive(it, tok))) &&
+				(neg.length===0 || !neg.some(tok => itemMatchesNegative(it, tok)))
+			));
+			const groups = groupByTypeOrdered(filtered);
+			const effectTokens = effectTokensFromPos(pos);
+			const firstEffect = findFirstEffectToken(effectTokens);
+			const secondEffect = effectTokens.length>1 ? findFirstEffectToken(effectTokens.slice(1)) : null;
+
+			let any = false;
+			for (const type of ORDERED_TYPES.concat(Array.from(groups.keys()).filter(k=>!ORDERED_TYPES.includes(k)))){
+				const list = groups.get(type);
+				if (!list || list.length === 0) continue;
+				any = true;
+				const withScore = list.map(it => ({
+					it,
+					primary: maxNumericAcrossMatched(it.effects, firstEffect),
+					secondary: maxNumericAcrossMatched(it.effects, secondEffect),
+					negAny: anyNegativeForEffects(it.effects, effectTokens),
+					display: collectEffectDisplayAll(it.effects, effectTokens)
+				})).sort((a,b)=> (b.primary - a.primary) || (b.secondary - a.secondary));
+
+				const sec = document.createElement('div');
+				sec.className = 'section';
+				const title = document.createElement('h2');
+				title.textContent = type.charAt(0).toUpperCase() + type.slice(1) + ` (${withScore.length})`;
+				sec.appendChild(title);
+
+				for (const row of withScore){
+					const div = document.createElement('div');
+					div.className = 'item';
+					const perType = EQUIPPED.get(row.it.type) || new Map();
+					const isEquipped = perType.has(row.it.name);
+					if (isEquipped) div.classList.add('equipped');
+					if (row.negAny) div.classList.add('neg-item');
+					div.onclick = ()=>{
+						if (isEquipped) unequip(row.it.type, row.it.name); else equip(row.it);
+					};
+					const main = document.createElement('div');
+					const srcTxt = formatSource(row.it.source);
+					const srcSpan = srcTxt ? ` <span class=\"meta\">src: ${srcTxt}</span>` : '';
+					main.innerHTML = `<strong>${row.it.name}</strong> <span class=\"meta\">[${row.it.region}]</span>${srcSpan}<div class=\"muted\">${row.display}</div>`;
+					div.appendChild(main);
+					sec.appendChild(div);
+				}
+				container.appendChild(sec);
+			}
+
+			if (!any){ container.innerHTML = '<div class=\"muted\">No matches.</div>'; }
+		}
+
+		function onQuery(){ render(ALL_ITEMS, document.getElementById('q').value); }
+
+		function getSavedBuilds(){
+			try { return JSON.parse(localStorage.getItem(BUILDS_KEY) || '[]'); } catch(e){ return []; }
+		}
+		function setSavedBuilds(list){ localStorage.setItem(BUILDS_KEY, JSON.stringify(list)); }
+		function snapshotCurrentBuild(){
+			const items = [];
+			for (const type of ORDERED_TYPES){
+				const perType = EQUIPPED.get(type) || new Map();
+				for (const {it} of perType.values()){
+					items.push({ region: it.region, type: it.type, name: it.name, qty: 1 });
+				}
+			}
+			return items;
+		}
+		function findItem(region, type, name){
+			return ALL_ITEMS.find(i => i.region===region && i.type===type && i.name===name);
+		}
+		function loadBuildById(id){
+			const list = getSavedBuilds();
+			const build = list.find(b => b.id===id);
+			if (!build) { toast('Build not found'); return; }
+			clearAll();
+			const typeToEntries = new Map();
+			for (const entry of build.items){
+				if (!typeToEntries.has(entry.type)) typeToEntries.set(entry.type, []);
+				typeToEntries.get(entry.type).push(entry);
+			}
+			for (const type of ORDERED_TYPES){
+				const entries = typeToEntries.get(type) || [];
+				if (entries.length===0) continue;
+				if (type === 'accessory'){
+					const limit = allowAccThird ? 3 : 2;
+					let added = 0; const seen = new Set();
+					for (const e of entries){ if (added>=limit) break; if (seen.has(e.name)) continue; const it=findItem(e.region,type,e.name); if (!it) continue; equip(it); seen.add(e.name); added++; }
+				} else if (type === 'retainer'){
+					const limit = allowRetThird ? 3 : 2;
+					let added = 0; const seen = new Set();
+					for (const e of entries){ if (added>=limit) break; if (seen.has(e.name)) continue; const it=findItem(e.region,type,e.name); if (!it) continue; equip(it); seen.add(e.name); added++; }
+				} else if (type === 'collection'){
+					const seen = new Set();
+					for (const e of entries){ if (seen.has(e.name)) continue; const it=findItem(e.region,type,e.name); if (!it) continue; equip(it); seen.add(e.name); }
+				} else {
+					let added = 0; const seen = new Set();
+					for (const e of entries){ if (added>=1) break; if (seen.has(e.name)) continue; const it=findItem(e.region,type,e.name); if (!it) continue; equip(it); seen.add(e.name); added++; }
+				}
+			}
+			toast('Build loaded');
+		}
+		function deleteBuildById(id){
+			const list = getSavedBuilds();
+			const idx = list.findIndex(b => b.id===id);
+			if (idx>=0){ list.splice(idx,1); setSavedBuilds(list); renderSavedBuilds(); }
+		}
+		function renderSavedBuilds(){
+			const container = document.getElementById('savedBuilds');
+			container.innerHTML = '';
+			const list = getSavedBuilds();
+			for (const b of list){
+				const btn = document.createElement('div'); btn.className='build-btn';
+				const name = document.createElement('span'); name.className='build-name'; name.textContent = b.name || 'Unnamed';
+				const del = document.createElement('button'); del.className='build-del'; del.textContent='X';
+				del.onclick=(e)=>{ e.stopPropagation(); if (confirm(`Delete build \"${b.name}\"?`)) deleteBuildById(b.id); };
+				btn.onclick=()=>loadBuildById(b.id);
+				btn.appendChild(name); btn.appendChild(del);
+				container.appendChild(btn);
+			}
+		}
+		function saveCurrentBuild(){
+			const name = prompt('Name this build:', 'My Build');
+			if (name===null) return;
+			const items = snapshotCurrentBuild();
+			const list = getSavedBuilds();
+			const id = Date.now() + '_' + Math.random().toString(36).slice(2,7);
+			list.push({ id, name, items });
+			setSavedBuilds(list);
+			renderSavedBuilds();
+			toast('Build saved');
+		}
+
+		function onEquipTabShown(){
+			const listEl = document.getElementById('equippedLists');
+			listEl.style.display = 'none';
+			listEl.dataset.hidden = '1';
+			document.getElementById('toggleEqVis').textContent = 'Show equipped items';
+			document.getElementById('controls').style.display = 'none';
+			renderAggregatedEffects();
+			renderSavedBuilds();
+			document.getElementById('missingTypes').style.display='none';
+		}
+
+		function onBrowseTabShown(){
+			document.getElementById('controls').style.display = 'flex';
+		}
+
+		function initEvents(){
+			document.getElementById('q').addEventListener('input', onQuery);
+			document.getElementById('fileInput').addEventListener('change', async (ev)=>{
+				const file = ev.target.files && ev.target.files[0];
+				if (!file) return;
+				const text = await file.text();
+				localStorage.setItem(CACHE_KEY, text);
+				const json = JSON.parse(text);
+				ALL_ITEMS = flatten(json);
+				ALL_EFFECT_KEYS = new Set();
+				for (const it of ALL_ITEMS){ for (const k of Object.keys(it.effects)) ALL_EFFECT_KEYS.add(normalizeKey(k)); }
+				document.getElementById('status').textContent = `Loaded ${ALL_ITEMS.length} items.`;
+				document.getElementById('q').focus();
+				onQuery();
+			});
+
+			// Tabs
+			document.getElementById('tabBrowse').addEventListener('click', ()=>{
+				document.getElementById('tabBrowse').classList.add('active');
+				document.getElementById('tabEquipped').classList.remove('active');
+				document.getElementById('browseView').style.display='block';
+				document.getElementById('equippedView').style.display='none';
+				onBrowseTabShown();
+			});
+			document.getElementById('tabEquipped').addEventListener('click', ()=>{
+				document.getElementById('tabEquipped').classList.add('active');
+				document.getElementById('tabBrowse').classList.remove('active');
+				document.getElementById('browseView').style.display='none';
+				document.getElementById('equippedView').style.display='block';
+				onEquipTabShown();
+			});
+			document.getElementById('clearAll').addEventListener('click', clearAll);
+			document.getElementById('toggleEqVis').addEventListener('click', ()=>{
+				const listEl = document.getElementById('equippedLists');
+				if (listEl.style.display === 'none'){
+					listEl.style.display = 'block';
+					listEl.dataset.hidden = '0';
+					document.getElementById('toggleEqVis').textContent = 'Hide equipped items';
+					renderEquipped();
+				} else {
+					listEl.style.display = 'none';
+					listEl.dataset.hidden = '1';
+					document.getElementById('toggleEqVis').textContent = 'Show equipped items';
+					renderAggregatedEffects();
+					document.getElementById('missingTypes').style.display='none';
+				}
+			});
+			document.getElementById('saveBuild').addEventListener('click', saveCurrentBuild);
+			document.getElementById('helpBtn').addEventListener('click', ()=>{
+				const p = document.getElementById('helpPanel');
+				p.style.display = p.style.display==='none' ? 'block' : 'none';
+			});
+			document.getElementById('helpClose').addEventListener('click', ()=>{
+				document.getElementById('helpPanel').style.display = 'none';
+			});
+			document.getElementById('toggleAcc3').addEventListener('change', (e)=>{
+				allowAccThird = e.target.checked; renderEquipped(); onQuery();
+			});
+			document.getElementById('toggleRet3').addEventListener('change', (e)=>{
+				allowRetThird = e.target.checked; renderEquipped(); onQuery();
+			});
+		}
+
+		async function tryFetchJson(){
+			const status = document.getElementById('status');
+			try {
+				const res = await fetch('item_glossary.json', { cache: 'no-store' });
+				if (!res.ok) throw new Error('HTTP '+res.status);
+				const text = await res.text();
+				localStorage.setItem(CACHE_KEY, text);
+				const data = JSON.parse(text);
+				ALL_ITEMS = flatten(data);
+				ALL_EFFECT_KEYS = new Set();
+				for (const it of ALL_ITEMS){ for (const k of Object.keys(it.effects)) ALL_EFFECT_KEYS.add(normalizeKey(k)); }
+				status.textContent = `Loaded ${ALL_ITEMS.length} items.`;
+				document.getElementById('fallback').style.display = 'none';
+				onQuery();
+				return;
+			} catch (e) {}
+			try {
+				const cached = localStorage.getItem(CACHE_KEY);
+				if (cached) {
+					const data = JSON.parse(cached);
+					ALL_ITEMS = flatten(data);
+					ALL_EFFECT_KEYS = new Set();
+					for (const it of ALL_ITEMS){ for (const k of Object.keys(it.effects)) ALL_EFFECT_KEYS.add(normalizeKey(k)); }
+					document.getElementById('status').textContent = `Loaded ${ALL_ITEMS.length} items (from cache).`;
+					document.getElementById('fallback').style.display = 'inline';
+					onQuery();
+					return;
+				}
+			} catch (e) {}
+			document.getElementById('status').textContent = 'Could not fetch item_glossary.json. Use file picker.';
+			document.getElementById('fallback').style.display = 'inline';
+		}
+
+		initEvents();
+		tryFetchJson();
+	})();
+	</script>
+</body>
+</html>
