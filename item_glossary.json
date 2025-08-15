@@ -5514,7 +5514,8 @@
                                                                             "Evade":  "5%",
                                                                             "Restless":  "10%",
                                                                             "Summoning":  "6%",
-                                                                            "Timewalker":  "30 -s"
+                                                                            "Timewalker":  "30 -s",
+																			"Cloning":  "6%"
                                                                         },
                                                             "source":  "Craft"
                                                         },
@@ -8988,5 +8989,6 @@
                          }
             }
 }
+
 
 
