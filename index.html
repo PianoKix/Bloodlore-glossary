@@ -277,24 +277,29 @@
 				}
 			}
 			
-			// Sort effects in the same order as aggregated stats: health, weapon damage, retainer weapon damage, then alphabetically
-			function effectSortPriority(line) {
-				const key = line.split(':')[0].toLowerCase();
-				if (key.includes('health')) return 0;
-				if (key.includes('weapon') && key.includes('damage') && !key.includes('retainer')) return 1;
-				if (key.includes('retainer') && key.includes('weapon') && key.includes('damage')) return 2;
-				return 3;
+			// Only apply priority sorting when no search tokens (same as aggregated stats order)
+			if (tokens.length === 0) {
+				function effectSortPriority(line) {
+					const key = line.split(':')[0].toLowerCase();
+					if (key.includes('health')) return 0;
+					if (key.includes('weapon') && key.includes('damage') && !key.includes('retainer')) return 1;
+					if (key.includes('retainer') && key.includes('weapon') && key.includes('damage')) return 2;
+					return 3;
+				}
+				
+				const allEffects = matchedByToken.flat().concat(matchedOther).concat(others);
+				allEffects.sort((a, b) => {
+					const pa = effectSortPriority(a);
+					const pb = effectSortPriority(b);
+					if (pa !== pb) return pa - pb;
+					return a.localeCompare(b);
+				});
+				
+				return allEffects.join(' | ');
+			} else {
+				// When searching, use the same order as normal search mode
+				return matchedByToken.flat().concat(matchedOther).concat(others).join(' | ');
 			}
-			
-			const allEffects = matchedByToken.flat().concat(matchedOther).concat(others);
-			allEffects.sort((a, b) => {
-				const pa = effectSortPriority(a);
-				const pb = effectSortPriority(b);
-				if (pa !== pb) return pa - pb;
-				return a.localeCompare(b);
-			});
-			
-			return allEffects.join(' | ');
 		}
 		function maxNumericAcrossMatched(effects, effectQuery){
 			if (!effectQuery) return 0;
@@ -812,12 +817,28 @@
 					title.textContent = type.charAt(0).toUpperCase() + type.slice(1) + ` (${list.length})`;
 					sec.appendChild(title);
 
-					for (const item of list){
+					// Sort items by effect values when searching (same as normal search mode)
+					let sortedList = list;
+					if (effectTokens.length > 0) {
+						const firstEffect = findFirstEffectToken(effectTokens);
+						const secondEffect = effectTokens.length > 1 ? findFirstEffectToken(effectTokens.slice(1)) : null;
+						
+						sortedList = list.map(it => ({
+							it,
+							primary: maxNumericAcrossMatched(it.effects, firstEffect),
+							secondary: maxNumericAcrossMatched(it.effects, secondEffect),
+							negAny: anyNegativeForEffects(it.effects, effectTokens)
+						})).sort((a,b)=> (b.primary - a.primary) || (b.secondary - a.secondary));
+					}
+
+					for (const itemData of sortedList){
+						const item = itemData.it || itemData; // Handle both sorted and unsorted cases
 						const div = document.createElement('div');
 						div.className = 'item';
 						const perType = EQUIPPED.get(item.type) || new Map();
 						const isEquipped = perType.has(item.name);
 						if (isEquipped) div.classList.add('equipped');
+						if (itemData.negAny) div.classList.add('neg-item');
 						div.onclick = ()=>{
 							if (isEquipped) unequip(item.type, item.name); else equip(item);
 						};
@@ -842,18 +863,34 @@
 					return;
 				}
 				
+				// Sort items by effect values when searching (same as normal search mode)
+				let sortedFiltered = filtered;
+				if (effectTokens.length > 0) {
+					const firstEffect = findFirstEffectToken(effectTokens);
+					const secondEffect = effectTokens.length > 1 ? findFirstEffectToken(effectTokens.slice(1)) : null;
+					
+					sortedFiltered = filtered.map(it => ({
+						it,
+						primary: maxNumericAcrossMatched(it.effects, firstEffect),
+						secondary: maxNumericAcrossMatched(it.effects, secondEffect),
+						negAny: anyNegativeForEffects(it.effects, effectTokens)
+					})).sort((a,b)=> (b.primary - a.primary) || (b.secondary - a.secondary));
+				}
+				
 				const sec = document.createElement('div');
 				sec.className = 'section';
 				const title = document.createElement('h2');
 				title.textContent = currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1) + ` (${filtered.length})`;
 				sec.appendChild(title);
 
-				for (const item of filtered){
+				for (const itemData of sortedFiltered){
+					const item = itemData.it || itemData; // Handle both sorted and unsorted cases
 					const div = document.createElement('div');
 					div.className = 'item';
 					const perType = EQUIPPED.get(item.type) || new Map();
 					const isEquipped = perType.has(item.name);
 					if (isEquipped) div.classList.add('equipped');
+					if (itemData.negAny) div.classList.add('neg-item');
 					div.onclick = ()=>{
 						if (isEquipped) unequip(item.type, item.name); else equip(item);
 					};
