@@ -2028,7 +2028,62 @@
                                                      }
                             },
                    "Emblem":  {
-                                  "Evilslayer Aegis":  {
+                                  "Dragonslayer Aegis":  {
+                                                                "effects":  {
+                                                                                "Nightward":  "5%",
+                                                                                "Fireward":  "5%",
+                                                                                "Dispel":  "10%",
+                                                                                "XP-losion":  "7%",
+                                                                                "Dragonbane":  "5%",
+                                                                                "Dragonward":  "5%"
+                                                                            },
+                                                                "source":  "Purchase"
+                                                            },
+					   			  "Demonslayer Aegis":  {
+                                                                "effects":  {
+                                                                                "Nightward":  "5%",
+                                                                                "Fireward":  "5%",
+                                                                                "Dispel":  "10%",
+                                                                                "XP-losion":  "7%",
+                                                                                "Demonbane":  "5%",
+                                                                                "Demonward":  "5%"
+                                                                            },
+                                                                "source":  "Purchase"
+                                                            },
+					   			  "Monsterslayer Aegis":  {
+                                                                "effects":  {
+                                                                                "Nightward":  "5%",
+                                                                                "Fireward":  "5%",
+                                                                                "Dispel":  "10%",
+                                                                                "XP-losion":  "7%",
+                                                                                "Terrorbane":  "5%",
+                                                                                "Terrorward":  "5%"
+                                                                            },
+                                                                "source":  "Purchase"
+                                                            },
+					   			  "Lycanslayer Aegis":  {
+                                                                "effects":  {
+                                                                                "Nightward":  "5%",
+                                                                                "Fireward":  "5%",
+                                                                                "Dispel":  "10%",
+                                                                                "XP-losion":  "7%",
+                                                                                "Wolfbane":  "5%",
+                                                                                "Wolfward":  "5%"
+                                                                            },
+                                                                "source":  "Purchase"
+                                                            },
+					   			  "Xenoslayer Aegis":  {
+                                                                "effects":  {
+                                                                                "Nightward":  "5%",
+                                                                                "Fireward":  "5%",
+                                                                                "Dispel":  "10%",
+                                                                                "XP-losion":  "7%",
+                                                                                "Xenobane":  "5%",
+                                                                                "Xenoward":  "5%"
+                                                                            },
+                                                                "source":  "Purchase"
+                                                            },
+					   			  "Evilslayer Aegis":  {
                                                                 "effects":  {
                                                                                 "Nightward":  "5%",
                                                                                 "Fireward":  "5%",
@@ -8933,4 +8988,5 @@
                          }
             }
 }
+
 
