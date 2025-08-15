@@ -70,7 +70,6 @@
 		<div class="toggles">
 			<label><input type="checkbox" id="toggleAcc3" checked /> 3rd acc.</label>
 			<label><input type="checkbox" id="toggleRet3" checked /> 3rd ret.</label>
-			<label><input type="checkbox" id="toggleCategorize" /> Categorize</label>
 		</div>
 	</div>
 	<div id="browseView">
@@ -103,10 +102,9 @@
 	<div id="toast" style="display:none"><span class="msg"></span></div>
 	<div id="helpBtn" class="help-btn">?</div>
 	<div id="helpPanel" class="help-panel" style="display:none">
-		<button class="btn help-close" id="helpClose">Close</button>
 		<h3>Search rules</h3>
 		<ul>
-			<li>Check the "Categorize" box to see items grouped by type.</li>
+			<li>Items are grouped by type with category tabs.</li>
 			<li>Comma-separated terms (ALL have to be satisfied); effect, name, region or source : e.g., R07, drop, lifebane.</li>
 			<li>Prefix with '!' to search by type: e.g. !weapon, !retainer, !accessory (has to be full type name, not just a part of it).</li>
 			<li>Prefix with '-' to exclude by region/source/event (AT LEAST ONE has to be satisfied): e.g., -R01.3, -purch, -event.</li>
@@ -137,7 +135,7 @@
 		const BUILDS_KEY = 'itemGlossarySavedBuildsV1';
 		let allowAccThird = true;
 		let allowRetThird = true;
-		let categorizeMode = false;
+		let categorizeMode = true;
 		let currentCategory = 'all';
 
 		function normalizeType(raw) {
@@ -483,8 +481,8 @@
 				return String(value).includes('%');
 			}
 			
-			// Filter types based on current category if in categorize mode
-			const typesToProcess = categorizeMode && currentCategory !== 'all' ? [currentCategory] : Array.from(EQUIPPED.keys());
+			// Filter types based on current category
+			const typesToProcess = currentCategory !== 'all' ? [currentCategory] : Array.from(EQUIPPED.keys());
 			
 			for (const type of typesToProcess){
 				const perType = EQUIPPED.get(type);
@@ -549,8 +547,8 @@
 			const listEl = document.getElementById('equippedLists');
 			if (listEl.dataset.hidden === '1') { banner.style.display='none'; banner.textContent=''; return; }
 			
-			// Don't show missing types banner when in categorize mode with specific category
-			if (categorizeMode && currentCategory !== 'all') {
+			// Don't show missing types banner when specific category is selected
+			if (currentCategory !== 'all') {
 				banner.style.display='none';
 				banner.textContent='';
 				return;
@@ -663,8 +661,8 @@
 			container.innerHTML = '';
 			let any = false;
 			
-			// Filter types based on current category if in categorize mode
-			const typesToShow = categorizeMode && currentCategory !== 'all' ? [currentCategory] : ORDERED_TYPES;
+			// Filter types based on current category
+			const typesToShow = currentCategory !== 'all' ? [currentCategory] : ORDERED_TYPES;
 			
 			for (const type of typesToShow){
 				const perType = EQUIPPED.get(type);
@@ -761,28 +759,21 @@
 
 		function onQuery(){ 
 			const query = document.getElementById('q').value;
-			if (categorizeMode) {
-				// Show category tabs when categorize mode is on (regardless of search)
-				const categoryTabs = document.getElementById('categoryTabs');
-				const equippedCategoryTabs = document.getElementById('equippedCategoryTabs');
-				const browseView = document.getElementById('browseView');
-				const equippedView = document.getElementById('equippedView');
-				
-				if (browseView.style.display !== 'none') {
-					categoryTabs.style.display = 'block';
-					renderCategoryTabs();
-				}
-				if (equippedView.style.display !== 'none') {
-					equippedCategoryTabs.style.display = 'block';
-					renderEquippedCategoryTabs();
-				}
-				renderCategories();
-			} else {
-				// Hide category tabs when categorize mode is off
-				document.getElementById('categoryTabs').style.display = 'none';
-				document.getElementById('equippedCategoryTabs').style.display = 'none';
-				render(ALL_ITEMS, query);
+			// Always show category tabs
+			const categoryTabs = document.getElementById('categoryTabs');
+			const equippedCategoryTabs = document.getElementById('equippedCategoryTabs');
+			const browseView = document.getElementById('browseView');
+			const equippedView = document.getElementById('equippedView');
+			
+			if (browseView.style.display !== 'none') {
+				categoryTabs.style.display = 'block';
+				renderCategoryTabs();
 			}
+			if (equippedView.style.display !== 'none') {
+				equippedCategoryTabs.style.display = 'block';
+				renderEquippedCategoryTabs();
+			}
+			renderCategories();
 		}
 
 		function renderCategories() {
@@ -1111,16 +1102,12 @@
 			listEl.dataset.hidden = '1';
 			document.getElementById('toggleEqVis').textContent = 'Show equipped items';
 			document.getElementById('controls').style.display = 'none';
-			// Show/hide category tabs based on categorize mode
+			// Always show category tabs
 			const categoryTabs = document.getElementById('categoryTabs');
 			const equippedCategoryTabs = document.getElementById('equippedCategoryTabs');
 			categoryTabs.style.display = 'none';
-			if (categorizeMode) {
-				equippedCategoryTabs.style.display = 'block';
-				renderEquippedCategoryTabs();
-			} else {
-				equippedCategoryTabs.style.display = 'none';
-			}
+			equippedCategoryTabs.style.display = 'block';
+			renderEquippedCategoryTabs();
 			renderAggregatedEffects();
 			renderSavedBuilds();
 			document.getElementById('missingTypes').style.display='none';
@@ -1128,14 +1115,10 @@
 
 		function onBrowseTabShown(){
 			document.getElementById('controls').style.display = 'flex';
-			// Show/hide category tabs based on categorize mode
+			// Always show category tabs
 			const categoryTabs = document.getElementById('categoryTabs');
-			if (categorizeMode) {
-				categoryTabs.style.display = 'block';
-				renderCategoryTabs();
-			} else {
-				categoryTabs.style.display = 'none';
-			}
+			categoryTabs.style.display = 'block';
+			renderCategoryTabs();
 		}
 
 		function initEvents(){
@@ -1199,22 +1182,7 @@
 			document.getElementById('toggleRet3').addEventListener('change', (e)=>{
 				allowRetThird = e.target.checked; renderEquipped(); onQuery();
 			});
-			document.getElementById('toggleCategorize').addEventListener('change', (e)=>{
-				categorizeMode = e.target.checked;
-				const categoryTabs = document.getElementById('categoryTabs');
-				const equippedCategoryTabs = document.getElementById('equippedCategoryTabs');
-				if (categorizeMode) {
-					categoryTabs.style.display = 'block';
-					equippedCategoryTabs.style.display = 'block';
-					renderCategoryTabs();
-					renderEquippedCategoryTabs();
-					onQuery();
-				} else {
-					categoryTabs.style.display = 'none';
-					equippedCategoryTabs.style.display = 'none';
-					onQuery();
-				}
-			});
+
 		}
 
 		async function tryFetchJson(){
