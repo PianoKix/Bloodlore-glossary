@@ -96,9 +96,7 @@
 		let combineable = [];
 		let type_map = {};
 
-		// Load constants from JSON file
 		async function loadConstants() {
-			// Try to load from cache first (like item_glossary.json does)
 			try {
 				const cached = localStorage.getItem(CONSTANTS_CACHE_KEY);
 				if (cached) {
@@ -106,8 +104,6 @@
 					skill_groups = constants.skill_groups;
 					combineable = constants.combineable;
 					type_map = constants.type_map;
-					
-					// Re-render aggregated effects after constants are loaded from cache
 					renderAggregatedEffects();
 					return;
 				}
@@ -115,7 +111,6 @@
 				console.error('Failed to load constants from cache:', cacheError);
 			}
 			
-			// If no cache, try to fetch from network
 			try {
 				const response = await fetch('constants.json', { cache: 'no-store' });
 				if (!response.ok) throw new Error('HTTP ' + response.status);
@@ -125,15 +120,12 @@
 				skill_groups = constants.skill_groups;
 				combineable = constants.combineable;
 				type_map = constants.type_map;
-
-				// Re-render aggregated effects after constants are loaded
 				renderAggregatedEffects();
 				return;
 			} catch (error) {
 				console.error('Failed to load constants.json:', error);
 			}
 			
-			// Show fallback file picker if constants can't be loaded
 			document.getElementById('constantsFallback').style.display = 'inline';
 		}
 
@@ -174,7 +166,9 @@
 		function maxNumericFromValue(value){
 			if (value == null) return 0;
 			if (Array.isArray(value)){
-				let m = 0; for (const v of value) m = Math.max(m, maxNumericFromValue(v)); return m;
+				let m = 0;
+				for (const v of value) m = Math.max(m, maxNumericFromValue(v));
+				return m;
 			}
 			let s = String(value).replace(/,/g,'.');
 			const arr = [];
@@ -194,13 +188,26 @@
 		function minNumericFromValue(value){
 			if (value == null) return 0;
 			if (Array.isArray(value)){
-				let m = Infinity; let seen=false; for (const v of value){ const mn=minNumericFromValue(v); if (!Number.isNaN(mn)){ m=Math.min(m,mn); seen=true; } } return seen?m:0;
+				let m = Infinity;
+				let seen = false;
+				for (const v of value) {
+					const mn = minNumericFromValue(v);
+					if (!Number.isNaN(mn)) {
+						m = Math.min(m, mn);
+						seen = true;
+					}
+				}
+				return seen ? m : 0;
 			}
 			let s = String(value).replace(/,/g,'.');
 			const arr = [];
 			const rangeRe = /([+-]?\d+(?:\.\d+)?)\s*-\s*([+-]?\d+(?:\.\d+)?)/g;
-			let copy = s; let rm;
-			while ((rm = rangeRe.exec(s))){ arr.push(parseFloat(rm[1]), parseFloat(rm[2])); copy = copy.replace(rm[0],' '); }
+			let copy = s;
+			let rm;
+			while ((rm = rangeRe.exec(s))) {
+				arr.push(parseFloat(rm[1]), parseFloat(rm[2]));
+				copy = copy.replace(rm[0], ' ');
+			}
 			const numMatches = copy.match(/[+-]?\d+(?:\.\d+)?/g);
 			if (numMatches) for (const n of numMatches) arr.push(parseFloat(n));
 			const nums = arr.filter(n => !Number.isNaN(n));
@@ -223,7 +230,11 @@
 			}
 			const singles = s.match(/[+-]?\d+(?:\.\d+)?/g);
 			if (singles){
-				for (const n of singles){ const v = parseFloat(n); minSum += v; maxSum += v; }
+				for (const n of singles) {
+					const v = parseFloat(n);
+					minSum += v;
+					maxSum += v;
+				}
 			}
 			return {min:minSum, max:maxSum};
 		}
@@ -285,10 +296,12 @@
 		function maxNumericAcrossMatched(effects, effectQuery){
 			if (!effectQuery) return 0;
 			const q = normalizeKey(effectQuery);
-			let best = -Infinity; let found=false;
+			let best = -Infinity;
+			let found = false;
 			for (const [key,val] of Object.entries(effects||{})){
 				if (normalizeKey(key).includes(q)){
-					found=true; best = Math.max(best, maxNumericFromValue(val));
+					found = true;
+					best = Math.max(best, maxNumericFromValue(val));
 				}
 			}
 			return found ? best : 0;
@@ -296,17 +309,25 @@
 		function minNumericAcrossMatched(effects, effectQuery){
 			if (!effectQuery) return 0;
 			const q = normalizeKey(effectQuery);
-			let worst = Infinity; let found=false;
+			let worst = Infinity;
+			let found = false;
 			for (const [key,val] of Object.entries(effects||{})){
 				if (normalizeKey(key).includes(q)){
-					found=true; worst = Math.min(worst, minNumericFromValue(val));
+					found = true;
+					worst = Math.min(worst, minNumericFromValue(val));
 				}
 			}
 			return found ? worst : 0;
 		}
 		function anyNegativeForEffects(effects, effectTokens){
 			for (const tok of effectTokens||[]){
-				let hasTemp=false; for (const k of Object.keys(effects||{})){ if (normalizeKey(k).includes('temperance') && normalizeKey(k).includes(tok)) { hasTemp=true; break; } }
+				let hasTemp = false;
+				for (const k of Object.keys(effects||{})) {
+					if (normalizeKey(k).includes('temperance') && normalizeKey(k).includes(tok)) {
+						hasTemp = true;
+						break;
+					}
+				}
 				if (hasTemp) continue;
 				const mn = minNumericAcrossMatched(effects, tok);
 				if (mn < 0) return true;
@@ -493,7 +514,7 @@
 		}
 
 
-////////////////////////////////////////////////////////////////1. Separate skills based combinable list - some skills can be combined (Blood Craze 1% + 2% = 3%), some can't (Evade 1% can't be combined with Evade 2%) 2 RNG will be rolled to check its proc
+		// Aggregate effects ranges - combinable skills are summed, uncombinable skills are kept separate
 
 		function aggregateEffectsRanges(){
 			const totals = new Map();
@@ -503,7 +524,6 @@
 				return String(value).includes('%');
 			}
 
-			// Wait for constants to be loaded
 			if (combineable.length === 0 || Object.keys(skill_groups).length === 0) {
 				return totals;
 			}
@@ -511,8 +531,6 @@
 			const typesToProcess = categorizeMode && currentCategory !== 'all'
 				? [currentCategory]
 				: Array.from(EQUIPPED.keys());
-
-
 
 			for (const type of typesToProcess){
 				const perType = EQUIPPED.get(type);
@@ -523,7 +541,6 @@
 						const r = rangeFromValue(effVal);
 
 						if (combineable.includes(effKey)) {
-							// normal combine
 							const rec = totals.get(effKey) || { displayKey: effKey, min: 0, max: 0, details: [], percent: false };
 							rec.min += r.min;
 							rec.max += r.max;
@@ -532,7 +549,6 @@
 							rec.details.push(`${it.name}: ${rec.percent ? valStr+"%" : valStr}`);
 							totals.set(effKey, rec);
 						} else {
-							// split → unique key, but keep displayKey for sorting/rendering
 							const uniqueKey = effKey + "#" + it.name;
 							const rec = { displayKey: effKey, min: r.min, max: r.max, details: [], percent: false };
 							rec.percent = rec.percent || containsPercentInValue(effVal);
@@ -546,25 +562,13 @@
 			return totals;
 		}
 
-///////////////////////////////////// 1. Sort based on skill group and add group header, 2. Sort based on highest average for each skill: Ret 10-14, Ret 9-12, Ret 1-2
-		function effectSortPriority2(name) {
-			const low = String(name || '').toLowerCase();
-			let idx = 0;
-			for (const groupKey of Object.keys(skill_groups)) {
-				for (const skill of skill_groups[groupKey]) {
-					if (skill.toLowerCase() === low) return idx;
-					idx++;
-				}
-			}
-			return idx; // unknown goes last
-		}
+
 
 		function renderAggregatedEffects(){
 		  const agg = aggregateEffectsRanges();
 		  const container = document.getElementById('aggEffects');
 		  container.innerHTML = '';
 		  
-		  // Check if constants are loaded
 		  if (combineable.length === 0 || Object.keys(skill_groups).length === 0) {
 			container.innerHTML = '<div class="muted">Loading constants...</div>';
 			return;
@@ -579,13 +583,11 @@
 		  const list = document.createElement('div');
 		  list.className = 'agg-list';
 
-		  // First, render Health separately at the top (ungrouped)
 		  const healthEntries = entries.filter(([, v]) => 
 			(v.displayKey || '').toLowerCase() === 'health'
 		  );
 		  if (healthEntries.length > 0) {
-			// Combine all health entries into one
-			const combinedHealth = { displayKey: 'Health', min: 0, max: 0, details: [], percent: false };
+		  const combinedHealth = { displayKey: 'Health', min: 0, max: 0, details: [], percent: false };
 			for (const [, v] of healthEntries) {
 			  combinedHealth.min += v.min;
 			  combinedHealth.max += v.max;
@@ -620,9 +622,7 @@
 			list.appendChild(row);
 		  }
 
-		  			// Then render group by group, skill order is taken from skill_groups
 		  for (const [groupName, skills] of Object.entries(skill_groups)) {
-			// Skip Health since it's already rendered at the top
 			if (groupName === 'Heal') {
 			  const healSkills = skills.filter(skill => skill.toLowerCase() !== 'health');
 			  if (healSkills.length === 0) continue;
@@ -635,7 +635,6 @@
 			  header.style.color = '#F4E5B7';
 			  list.appendChild(header);
 
-			  // Sort healSkills alphabetically
 			  const sortedHealSkills = [...healSkills].sort((a, b) => a.localeCompare(b));
 			  
 			  for (const skill of sortedHealSkills) {
@@ -644,17 +643,14 @@
 				);
 				if (groupEntries.length === 0) continue;
 
-				// split: combinable (key without '#') vs uncombinable (key with '#')
 				const combinableEntries = groupEntries.filter(([k]) => !k.includes('#'));
 				const uncombinableEntries = groupEntries.filter(([k]) => k.includes('#'));
 
-				// Sort entries alphabetically by displayKey (except for Weapon Attack group which preserves manual order)
 				if (skill !== 'Weapon Attack') {
 				  combinableEntries.sort(([, a], [, b]) => (a.displayKey || '').localeCompare(b.displayKey || ''));
 				  uncombinableEntries.sort(([, a], [, b]) => (a.displayKey || '').localeCompare(b.displayKey || ''));
 				}
 
-				// Render combinable entries first
 				for (const [key, v] of combinableEntries) {
 				  const row = document.createElement('div');
 				  row.className = 'agg-effect';
@@ -682,14 +678,10 @@
 				  list.appendChild(row);
 				}
 
-				// Handle uncombinable entries differently for Weapon Attack group vs other groups
 				if (uncombinableEntries.length > 0) {
 				  if (skill === 'Weapon Attack') {
-					// For Weapon Attack group, render each effect individually in the order from constants.json
-					// First, get the order from constants.json
 					const weaponAttackOrder = skill_groups['Weapon Attack'];
 					
-					// Render effects in the order they appear in constants.json
 					for (const effectName of weaponAttackOrder) {
 					  const matchingEntries = uncombinableEntries.filter(([, v]) => 
 						v.displayKey.toLowerCase() === effectName.toLowerCase()
@@ -697,7 +689,6 @@
 					  
 					  if (matchingEntries.length === 0) continue;
 					  
-					  // Render each matching entry individually
 					  for (const [key, v] of matchingEntries) {
 						const row = document.createElement('div');
 						row.className = 'agg-effect';
@@ -725,12 +716,10 @@
 						list.appendChild(row);
 					  }
 					}
-				  } else {
-					// For other groups, use the original grouping logic
-					const uncombinableGroups = new Map();
-					
-					// Group by displayKey
-					for (const [key, v] of uncombinableEntries) {
+					} else {
+						const uncombinableGroups = new Map();
+						
+						for (const [key, v] of uncombinableEntries) {
 					  const displayKey = v.displayKey;
 					  if (!uncombinableGroups.has(displayKey)) {
 						uncombinableGroups.set(displayKey, {
@@ -749,11 +738,9 @@
 					  group.items.push(v);
 					}
 
-					// Sort uncombinable groups alphabetically by displayKey
-					const sortedUncombinableGroups = Array.from(uncombinableGroups.entries()).sort(([a], [b]) => a.localeCompare(b));
-					
-					// Render each uncombinable group
-					for (const [displayKey, group] of sortedUncombinableGroups) {
+						const sortedUncombinableGroups = Array.from(uncombinableGroups.entries()).sort(([a], [b]) => a.localeCompare(b));
+						
+						for (const [displayKey, group] of sortedUncombinableGroups) {
 					  const row = document.createElement('div');
 					  row.className = 'agg-effect';
 
@@ -763,7 +750,6 @@
 					  const nameEl = document.createElement('div');
 					  nameEl.className = 'agg-name';
 					  
-					  // Add toggle button for uncombinable effects
 					  const toggle = document.createElement('span');
 					  toggle.className = 'agg-toggle';
 					  toggle.textContent = '+';
@@ -791,18 +777,15 @@
 					  head.appendChild(totalEl);
 					  row.appendChild(head);
 
-					  // Create detailed breakdown for each item
 					  const details = document.createElement('div');
 					  details.className = 'agg-details collapsed muted';
 					  
-					  // Sort items by average value (highest first)
 					  const sortedItems = [...group.items].sort((a, b) => {
 						const avgA = (a.min + a.max) / 2;
 						const avgB = (b.min + b.max) / 2;
 						return avgB - avgA;
 					  });
 					  
-					  // Create detailed breakdown with proper layout
 					  for (const item of sortedItems) {
 						const itemRow = document.createElement('div');
 						itemRow.className = 'agg-detail-item';
@@ -828,7 +811,6 @@
 				}
 			  }
 			} else {
-			  // Regular group rendering
 			  const header = document.createElement('div');
 			  header.className = 'agg-group-header';
 			  header.textContent = groupName;
@@ -837,15 +819,12 @@
 			  header.style.color = '#F4E5B7';
 			  list.appendChild(header);
 
-			  // Sort skills alphabetically (excluding Health and Weapon Attack which have manual ordering)
 			  const sortedSkills = skills.filter(skill => skill.toLowerCase() !== 'health').map(skill => {
 				if (skill === 'Weapon Attack') {
-				  // Keep Weapon Attack in its original order from constants.json
 				  return skill;
 				}
 				return skill;
 			  }).sort((a, b) => {
-				// Skip sorting for Weapon Attack group
 				if (a === 'Weapon Attack' || b === 'Weapon Attack') {
 				  return 0;
 				}
@@ -853,7 +832,6 @@
 			  });
 			  
 			  for (const skill of sortedSkills) {
-				// Skip Health since it's already rendered at the top
 				if (skill.toLowerCase() === 'health') continue;
 				
 				const groupEntries = entries.filter(([, v]) =>
@@ -861,17 +839,14 @@
 				);
 				if (groupEntries.length === 0) continue;
 
-				// split: combinable (key without '#') vs uncombinable (key with '#')
 				const combinableEntries = groupEntries.filter(([k]) => !k.includes('#'));
 				const uncombinableEntries = groupEntries.filter(([k]) => k.includes('#'));
 				
-				// Sort entries alphabetically by displayKey (except for Weapon Attack group which preserves manual order)
 				if (skill !== 'Weapon Attack') {
 				  combinableEntries.sort(([, a], [, b]) => (a.displayKey || '').localeCompare(b.displayKey || ''));
 				  uncombinableEntries.sort(([, a], [, b]) => (a.displayKey || '').localeCompare(b.displayKey || ''));
 				}
 
-				// Render combinable entries first
 				for (const [key, v] of combinableEntries) {
 				  const row = document.createElement('div');
 				  row.className = 'agg-effect';
@@ -899,148 +874,96 @@
 				  list.appendChild(row);
 				}
 
-				// Handle uncombinable entries differently for Weapon Attack group vs other groups
 				if (uncombinableEntries.length > 0) {
-				  if (skill === 'Weapon Attack') {
-					// For Weapon Attack group, render each effect individually in the order from constants.json
-					// First, get the order from constants.json
-					const weaponAttackOrder = skill_groups['Weapon Attack'];
-					
-					// Render effects in the order they appear in constants.json
-					for (const effectName of weaponAttackOrder) {
-					  const matchingEntries = uncombinableEntries.filter(([, v]) => 
-						v.displayKey.toLowerCase() === effectName.toLowerCase()
-					  );
-					  
-					  if (matchingEntries.length === 0) continue;
-					  
-					  // Render each matching entry individually
-					  for (const [key, v] of matchingEntries) {
-						const row = document.createElement('div');
-						row.className = 'agg-effect';
-
-						const head = document.createElement('div');
-						head.className = 'agg-head';
-
-						const nameEl = document.createElement('div');
-						nameEl.className = 'agg-name';
-						nameEl.appendChild(document.createTextNode(v.displayKey || ''));
-
-						const totalEl = document.createElement('div');
-						totalEl.className = 'agg-total';
-						const totalVal = (v.min === v.max) ? `${v.min}` : `${v.min}-${v.max}`;
-						totalEl.textContent = v.percent ? `${totalVal}%` : totalVal;
-
-						head.appendChild(nameEl);
-						head.appendChild(totalEl);
-						row.appendChild(head);
-
-						const details = document.createElement('div');
-						details.className = 'agg-details muted';
-						details.textContent = v.details.join(' | ');
-						row.appendChild(details);
-						list.appendChild(row);
-					  }
-					}
-				  } else {
-					// For other groups, use the original grouping logic
-					const uncombinableGroups = new Map();
-					
-					// Group by displayKey
-					for (const [key, v] of uncombinableEntries) {
-					  const displayKey = v.displayKey;
-					  if (!uncombinableGroups.has(displayKey)) {
-						uncombinableGroups.set(displayKey, {
-						  displayKey: displayKey,
-						  min: 0,
-						  max: 0,
-						  details: [],
-						  percent: false,
-						  items: []
-						});
-					  }
-					  const group = uncombinableGroups.get(displayKey);
-					  group.min += v.min;
-					  group.max += v.max;
-					  group.percent = group.percent || v.percent;
-					  group.items.push(v);
-					}
-
-					// Sort uncombinable groups alphabetically by displayKey
-					const sortedUncombinableGroups = Array.from(uncombinableGroups.entries()).sort(([a], [b]) => a.localeCompare(b));
-					
-					// Render each uncombinable group
-					for (const [displayKey, group] of sortedUncombinableGroups) {
-					  const row = document.createElement('div');
-					  row.className = 'agg-effect';
-
-					  const head = document.createElement('div');
-					  head.className = 'agg-head';
-
-					  const nameEl = document.createElement('div');
-					  nameEl.className = 'agg-name';
-					  
-					  // Add toggle button for uncombinable effects
-					  const toggle = document.createElement('span');
-					  toggle.className = 'agg-toggle';
-					  toggle.textContent = '+';
-					  toggle.onclick = function() {
-						const details = row.querySelector('.agg-details');
-						if (details.classList.contains('collapsed')) {
-						  details.classList.remove('collapsed');
-						  details.classList.add('expanded');
-						  toggle.textContent = '-';
-						} else {
-						  details.classList.remove('expanded');
-						  details.classList.add('collapsed');
-						  toggle.textContent = '+';
-						}
-					  };
-					  nameEl.appendChild(toggle);
-					  nameEl.appendChild(document.createTextNode(`${group.displayKey || ''} (${group.items.length})`));
-
-					  const totalEl = document.createElement('div');
-					  totalEl.className = 'agg-total';
-					  const totalVal = (group.min === group.max) ? `${group.min}` : `${group.min}-${group.max}`;
-					  totalEl.textContent = group.percent ? `${totalVal}%` : totalVal;
-
-					  head.appendChild(nameEl);
-					  head.appendChild(totalEl);
-					  row.appendChild(head);
-
-					  // Create detailed breakdown for each item
-					  const details = document.createElement('div');
-					  details.className = 'agg-details collapsed muted';
-					  
-					  // Sort items by average value (highest first)
-					  const sortedItems = [...group.items].sort((a, b) => {
-						const avgA = (a.min + a.max) / 2;
-						const avgB = (b.min + b.max) / 2;
-						return avgB - avgA;
+				  const uncombinableGroups = new Map();
+				  
+				  for (const [key, v] of uncombinableEntries) {
+					const displayKey = v.displayKey;
+					if (!uncombinableGroups.has(displayKey)) {
+					  uncombinableGroups.set(displayKey, {
+						displayKey: displayKey,
+						min: 0,
+						max: 0,
+						details: [],
+						percent: false,
+						items: []
 					  });
-					  
-					  // Create detailed breakdown with proper layout
-					  for (const item of sortedItems) {
-						const itemRow = document.createElement('div');
-						itemRow.className = 'agg-detail-item';
-						
-						const itemName = document.createElement('div');
-						itemName.className = 'item-name';
-						itemName.textContent = item.details[0].split(':')[0];
-						
-						const itemValue = document.createElement('div');
-						itemValue.className = 'item-value';
-						const itemRange = (item.min === item.max) ? `${item.min}` : `${item.min}-${item.max}`;
-						itemValue.textContent = group.percent ? `${itemRange}%` : itemRange;
-						
-						itemRow.appendChild(itemName);
-						itemRow.appendChild(itemValue);
-						details.appendChild(itemRow);
-					  }
-					  
-					  row.appendChild(details);
-					  list.appendChild(row);
 					}
+					const group = uncombinableGroups.get(displayKey);
+					group.min += v.min;
+					group.max += v.max;
+					group.percent = group.percent || v.percent;
+					group.items.push(v);
+				  }
+
+				  const sortedUncombinableGroups = Array.from(uncombinableGroups.entries()).sort(([a], [b]) => a.localeCompare(b));
+				  
+				  for (const [displayKey, group] of sortedUncombinableGroups) {
+					const row = document.createElement('div');
+					row.className = 'agg-effect';
+
+					const head = document.createElement('div');
+					head.className = 'agg-head';
+
+					const nameEl = document.createElement('div');
+					nameEl.className = 'agg-name';
+					
+				  const toggle = document.createElement('span');
+					toggle.className = 'agg-toggle';
+					toggle.textContent = '+';
+					toggle.onclick = function() {
+					  const details = row.querySelector('.agg-details');
+					  if (details.classList.contains('collapsed')) {
+						details.classList.remove('collapsed');
+						details.classList.add('expanded');
+						toggle.textContent = '-';
+					  } else {
+						details.classList.remove('expanded');
+						details.classList.add('collapsed');
+						toggle.textContent = '+';
+					  }
+					};
+					nameEl.appendChild(toggle);
+					nameEl.appendChild(document.createTextNode(`${group.displayKey || ''} (${group.items.length})`));
+
+					const totalEl = document.createElement('div');
+					totalEl.className = 'agg-total';
+					const totalVal = (group.min === group.max) ? `${group.min}` : `${group.min}-${group.max}`;
+					totalEl.textContent = group.percent ? `${totalVal}%` : totalVal;
+
+					head.appendChild(nameEl);
+					head.appendChild(totalEl);
+					row.appendChild(head);
+
+				  const details = document.createElement('div');
+					details.className = 'agg-details collapsed muted';
+					
+				  const sortedItems = [...group.items].sort((a, b) => {
+					  const avgA = (a.min + a.max) / 2;
+					  const avgB = (b.min + b.max) / 2;
+						return avgB - avgA;
+					});
+					
+				  for (const item of sortedItems) {
+					  const itemRow = document.createElement('div');
+					  itemRow.className = 'agg-detail-item';
+						
+					  const itemName = document.createElement('div');
+					  itemName.className = 'item-name';
+					  itemName.textContent = item.details[0].split(':')[0];
+						
+					  const itemValue = document.createElement('div');
+					  itemValue.className = 'item-value';
+					  const itemRange = (item.min === item.max) ? `${item.min}` : `${item.min}-${item.max}`;
+					  itemValue.textContent = group.percent ? `${itemRange}%` : itemRange;
+						
+					  itemRow.appendChild(itemName);
+					  itemRow.appendChild(itemValue);
+					  details.appendChild(itemRow);
+					}
+					
+					row.appendChild(details);
+					list.appendChild(row);
 				  }
 				}
 			  }
@@ -1049,7 +972,6 @@
 
 		  container.appendChild(list);
 		}
-//////////////////////////////////////////////
 
 
 
@@ -1058,7 +980,6 @@
 			const listEl = document.getElementById('equippedLists');
 			if (listEl.dataset.hidden === '1') { banner.style.display='none'; banner.textContent=''; return; }
 			
-			// Don't show missing types banner when in categorize mode with specific category
 			if (categorizeMode && currentCategory !== 'all') {
 				banner.style.display='none';
 				banner.textContent='';
@@ -1066,7 +987,6 @@
 			}
 			
 			const parts = [];
-			// Single-slot expectations for all types except accessory/retainer/collection
 			for (const t of ORDERED_TYPES){
 				if (t === 'collection' || t === 'accessory' || t === 'retainer') continue;
 				const perType = EQUIPPED.get(t) || new Map();
@@ -1076,7 +996,6 @@
 					parts.push(label + (missing===1 ? '' : ` x${missing}`));
 				}
 			}
-			// Accessory and Retainer totals based on toggles
 			const accLimit = allowAccThird ? 3 : 2;
 			const retLimit = allowRetThird ? 3 : 2;
 			const accMissing = Math.max(0, accLimit - (EQUIPPED.get('accessory')||new Map()).size);
@@ -1092,12 +1011,10 @@
 			const region = item.region;
 			const itemName = item.name.replace(/"/g, '').replace(/\s+/g, '_');
 			
-			// Handle special item types
 			if (item.type === 'hex') {
 				return `https://the-bloodlore-chronicles.fandom.com/wiki/Hex_Overhaul#${itemName}`;
 			}
 			if (item.type === 'collection') {
-				// Collection mapping based on name patterns
 				const itemNameLower = item.name.toLowerCase();
 				
 				if (itemNameLower.includes('crows hill collection')) return `https://the-bloodlore-chronicles.fandom.com/wiki/Treasury#R1`;
@@ -1117,7 +1034,6 @@
 				if (itemNameLower.includes('dark dimension collection')) return `https://the-bloodlore-chronicles.fandom.com/wiki/Treasury#DD`;
 				if (itemNameLower.includes('archangel')) return `https://the-bloodlore-chronicles.fandom.com/wiki/Treasury#AA`;
 				
-				// Fallback to original item name if no pattern matches
 				return `https://the-bloodlore-chronicles.fandom.com/wiki/Treasury#${itemName}`;
 			}
 			if (item.type === 'emblem') {
@@ -1130,7 +1046,6 @@
 				return `https://the-bloodlore-chronicles.fandom.com/wiki/Bait_Overhaul#${itemName}`;
 			}
 			
-			// Handle special regions
 			if (region === 'PS2024') {
 				return `https://the-bloodlore-chronicles.fandom.com/wiki/2023-2024_Premium_Shop/Giveaways#${itemName}`;
 			}
@@ -1150,14 +1065,12 @@
 				return `https://the-bloodlore-chronicles.fandom.com/wiki/R2.3_Equipment_Stat#${itemName}`;
 			}
 			
-			// Handle regular regions (R01, R02, etc.)
 			if (region.match(/^R\d+$/)) {
 				const zoneNumber = region.substring(1); // Remove the 'R' prefix
 				const zoneWithoutZero = zoneNumber.replace(/^0+/, ''); // Remove leading zeros
 				return `https://the-bloodlore-chronicles.fandom.com/wiki/R${zoneWithoutZero}_Equipment#${itemName}`;
 			}
 			
-			// Default fallback
 			return `https://the-bloodlore-chronicles.fandom.com/wiki/${region}_Equipment#${itemName}`;
 		}
 
@@ -1172,7 +1085,6 @@
 			container.innerHTML = '';
 			let any = false;
 			
-			// Filter types based on current category if in categorize mode
 			const typesToShow = categorizeMode && currentCategory !== 'all' ? [currentCategory] : ORDERED_TYPES;
 			
 			for (const type of typesToShow){
@@ -1272,7 +1184,6 @@
 		function onQuery(){ 
 			const query = document.getElementById('q').value;
 			if (categorizeMode) {
-				// Show category tabs when categorize mode is on (regardless of search)
 				const categoryTabs = document.getElementById('categoryTabs');
 				const equippedCategoryTabs = document.getElementById('equippedCategoryTabs');
 				const browseView = document.getElementById('browseView');
@@ -1288,7 +1199,6 @@
 				}
 				renderCategories();
 			} else {
-				// Hide category tabs when categorize mode is off
 				document.getElementById('categoryTabs').style.display = 'none';
 				document.getElementById('equippedCategoryTabs').style.display = 'none';
 				render(ALL_ITEMS, query);
@@ -1300,7 +1210,6 @@
 			container.innerHTML = '';
 			const query = document.getElementById('q').value;
 			
-			// Apply search filter if there's a query
 			let itemsToShow = ALL_ITEMS;
 			let effectTokens = [];
 			if (query.trim()) {
@@ -1315,7 +1224,6 @@
 			}
 			
 			if (currentCategory === 'all') {
-				// Show all items grouped by type
 				const groups = groupByTypeOrdered(itemsToShow);
 				let any = false;
 				for (const type of ORDERED_TYPES.concat(Array.from(groups.keys()).filter(k=>!ORDERED_TYPES.includes(k)))){
@@ -1328,8 +1236,7 @@
 					title.textContent = type.charAt(0).toUpperCase() + type.slice(1) + ` (${list.length})`;
 					sec.appendChild(title);
 
-					// Sort items by effect values when searching (same as normal search mode)
-					let sortedList = list;
+				let sortedList = list;
 					if (effectTokens.length > 0) {
 						const firstEffect = findFirstEffectToken(effectTokens);
 						const secondEffect = effectTokens.length > 1 ? findFirstEffectToken(effectTokens.slice(1)) : null;
@@ -1342,9 +1249,9 @@
 						})).sort((a,b)=> (b.primary - a.primary) || (b.secondary - a.secondary));
 					}
 
-					for (const itemData of sortedList){
-						const item = itemData.it || itemData; // Handle both sorted and unsorted cases
-						const div = document.createElement('div');
+				for (const itemData of sortedList){
+					const item = itemData.it || itemData;
+					const div = document.createElement('div');
 						div.className = 'item';
 						const perType = EQUIPPED.get(item.type) || new Map();
 						const isEquipped = perType.has(item.name);
@@ -1367,14 +1274,12 @@
 				}
 				if (!any){ container.innerHTML = '<div class="muted">No items found.</div>'; }
 			} else {
-				// Show items of specific category
 				const filtered = itemsToShow.filter(item => item.type === currentCategory);
 				if (filtered.length === 0) {
 					container.innerHTML = '<div class="muted">No items in this category.</div>';
 					return;
 				}
 				
-				// Sort items by effect values when searching (same as normal search mode)
 				let sortedFiltered = filtered;
 				if (effectTokens.length > 0) {
 					const firstEffect = findFirstEffectToken(effectTokens);
@@ -1395,7 +1300,7 @@
 				sec.appendChild(title);
 
 				for (const itemData of sortedFiltered){
-					const item = itemData.it || itemData; // Handle both sorted and unsorted cases
+					const item = itemData.it || itemData;
 					const div = document.createElement('div');
 					div.className = 'item';
 					const perType = EQUIPPED.get(item.type) || new Map();
@@ -1423,7 +1328,6 @@
 			const container = document.querySelector('.category-tabs');
 			container.innerHTML = '';
 			
-			// Get current search query to calculate counts
 			const query = document.getElementById('q').value;
 			let itemsToCount = ALL_ITEMS;
 			if (query.trim()) {
@@ -1436,14 +1340,12 @@
 				));
 			}
 			
-			// Calculate counts for each type
 			const typeCounts = new Map();
 			for (const item of itemsToCount) {
 				const count = typeCounts.get(item.type) || 0;
 				typeCounts.set(item.type, count + 1);
 			}
 			
-			// Add "All" tab
 			const allTab = document.createElement('div');
 			allTab.className = 'category-tab' + (currentCategory === 'all' ? ' active' : '');
 			allTab.textContent = `All (${itemsToCount.length})`;
@@ -1454,7 +1356,6 @@
 			};
 			container.appendChild(allTab);
 			
-			// Add tabs for each type
 			for (const type of ORDERED_TYPES) {
 				const tab = document.createElement('div');
 				tab.className = 'category-tab' + (currentCategory === type ? ' active' : '');
@@ -1475,7 +1376,6 @@
 				tab.classList.remove('active');
 			});
 			
-			// Find the active tab by checking the text content
 			const activeTab = Array.from(tabs).find(tab => {
 				if (currentCategory === 'all') {
 					return tab.textContent.startsWith('All');
@@ -1493,7 +1393,6 @@
 			const container = document.querySelector('#equippedCategoryTabs .category-tabs');
 			container.innerHTML = '';
 			
-			// Add "All" tab
 			const allTab = document.createElement('div');
 			allTab.className = 'category-tab' + (currentCategory === 'all' ? ' active' : '');
 			allTab.textContent = 'All';
@@ -1504,7 +1403,6 @@
 			};
 			container.appendChild(allTab);
 			
-			// Add tabs for each type
 			for (const type of ORDERED_TYPES) {
 				const tab = document.createElement('div');
 				tab.className = 'category-tab' + (currentCategory === type ? ' active' : '');
@@ -1524,7 +1422,6 @@
 				tab.classList.remove('active');
 			});
 			
-			// Find the active tab by checking the text content
 			const activeTab = Array.from(tabs).find(tab => {
 				if (currentCategory === 'all') {
 					return tab.textContent.startsWith('All');
@@ -1570,18 +1467,51 @@
 				if (entries.length===0) continue;
 				if (type === 'accessory'){
 					const limit = allowAccThird ? 3 : 2;
-					let added = 0; const seen = new Set();
-					for (const e of entries){ if (added>=limit) break; if (seen.has(e.name)) continue; const it=findItem(e.region,type,e.name); if (!it) continue; equip(it); seen.add(e.name); added++; }
+					let added = 0;
+					const seen = new Set();
+					for (const e of entries) {
+						if (added >= limit) break;
+						if (seen.has(e.name)) continue;
+						const it = findItem(e.region, type, e.name);
+						if (!it) continue;
+						equip(it);
+						seen.add(e.name);
+						added++;
+					}
 				} else if (type === 'retainer'){
 					const limit = allowRetThird ? 3 : 2;
-					let added = 0; const seen = new Set();
-					for (const e of entries){ if (added>=limit) break; if (seen.has(e.name)) continue; const it=findItem(e.region,type,e.name); if (!it) continue; equip(it); seen.add(e.name); added++; }
+					let added = 0;
+					const seen = new Set();
+					for (const e of entries) {
+						if (added >= limit) break;
+						if (seen.has(e.name)) continue;
+						const it = findItem(e.region, type, e.name);
+						if (!it) continue;
+						equip(it);
+						seen.add(e.name);
+						added++;
+					}
 				} else if (type === 'collection'){
 					const seen = new Set();
-					for (const e of entries){ if (seen.has(e.name)) continue; const it=findItem(e.region,type,e.name); if (!it) continue; equip(it); seen.add(e.name); }
+					for (const e of entries) {
+						if (seen.has(e.name)) continue;
+						const it = findItem(e.region, type, e.name);
+						if (!it) continue;
+						equip(it);
+						seen.add(e.name);
+					}
 				} else {
-					let added = 0; const seen = new Set();
-					for (const e of entries){ if (added>=1) break; if (seen.has(e.name)) continue; const it=findItem(e.region,type,e.name); if (!it) continue; equip(it); seen.add(e.name); added++; }
+					let added = 0;
+					const seen = new Set();
+					for (const e of entries) {
+						if (added >= 1) break;
+						if (seen.has(e.name)) continue;
+						const it = findItem(e.region, type, e.name);
+						if (!it) continue;
+						equip(it);
+						seen.add(e.name);
+						added++;
+					}
 				}
 			}
 			toast('Build loaded');
@@ -1623,7 +1553,6 @@
 			listEl.dataset.hidden = '1';
 			document.getElementById('toggleEqVis').textContent = 'Show equipped items';
 			document.getElementById('controls').style.display = 'none';
-			// Show/hide category tabs based on categorize mode
 			const categoryTabs = document.getElementById('categoryTabs');
 			const equippedCategoryTabs = document.getElementById('equippedCategoryTabs');
 			categoryTabs.style.display = 'none';
@@ -1640,7 +1569,6 @@
 
 		function onBrowseTabShown(){
 			document.getElementById('controls').style.display = 'flex';
-			// Show/hide category tabs based on categorize mode
 			const categoryTabs = document.getElementById('categoryTabs');
 			if (categorizeMode) {
 				categoryTabs.style.display = 'block';
@@ -1660,7 +1588,9 @@
 				const json = JSON.parse(text);
 				ALL_ITEMS = flatten(json);
 				ALL_EFFECT_KEYS = new Set();
-				for (const it of ALL_ITEMS){ for (const k of Object.keys(it.effects)) ALL_EFFECT_KEYS.add(normalizeKey(k)); }
+				for (const it of ALL_ITEMS) {
+					for (const k of Object.keys(it.effects)) ALL_EFFECT_KEYS.add(normalizeKey(k));
+				}
 				document.getElementById('status').textContent = `Loaded ${ALL_ITEMS.length} items.`;
 				document.getElementById('q').focus();
 				onQuery();
@@ -1676,7 +1606,6 @@
 					combineable = constants.combineable;
 					type_map = constants.type_map;
 					
-					// Hide the fallback and re-render
 					document.getElementById('constantsFallback').style.display = 'none';
 					renderAggregatedEffects();
 				} catch (error) {
@@ -1685,7 +1614,6 @@
 				}
 			});
 
-			// Tabs
 			document.getElementById('tabBrowse').addEventListener('click', ()=>{
 				document.getElementById('tabBrowse').classList.add('active');
 				document.getElementById('tabEquipped').classList.remove('active');
@@ -1758,11 +1686,12 @@
 				const data = JSON.parse(text);
 				ALL_ITEMS = flatten(data);
 				ALL_EFFECT_KEYS = new Set();
-				for (const it of ALL_ITEMS){ for (const k of Object.keys(it.effects)) ALL_EFFECT_KEYS.add(normalizeKey(k)); }
+				for (const it of ALL_ITEMS) {
+					for (const k of Object.keys(it.effects)) ALL_EFFECT_KEYS.add(normalizeKey(k));
+				}
 				status.textContent = `Loaded ${ALL_ITEMS.length} items.`;
 				document.getElementById('fallback').style.display = 'none';
 				onQuery();
-				// Re-render aggregated effects after data is loaded
 				renderAggregatedEffects();
 				return;
 			} catch (e) {}
@@ -1772,11 +1701,12 @@
 					const data = JSON.parse(cached);
 					ALL_ITEMS = flatten(data);
 					ALL_EFFECT_KEYS = new Set();
-					for (const it of ALL_ITEMS){ for (const k of Object.keys(it.effects)) ALL_EFFECT_KEYS.add(normalizeKey(k)); }
+					for (const it of ALL_ITEMS) {
+						for (const k of Object.keys(it.effects)) ALL_EFFECT_KEYS.add(normalizeKey(k));
+					}
 					document.getElementById('status').textContent = `Loaded ${ALL_ITEMS.length} items (from cache).`;
 					document.getElementById('fallback').style.display = 'inline';
 					onQuery();
-					// Re-render aggregated effects after data is loaded
 					renderAggregatedEffects();
 					return;
 				}

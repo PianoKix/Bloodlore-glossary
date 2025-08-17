@@ -915,6 +915,7 @@
                                                       },
                                    "Bramblefiend":  {
                                                         "effects":  {
+                                                                        "Restless":  "10%",
                                                                         "Wound":  "4-7",
                                                                         "Stun":  "5%",
                                                                         "Retainer Physical Weapon Damage":  "5-9"
@@ -8988,7 +8989,6 @@
                          }
             }
 }
-
 
 
 
