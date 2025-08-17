@@ -266,27 +266,32 @@ h1 { margin: 0 0 12px; font-size: 20px; }
 	pointer-events: none;
 }
 
-/* First 2 columns: tooltip on top-right */
-.equipment-row:nth-child(1) .equipment-slot:nth-child(-n+2) .equipment-tooltip,
-.equipment-row:nth-child(2) .equipment-slot:nth-child(-n+2) .equipment-tooltip,
-.equipment-row:nth-child(3) .equipment-slot:nth-child(-n+2) .equipment-tooltip {
+/* Tooltips on top-right */
+.slot-coin .equipment-tooltip,
+.slot-weapon .equipment-tooltip,
+.slot-power .equipment-tooltip,
+.slot-coffin .equipment-tooltip,
+.slot-mount .equipment-tooltip,
+.slot-head .equipment-tooltip,
+.slot-chest .equipment-tooltip,
+.slot-feet .equipment-tooltip,
+.slot-acc1 .equipment-tooltip,
+.slot-ret1 .equipment-tooltip {
+	left: 0;
+	right: auto;
+}
+
+/* Tooltips on top-left */
+.slot-bait .equipment-tooltip,
+.slot-hands .equipment-tooltip,
+.slot-emblem .equipment-tooltip,
+.slot-acc2 .equipment-tooltip,
+.slot-ret2 .equipment-tooltip,
+.slot-hex .equipment-tooltip,
+.slot-acc3 .equipment-tooltip,
+.slot-ret3 .equipment-tooltip {
 	right: 0;
 	left: auto;
-}
-
-/* Last 2 columns: tooltip on top-left */
-.equipment-row:nth-child(1) .equipment-slot:nth-child(n+3) .equipment-tooltip,
-.equipment-row:nth-child(2) .equipment-slot:nth-child(n+3) .equipment-tooltip,
-.equipment-row:nth-child(3) .equipment-slot:nth-child(n+3) .equipment-tooltip {
-	left: 0;
-	right: auto;
-}
-
-/* 4th and 5th rows: all tooltips on top-left (since they're all left-aligned) */
-.equipment-row:nth-child(4) .equipment-tooltip,
-.equipment-row:nth-child(5) .equipment-tooltip {
-	left: 0;
-	right: auto;
 }
 
 @media (max-width: 768px) {
