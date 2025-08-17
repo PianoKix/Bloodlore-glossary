@@ -60,7 +60,7 @@
 <body>
 	<h1>Item Glossary Viewer</h1>
 	<div id="controls">
-		<input id="q" type="search" placeholder="Search: effect, name, region (e.g. R01), source (e.g. Purchase). Comma-separated. Use -term to exclude by region/source or -event to exclude events; use event to include only events." autocomplete="off" />
+		<input id="q" type="search" placeholder="Search: effect, name, region (e.g. R01), source (e.g. Purchase). Comma-separated. Use -term to exclude by region/source or -event to exclude events; use event to include only events; use &lt;region to search up to region." autocomplete="off" />
 		<span id="status" class="muted">Loading item_glossary.json…</span>
 		<label id="fallback" class="muted">or open file: <input id="fileInput" type="file" accept="application/json,.json" /></label>
 	</div>
@@ -110,6 +110,7 @@
 			<li>Comma-separated terms (ALL have to be satisfied); effect, name, region or source : e.g., R07, drop, lifebane.</li>
 			<li>Prefix with '!' to search by type: e.g. !weapon, !retainer, !accessory (has to be full type name, not just a part of it).</li>
 			<li>Prefix with '-' to exclude by region/source/event (AT LEAST ONE has to be satisfied): e.g., -R01.3, -purch, -event.</li>
+			<li>Prefix with '&lt;' to search only up to a specific region (only applies to non-event regions).</li>
 			<li>Use 'event' to include only event regions (like R01.3, RAA). Use '-event' to exclude event regions.</li>
 			<li>Multiple effects allowed; results sorted by the first effect term's numeric value (then second, etc.).</li>
 			<li>Negative values for any searched effect are highlighted red (Temperance excluded).</li>
@@ -140,7 +141,7 @@
 		let categorizeMode = false;
 		let currentCategory = 'all';
 
-/////////////////
+///////////////// 1.Define skill category and combinable skill - I don't know how to add json file here so just defined them directly
 		const skill_groups = {
 			"El Off Buff": [
 				"Carnage",
@@ -484,8 +485,136 @@
 				"Coolness"
 			]
 		};
-////////////////
-
+		
+		const combineable = [
+			"Carnage",
+			"True Aim",
+			"Whispers of Madness",
+			"Electromancy",
+			"Pyromancy",
+			"Conviction",
+			"Cryomancy",
+			"Thaumaturgy",
+			"Cruelty",
+			"Venomancy",
+			"Focused Mind",
+			"Necromancy",
+			"Curse",
+			"Slow",
+			"Curse of the Old Gods",
+			"Stormcurse",
+			"Firecurse",
+			"Retribution",
+			"Icecurse",
+			"Manacurse",
+			"Weaken",
+			"Poisoncurse",
+			"Paranoia",
+			"Shadowcurse",
+			"Crit Chance",
+			"Terrorbane",
+			"Angelbane",
+			"Wildbane",
+			"Lifebane",
+			"Demonbane",
+			"Dragonbane",
+			"Eldritchbane",
+			"Spiritbane",
+			"Wolfbane",
+			"Necrobane",
+			"Lightbane",
+			"Techbane",
+			"Bloodbane",
+			"Xenobane",
+			"Health",
+			"Ancient Blood",
+			"Toughness",
+			"Blur",
+			"Stormward",
+			"Fireward",
+			"Blasphemy",
+			"Iceward",
+			"Manaward",
+			"Resilience",
+			"Poisonward",
+			"Nerves of Steel",
+			"Nightward",
+			"Shield",
+			"Ballistic Shield",
+			"Lightning Shield",
+			"Fire Shield",
+			"Holy Shield",
+			"Ice Shield",
+			"Mystic Shield",
+			"Physical Shield",
+			"Poison Shield",
+			"Psychic Shield",
+			"Shadow Shield",
+			"Divine Intervention",
+			"Sufferance",
+			"Ballistic Vulnerability",
+			"Electric Vulnerability",
+			"Fire Vulnerability",
+			"Holy Vulnerability",
+			"Ice Vulnerability",
+			"Mystic Vulnerability",
+			"Physical Vulnerability",
+			"Poison Vulnerability",
+			"Psychic Vulnerability",
+			"Shadow Vulnerability",
+			"Terrorward",
+			"Angelward",
+			"Wildward",
+			"Lifeward",
+			"Demonward",
+			"Dragonward",
+			"Eldritchward",
+			"Spiritward",
+			"Wolfward",
+			"Necroward",
+			"Lightward",
+			"Techward",
+			"Bloodward",
+			"Xenoward",
+			"Monster Barrier",
+			"Wilderness Barrier",
+			"Cleansing Barrier",
+			"Infernal Barrier",
+			"Dragonfire Barrier",
+			"Spectral Barrier",
+			"Moonlit Barrier",
+			"Bone Barrier",
+			"Angel Barrier",
+			"Technomancer Barrier",
+			"Nocturnal Barrier",
+			"Nostromo Barrier",
+			"First Strike",
+			"Attunement",
+			"Necrosis",
+			"Infectious Bite",
+			"Timewalker",
+			"Blood Craze",
+			"Coffin Capacity",
+			"Coffin Recharge Time",
+			"Restless",
+			"Questing",
+			"Attraction",
+			"Summoning",
+			"Invocation",
+			"Temperance",
+			"Gluttony",
+			"Bloodlust",
+			"Megalomania",
+			"Loot Chance Modifier",
+			"Cloning",
+			"Investment",
+			"XP-losion",
+			"Dominate",
+			"Curator",
+			"Arsenal",
+			"Coolness"
+		]
+/////////////////////////////////////////////////////////////
 
 		function normalizeType(raw) {
 			if (!raw) return '';
@@ -686,6 +815,38 @@
 			return !/^R\d+$/.test(s);
 		}
 
+		function compareRegions(region1, region2) {
+			// Convert to uppercase for comparison
+			const r1 = String(region1 || '').toUpperCase();
+			const r2 = String(region2 || '').toUpperCase();
+			
+			// If both are regular regions (R01, R02, etc.), compare numerically
+			if (/^R\d+$/.test(r1) && /^R\d+$/.test(r2)) {
+				const num1 = parseInt(r1.substring(1));
+				const num2 = parseInt(r2.substring(1));
+				return num1 - num2;
+			}
+			
+			// If one is regular and one is not, regular regions come first
+			const isRegular1 = /^R\d+$/.test(r1);
+			const isRegular2 = /^R\d+$/.test(r2);
+			
+			if (isRegular1 && !isRegular2) return -1;
+			if (!isRegular1 && isRegular2) return 1;
+			
+			// For non-regular regions, use string comparison
+			return r1.localeCompare(r2);
+		}
+
+		function isRegionLessThan(itemRegion, maxRegion) {
+			// Event regions and special regions (PS2024, PS2025, etc.) are always included
+			if (isEventRegion(itemRegion)) return true;
+			if (!itemRegion.toUpperCase().startsWith('R')) return true;
+			
+			// For regular regions, compare numerically
+			return compareRegions(itemRegion, maxRegion) <= 0;
+		}
+
 		function flatten(data){
 			const items = [];
 			for (const region of Object.keys(data||{})){
@@ -716,13 +877,17 @@
 
 		function parseQuery(q){
 			const raw = q.split(',').map(s => s.trim()).filter(Boolean);
-			const pos = [], neg = [], types = [];
+			const pos = [], neg = [], types = [], lessThanRegions = [];
 			for (const r of raw){
 				if (r.startsWith('-')) neg.push(normalizeKey(r.slice(1)));
 				else if (r.startsWith('!')) types.push(normalizeType(r.slice(1)));
+				else if (r.startsWith('<')) {
+					const region = r.slice(1).trim();
+					if (region) lessThanRegions.push(normalizeKey(region));
+				}
 				else pos.push(normalizeKey(r));
 			}
-			return { pos, neg, types };
+			return { pos, neg, types, lessThanRegions };
 		}
 		function itemMatchesPositive(it, token){
 			if (token === 'event') return (it.tags||[]).includes('event');
@@ -822,6 +987,9 @@
 			document.getElementById('eqCount').textContent = total;
 		}
 
+
+////////////////////////////////////////////////////////////////1. Separate skills based combinable list - some skills can be combined (Blood Craze 1% + 2% = 3%), some can't (Evade 1% can't be combined with Evade 2%) 2 RNG will be rolled to check its proc
+
 		function aggregateEffectsRanges(){
 			const totals = new Map();
 			function containsPercentInValue(value){
@@ -829,33 +997,44 @@
 				if (Array.isArray(value)) return value.some(v => containsPercentInValue(v));
 				return String(value).includes('%');
 			}
-			
-			// Filter types based on current category if in categorize mode
-			const typesToProcess = categorizeMode && currentCategory !== 'all' ? [currentCategory] : Array.from(EQUIPPED.keys());
-			
+
+			const typesToProcess = categorizeMode && currentCategory !== 'all'
+				? [currentCategory]
+				: Array.from(EQUIPPED.keys());
+
 			for (const type of typesToProcess){
 				const perType = EQUIPPED.get(type);
 				if (!perType) continue;
+
 				for (const {it} of perType.values()){
 					for (const [effKey, effVal] of Object.entries(it.effects||{})){
 						const r = rangeFromValue(effVal);
-						const rec = totals.get(effKey) || { min: 0, max: 0, details: [], percent: false };
-						rec.min += r.min;
-						rec.max += r.max;
-						rec.percent = rec.percent || containsPercentInValue(effVal);
-						const singleVal = (r.min === r.max) ? `${r.min}` : `${r.min}-${r.max}`;
-						const singleValWithUnit = rec.percent ? `${singleVal}%` : singleVal;
-						rec.details.push(`${it.name}: ${singleValWithUnit}`);
-						totals.set(effKey, rec);
+
+						if (combineable.includes(effKey)) {
+							// normal combine
+							const rec = totals.get(effKey) || { displayKey: effKey, min: 0, max: 0, details: [], percent: false };
+							rec.min += r.min;
+							rec.max += r.max;
+							rec.percent = rec.percent || containsPercentInValue(effVal);
+							const valStr = (r.min===r.max) ? `${r.min}` : `${r.min}-${r.max}`;
+							rec.details.push(`${it.name}: ${rec.percent ? valStr+"%" : valStr}`);
+							totals.set(effKey, rec);
+						} else {
+							// split → unique key, but keep displayKey for sorting/rendering
+							const uniqueKey = effKey + "#" + it.name;
+							const rec = { displayKey: effKey, min: r.min, max: r.max, details: [], percent: false };
+							rec.percent = rec.percent || containsPercentInValue(effVal);
+							const valStr = (r.min===r.max) ? `${r.min}` : `${r.min}-${r.max}`;
+							rec.details.push(`${it.name}: ${rec.percent ? valStr+"%" : valStr}`);
+							totals.set(uniqueKey, rec);
+						}
 					}
 				}
 			}
 			return totals;
 		}
 
-
-
-/////////////////////////////////////
+///////////////////////////////////// 1. Sort based on skill group and add group header, 2. Sort based on highest average for each skill: Ret 10-14, Ret 9-12, Ret 1-2
 		function effectSortPriority2(name) {
 			const low = String(name || '').toLowerCase();
 			let idx = 0;
@@ -867,69 +1046,88 @@
 			}
 			return idx; // unknown goes last
 		}
+
 		function renderAggregatedEffects(){
-			const agg = aggregateEffectsRanges();
-			const container = document.getElementById('aggEffects');
-			container.innerHTML = '';
-			if (agg.size === 0) {
-				container.innerHTML = '<div class="muted">No items equipped.</div>';
-				return;
+		  const agg = aggregateEffectsRanges();
+		  const container = document.getElementById('aggEffects');
+		  container.innerHTML = '';
+		  if (agg.size === 0) {
+			container.innerHTML = '<div class="muted">No items equipped.</div>';
+			return;
+		  }
+
+		  // Don't globally sort here; we'll sort per-skill below
+		  const entries = Array.from(agg.entries());
+
+		  const list = document.createElement('div');
+		  list.className = 'agg-list';
+
+		  // Render group by group, skill order is taken from skill_groups
+		  for (const [groupName, skills] of Object.entries(skill_groups)) {
+			const header = document.createElement('div');
+			header.className = 'agg-group-header';
+			header.textContent = groupName;
+			header.style.fontWeight = 'bold';
+			header.style.marginTop = '10px';
+			list.appendChild(header);
+
+			for (const skill of skills) {
+			  // pick rows that belong to this skill (use displayKey from aggregate)
+			  const groupEntries = entries.filter(([, v]) =>
+				(v.displayKey || '').toLowerCase() === skill.toLowerCase()
+			  );
+			  if (groupEntries.length === 0) continue;
+
+			  // split: combinable (key without '#') vs uncombinable (key with '#')
+			  const combinableEntries     = groupEntries.filter(([k]) => !k.includes('#'));
+			  const uncombinableEntries   = groupEntries.filter(([k]) =>  k.includes('#'));
+
+			  // sort ONLY uncombinables by average DESC (highest first)
+			  uncombinableEntries.sort((a, b) => {
+				const avgA = (a[1].min + a[1].max) / 2;
+				const avgB = (b[1].min + b[1].max) / 2;
+				return avgB - avgA;
+			  });
+
+			  // final order: keep combinable as-is, then sorted uncombinables
+			  const ordered = [...combinableEntries, ...uncombinableEntries];
+
+			  // render rows
+			  for (const [, v] of ordered) {
+				const row = document.createElement('div');
+				row.className = 'agg-effect';
+
+				const head = document.createElement('div');
+				head.className = 'agg-head';
+
+				const nameEl = document.createElement('div');
+				nameEl.className = 'agg-name';
+				nameEl.textContent = v.displayKey || ''; // show the skill name
+
+				const totalEl = document.createElement('div');
+				totalEl.className = 'agg-total';
+				const totalVal = (v.min === v.max) ? `${v.min}` : `${v.min}-${v.max}`;
+				totalEl.textContent = v.percent ? `${totalVal}%` : totalVal;
+
+				head.appendChild(nameEl);
+				head.appendChild(totalEl);
+				row.appendChild(head);
+
+				const details = document.createElement('div');
+				details.className = 'agg-details muted';
+				details.textContent = v.details.join(' | ');
+				row.appendChild(details);
+
+				list.appendChild(row);
+			  }
 			}
+		  }
 
-			// Sort all effects first
-			const entries = Array.from(agg.entries());
-			entries.sort((a,b)=>{
-				const pa = effectSortPriority2(a[0]);
-				const pb = effectSortPriority2(b[0]);
-				if (pa !== pb) return pa - pb;
-				return a[0].localeCompare(b[0]);
-			});
-
-			const list = document.createElement('div');
-			list.className = 'agg-list';
-
-			// Render group by group
-			for (const [groupName, skills] of Object.entries(skill_groups)) {
-				// Add group header
-				const header = document.createElement('div');
-				header.className = 'agg-group-header';
-				header.textContent = groupName;
-				header.style.fontWeight = 'bold';
-				header.style.marginTop = '10px';
-				list.appendChild(header);
-
-				// Add skills belonging to this group
-				for (const [k,v] of entries) {
-					if (!skills.some(s => s.toLowerCase() === k.toLowerCase())) continue;
-					const row = document.createElement('div');
-					row.className = 'agg-effect';
-
-					const head = document.createElement('div');
-					head.className = 'agg-head';
-					const nameEl = document.createElement('div');
-					nameEl.className = 'agg-name';
-					nameEl.textContent = k;
-					const totalEl = document.createElement('div');
-					totalEl.className = 'agg-total';
-					const totalVal = (v.min===v.max) ? `${v.min}` : `${v.min}-${v.max}`;
-					totalEl.textContent = v.percent ? `${totalVal}%` : totalVal;
-
-					head.appendChild(nameEl);
-					head.appendChild(totalEl);
-					row.appendChild(head);
-
-					const details = document.createElement('div');
-					details.className = 'agg-details muted';
-					details.textContent = v.details.join(' | ');
-					row.appendChild(details);
-
-					list.appendChild(row);
-				}
-			}
-
-			container.appendChild(list);
+		  container.appendChild(list);
 		}
 //////////////////////////////////////////////
+
+
 
 		function renderMissingTypesBanner(){
 			const banner = document.getElementById('missingTypes');
@@ -1089,13 +1287,14 @@
 		function render(items, query){
 			const container = document.getElementById('results');
 			container.innerHTML = '';
-			const {pos, neg, types} = parseQuery(query);
-			if (pos.length === 0 && neg.length === 0 && types.length===0){ container.innerHTML = '<div class="muted">Type terms separated by commas… Use -term to exclude by region/source or -event to exclude events. Use !type to filter by item type.</div>'; return; }
+			const {pos, neg, types, lessThanRegions} = parseQuery(query);
+			if (pos.length === 0 && neg.length === 0 && types.length===0 && lessThanRegions.length===0){ container.innerHTML = '<div class="muted">Type terms separated by commas… Use -term to exclude by region/source or -event to exclude events. Use !type to filter by item type.</div>'; return; }
 
 			const filtered = items.filter(it => (
 				(types.length===0 || types.includes(it.type)) &&
 				(pos.length===0 || pos.every(tok => itemMatchesPositive(it, tok))) &&
-				(neg.length===0 || !neg.some(tok => itemMatchesNegative(it, tok)))
+				(neg.length===0 || !neg.some(tok => itemMatchesNegative(it, tok))) &&
+				(lessThanRegions.length===0 || lessThanRegions.every(region => isRegionLessThan(it.region, region)))
 			));
 			const groups = groupByTypeOrdered(filtered);
 			const effectTokens = effectTokensFromPos(pos);
@@ -1181,11 +1380,12 @@
 			let itemsToShow = ALL_ITEMS;
 			let effectTokens = [];
 			if (query.trim()) {
-				const {pos, neg, types} = parseQuery(query);
+				const {pos, neg, types, lessThanRegions} = parseQuery(query);
 				itemsToShow = ALL_ITEMS.filter(it => (
 					(types.length===0 || types.includes(it.type)) &&
 					(pos.length===0 || pos.every(tok => itemMatchesPositive(it, tok))) &&
-					(neg.length===0 || !neg.some(tok => itemMatchesNegative(it, tok)))
+					(neg.length===0 || !neg.some(tok => itemMatchesNegative(it, tok))) &&
+					(lessThanRegions.length===0 || lessThanRegions.every(region => isRegionLessThan(it.region, region)))
 				));
 				effectTokens = effectTokensFromPos(pos);
 			}
@@ -1303,11 +1503,12 @@
 			const query = document.getElementById('q').value;
 			let itemsToCount = ALL_ITEMS;
 			if (query.trim()) {
-				const {pos, neg, types} = parseQuery(query);
+				const {pos, neg, types, lessThanRegions} = parseQuery(query);
 				itemsToCount = ALL_ITEMS.filter(it => (
 					(types.length===0 || types.includes(it.type)) &&
 					(pos.length===0 || pos.every(tok => itemMatchesPositive(it, tok))) &&
-					(neg.length===0 || !neg.some(tok => itemMatchesNegative(it, tok)))
+					(neg.length===0 || !neg.some(tok => itemMatchesNegative(it, tok))) &&
+					(lessThanRegions.length===0 || lessThanRegions.every(region => isRegionLessThan(it.region, region)))
 				));
 			}
 			
@@ -1643,5 +1844,3 @@
 	</script>
 </body>
 </html>
-
-
