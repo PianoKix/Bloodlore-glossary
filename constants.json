@@ -1,6 +1,7 @@
 {
   "skill_groups": {
     "Weapon Attack": [
+      "Crit Chance",
       "Ballistic Weapon Damage",
       "Chaos Weapon Damage",
       "Electric Weapon Damage",
@@ -12,7 +13,6 @@
       "Poison Weapon Damage",
       "Psychic Weapon Damage",
       "Shadow Weapon Damage",
-      "Crit Chance",
       "Retainer Ballistic Weapon Damage",
       "Retainer Chaos Weapon Damage",
       "Retainer Electric Weapon Damage",

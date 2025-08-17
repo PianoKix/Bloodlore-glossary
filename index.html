@@ -4,90 +4,8 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Item Glossary Viewer</title>
-	<style>
-		:root { color-scheme: dark light; }
-		body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 16px; }
-		h1 { margin: 0 0 12px; font-size: 20px; }
-		#controls { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
-		#q { flex: 1 1 420px; padding: 8px 10px; font-size: 14px; }
-		#status { font-size: 12px; opacity: 0.8; }
-			.tabs { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; flex-wrap: wrap; }
-		.tab { padding: 6px 10px; border: 1px solid #888; border-radius: 6px; cursor: pointer; user-select: none; }
-		.tab.active { background: rgba(128,128,128,0.2); }
-		.category-tabs { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; flex-wrap: wrap; }
-		.category-tab { padding: 6px 10px; border: 1px solid #888; border-radius: 6px; cursor: pointer; user-select: none; font-size: 13px; }
-		.category-tab.active { background: rgba(128,128,128,0.2); font-weight: 600; }
-		.toggles { display: inline-flex; gap: 10px; align-items: center; margin-left: 8px; }
-		.section { margin: 18px 0; }
-		.section h2 { font-size: 16px; margin: 0 0 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
-		.item { position: relative; display: flex; gap: 8px; align-items: baseline; padding: 6px 0; border-bottom: 1px dashed rgba(128,128,128,0.3); cursor: pointer; }
-		.item.equipped { background: rgba(0,128,0,0.08); }
-		.item.neg-item { color: #c62828; }
-		.item .meta { font-size: 12px; opacity: 0.8; }
-		.item .meta a { color: #0066cc; text-decoration: none; }
-		.item .meta a:hover { text-decoration: underline; }
-		.muted { opacity: 0.7; }
-		#fallback { display:none; }
-		.controls-inline { display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-		.btn { padding: 2px 6px; border: 1px solid #888; border-radius: 4px; cursor: pointer; }
-		.btn:disabled { opacity: 0.5; cursor: default; }
-		.kv { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; }
-		.badge { display:inline-block; padding: 0 6px; border: 1px solid #888; border-radius: 999px; font-size: 11px; }
-		#toast { position: fixed; bottom: 12px; left: 12px; right: 12px; text-align: center; pointer-events: none; }
-		#toast .msg { display: inline-block; background: rgba(0,0,0,0.8); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 13px; }
-		/* Aggregated effects layout */
-		.agg-list { display: flex; flex-direction: column; gap: 8px; }
-		.agg-effect { border: 1px solid rgba(128,128,128,0.35); border-radius: 8px; padding: 8px 10px; }
-		.agg-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-		.agg-name { font-weight: 700; font-size: 14px; }
-		.agg-total { font-weight: 800; font-variant-numeric: tabular-nums; }
-		.agg-details { margin-top: 4px; font-size: 12px; padding: 8px 0; }
-		.agg-toggle { 
-			cursor: pointer; 
-			font-weight: bold; 
-			margin-right: 8px; 
-			user-select: none; 
-			color: #0066cc;
-			font-size: 16px;
-			width: 20px;
-			height: 20px;
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			border-radius: 3px;
-			transition: background-color 0.2s;
-		}
-		.agg-toggle:hover { background-color: rgba(0,102,204,0.1); }
-		.agg-details.expanded { display: block; }
-		.agg-details.collapsed { display: none; }
-		.agg-detail-item { 
-			display: flex; 
-			justify-content: space-between; 
-			align-items: center; 
-			padding: 4px 0; 
-			border-bottom: 1px solid rgba(128,128,128,0.2); 
-			font-size: 12px;
-		}
-		.agg-detail-item:last-child { border-bottom: none; }
-		.agg-detail-item .item-name { opacity: 0.8; }
-		.agg-detail-item .item-value { 
-			font-weight: 600; 
-			font-variant-numeric: tabular-nums; 
-		}
-		/* Saved builds */
-		.saved-builds { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-		.build-btn { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border: 1px solid #888; border-radius: 16px; cursor: pointer; background: rgba(128,128,128,0.12); }
-		.build-name { font-weight: 600; }
-		.build-del { padding: 0 6px; border: 1px solid #888; border-radius: 8px; cursor: pointer; background: rgba(255,0,0,0.1); }
-		/* Help bubble */
-		.help-btn { position: fixed; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 50%; background: rgba(128,128,128,0.2); border: 1px solid #888; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; }
-		.help-panel { position: fixed; top: 50px; right: 12px; width: min(480px, 92vw); max-height: 70vh; overflow:auto; padding: 12px 14px; border: 1px solid #888; border-radius: 12px; background: rgba(0,0,0,0.9); color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
-		.help-panel h3 { margin: 0 0 8px; font-size: 16px; }
-		.help-panel p, .help-panel li { font-size: 13px; line-height: 1.35; }
-		.help-close { float: right; margin-left: 8px; }
-		/* Missing types banner */
-		.missing-banner { border: 1px solid #b00020; background: rgba(176,0,32,0.1); color: #b00020; padding: 8px 10px; border-radius: 8px; margin-bottom: 10px; font-weight: 600; }
-	</style>
+	<link rel="stylesheet" href="style.css">
+
 </head>
 <body>
 	<h1>Item Glossary Viewer</h1>
@@ -717,15 +635,24 @@
 			  header.style.color = '#F4E5B7';
 			  list.appendChild(header);
 
-			  for (const skill of healSkills) {
+			  // Sort healSkills alphabetically
+			  const sortedHealSkills = [...healSkills].sort((a, b) => a.localeCompare(b));
+			  
+			  for (const skill of sortedHealSkills) {
 				const groupEntries = entries.filter(([, v]) =>
 				  (v.displayKey || '').toLowerCase() === skill.toLowerCase()
 				);
 				if (groupEntries.length === 0) continue;
 
-				// split: combinable (key without '#') vs uncombinable (key without '#')
+				// split: combinable (key without '#') vs uncombinable (key with '#')
 				const combinableEntries = groupEntries.filter(([k]) => !k.includes('#'));
 				const uncombinableEntries = groupEntries.filter(([k]) => k.includes('#'));
+
+				// Sort entries alphabetically by displayKey (except for Weapon Attack group which preserves manual order)
+				if (skill !== 'Weapon Attack') {
+				  combinableEntries.sort(([, a], [, b]) => (a.displayKey || '').localeCompare(b.displayKey || ''));
+				  uncombinableEntries.sort(([, a], [, b]) => (a.displayKey || '').localeCompare(b.displayKey || ''));
+				}
 
 				// Render combinable entries first
 				for (const [key, v] of combinableEntries) {
@@ -755,101 +682,148 @@
 				  list.appendChild(row);
 				}
 
-				// Group uncombinable entries by displayKey and render as one combined stat
+				// Handle uncombinable entries differently for Weapon Attack group vs other groups
 				if (uncombinableEntries.length > 0) {
-				  const uncombinableGroups = new Map();
-				  
-				  // Group by displayKey
-				  for (const [key, v] of uncombinableEntries) {
-					const displayKey = v.displayKey;
-					if (!uncombinableGroups.has(displayKey)) {
-					  uncombinableGroups.set(displayKey, {
-						displayKey: displayKey,
-						min: 0,
-						max: 0,
-						details: [],
-						percent: false,
-						items: []
-					  });
-					}
-					const group = uncombinableGroups.get(displayKey);
-					group.min += v.min;
-					group.max += v.max;
-					group.percent = group.percent || v.percent;
-					group.items.push(v);
-				  }
-
-				  // Render each uncombinable group
-				  for (const [displayKey, group] of uncombinableGroups) {
-					const row = document.createElement('div');
-					row.className = 'agg-effect';
-
-					const head = document.createElement('div');
-					head.className = 'agg-head';
-
-					const nameEl = document.createElement('div');
-					nameEl.className = 'agg-name';
+				  if (skill === 'Weapon Attack') {
+					// For Weapon Attack group, render each effect individually in the order from constants.json
+					// First, get the order from constants.json
+					const weaponAttackOrder = skill_groups['Weapon Attack'];
 					
-					// Add toggle button for uncombinable effects
-					const toggle = document.createElement('span');
-					toggle.className = 'agg-toggle';
-					toggle.textContent = '+';
-					toggle.onclick = function() {
-					  const details = row.querySelector('.agg-details');
-					  if (details.classList.contains('collapsed')) {
-						details.classList.remove('collapsed');
-						details.classList.add('expanded');
-						toggle.textContent = '-';
-					  } else {
-						details.classList.remove('expanded');
-						details.classList.add('collapsed');
-						toggle.textContent = '+';
+					// Render effects in the order they appear in constants.json
+					for (const effectName of weaponAttackOrder) {
+					  const matchingEntries = uncombinableEntries.filter(([, v]) => 
+						v.displayKey.toLowerCase() === effectName.toLowerCase()
+					  );
+					  
+					  if (matchingEntries.length === 0) continue;
+					  
+					  // Render each matching entry individually
+					  for (const [key, v] of matchingEntries) {
+						const row = document.createElement('div');
+						row.className = 'agg-effect';
+
+						const head = document.createElement('div');
+						head.className = 'agg-head';
+
+						const nameEl = document.createElement('div');
+						nameEl.className = 'agg-name';
+						nameEl.appendChild(document.createTextNode(v.displayKey || ''));
+
+						const totalEl = document.createElement('div');
+						totalEl.className = 'agg-total';
+						const totalVal = (v.min === v.max) ? `${v.min}` : `${v.min}-${v.max}`;
+						totalEl.textContent = v.percent ? `${totalVal}%` : totalVal;
+
+						head.appendChild(nameEl);
+						head.appendChild(totalEl);
+						row.appendChild(head);
+
+						const details = document.createElement('div');
+						details.className = 'agg-details muted';
+						details.textContent = v.details.join(' | ');
+						row.appendChild(details);
+						list.appendChild(row);
 					  }
-					};
-					nameEl.appendChild(toggle);
-					nameEl.appendChild(document.createTextNode(`${group.displayKey || ''} (${group.items.length})`));
-
-					const totalEl = document.createElement('div');
-					totalEl.className = 'agg-total';
-					const totalVal = (group.min === group.max) ? `${group.min}` : `${group.min}-${group.max}`;
-					totalEl.textContent = group.percent ? `${totalVal}%` : totalVal;
-
-					head.appendChild(nameEl);
-					head.appendChild(totalEl);
-					row.appendChild(head);
-
-					// Create detailed breakdown for each item
-					const details = document.createElement('div');
-					details.className = 'agg-details collapsed muted';
+					}
+				  } else {
+					// For other groups, use the original grouping logic
+					const uncombinableGroups = new Map();
 					
-					// Sort items by average value (highest first)
-					const sortedItems = [...group.items].sort((a, b) => {
-					  const avgA = (a.min + a.max) / 2;
-					  const avgB = (b.min + b.max) / 2;
-					  return avgB - avgA;
-					});
+					// Group by displayKey
+					for (const [key, v] of uncombinableEntries) {
+					  const displayKey = v.displayKey;
+					  if (!uncombinableGroups.has(displayKey)) {
+						uncombinableGroups.set(displayKey, {
+						  displayKey: displayKey,
+						  min: 0,
+						  max: 0,
+						  details: [],
+						  percent: false,
+						  items: []
+						});
+					  }
+					  const group = uncombinableGroups.get(displayKey);
+					  group.min += v.min;
+					  group.max += v.max;
+					  group.percent = group.percent || v.percent;
+					  group.items.push(v);
+					}
+
+					// Sort uncombinable groups alphabetically by displayKey
+					const sortedUncombinableGroups = Array.from(uncombinableGroups.entries()).sort(([a], [b]) => a.localeCompare(b));
 					
-					// Create detailed breakdown with proper layout
-					for (const item of sortedItems) {
-					  const itemRow = document.createElement('div');
-					  itemRow.className = 'agg-detail-item';
+					// Render each uncombinable group
+					for (const [displayKey, group] of sortedUncombinableGroups) {
+					  const row = document.createElement('div');
+					  row.className = 'agg-effect';
+
+					  const head = document.createElement('div');
+					  head.className = 'agg-head';
+
+					  const nameEl = document.createElement('div');
+					  nameEl.className = 'agg-name';
 					  
-					  const itemName = document.createElement('div');
-					  itemName.className = 'item-name';
-					  itemName.textContent = item.details[0].split(':')[0];
+					  // Add toggle button for uncombinable effects
+					  const toggle = document.createElement('span');
+					  toggle.className = 'agg-toggle';
+					  toggle.textContent = '+';
+					  toggle.onclick = function() {
+						const details = row.querySelector('.agg-details');
+						if (details.classList.contains('collapsed')) {
+						  details.classList.remove('collapsed');
+						  details.classList.add('expanded');
+						  toggle.textContent = '-';
+						} else {
+						  details.classList.remove('expanded');
+						  details.classList.add('collapsed');
+						  toggle.textContent = '+';
+						}
+					  };
+					  nameEl.appendChild(toggle);
+					  nameEl.appendChild(document.createTextNode(`${group.displayKey || ''} (${group.items.length})`));
+
+					  const totalEl = document.createElement('div');
+					  totalEl.className = 'agg-total';
+					  const totalVal = (group.min === group.max) ? `${group.min}` : `${group.min}-${group.max}`;
+					  totalEl.textContent = group.percent ? `${totalVal}%` : totalVal;
+
+					  head.appendChild(nameEl);
+					  head.appendChild(totalEl);
+					  row.appendChild(head);
+
+					  // Create detailed breakdown for each item
+					  const details = document.createElement('div');
+					  details.className = 'agg-details collapsed muted';
 					  
-					  const itemValue = document.createElement('div');
-					  itemValue.className = 'item-value';
-					  const itemRange = (item.min === item.max) ? `${item.min}` : `${item.min}-${item.max}`;
-					  itemValue.textContent = group.percent ? `${itemRange}%` : itemRange;
+					  // Sort items by average value (highest first)
+					  const sortedItems = [...group.items].sort((a, b) => {
+						const avgA = (a.min + a.max) / 2;
+						const avgB = (b.min + b.max) / 2;
+						return avgB - avgA;
+					  });
 					  
-					  itemRow.appendChild(itemName);
-					  itemRow.appendChild(itemValue);
-					  details.appendChild(itemRow);
+					  // Create detailed breakdown with proper layout
+					  for (const item of sortedItems) {
+						const itemRow = document.createElement('div');
+						itemRow.className = 'agg-detail-item';
+						
+						const itemName = document.createElement('div');
+						itemName.className = 'item-name';
+						itemName.textContent = item.details[0].split(':')[0];
+						
+						const itemValue = document.createElement('div');
+						itemValue.className = 'item-value';
+						const itemRange = (item.min === item.max) ? `${item.min}` : `${item.min}-${item.max}`;
+						itemValue.textContent = group.percent ? `${itemRange}%` : itemRange;
+						
+						itemRow.appendChild(itemName);
+						itemRow.appendChild(itemValue);
+						details.appendChild(itemRow);
 					}
 					
 					row.appendChild(details);
 					list.appendChild(row);
+				  }
 				  }
 				}
 			  }
@@ -863,7 +837,22 @@
 			  header.style.color = '#F4E5B7';
 			  list.appendChild(header);
 
-			  for (const skill of skills) {
+			  // Sort skills alphabetically (excluding Health and Weapon Attack which have manual ordering)
+			  const sortedSkills = skills.filter(skill => skill.toLowerCase() !== 'health').map(skill => {
+				if (skill === 'Weapon Attack') {
+				  // Keep Weapon Attack in its original order from constants.json
+				  return skill;
+				}
+				return skill;
+			  }).sort((a, b) => {
+				// Skip sorting for Weapon Attack group
+				if (a === 'Weapon Attack' || b === 'Weapon Attack') {
+				  return 0;
+				}
+				return a.localeCompare(b);
+			  });
+			  
+			  for (const skill of sortedSkills) {
 				// Skip Health since it's already rendered at the top
 				if (skill.toLowerCase() === 'health') continue;
 				
@@ -875,6 +864,12 @@
 				// split: combinable (key without '#') vs uncombinable (key with '#')
 				const combinableEntries = groupEntries.filter(([k]) => !k.includes('#'));
 				const uncombinableEntries = groupEntries.filter(([k]) => k.includes('#'));
+				
+				// Sort entries alphabetically by displayKey (except for Weapon Attack group which preserves manual order)
+				if (skill !== 'Weapon Attack') {
+				  combinableEntries.sort(([, a], [, b]) => (a.displayKey || '').localeCompare(b.displayKey || ''));
+				  uncombinableEntries.sort(([, a], [, b]) => (a.displayKey || '').localeCompare(b.displayKey || ''));
+				}
 
 				// Render combinable entries first
 				for (const [key, v] of combinableEntries) {
@@ -904,101 +899,148 @@
 				  list.appendChild(row);
 				}
 
-				// Group uncombinable entries by displayKey and render as one combined stat
+				// Handle uncombinable entries differently for Weapon Attack group vs other groups
 				if (uncombinableEntries.length > 0) {
-				  const uncombinableGroups = new Map();
-				  
-				  // Group by displayKey
-				  for (const [key, v] of uncombinableEntries) {
-					const displayKey = v.displayKey;
-					if (!uncombinableGroups.has(displayKey)) {
-					  uncombinableGroups.set(displayKey, {
-						displayKey: displayKey,
-						min: 0,
-						max: 0,
-						details: [],
-						percent: false,
-						items: []
-					  });
-					}
-					const group = uncombinableGroups.get(displayKey);
-					group.min += v.min;
-					group.max += v.max;
-					group.percent = group.percent || v.percent;
-					group.items.push(v);
-				  }
-
-				  // Render each uncombinable group
-				  for (const [displayKey, group] of uncombinableGroups) {
-					const row = document.createElement('div');
-					row.className = 'agg-effect';
-
-					const head = document.createElement('div');
-					head.className = 'agg-head';
-
-					const nameEl = document.createElement('div');
-					nameEl.className = 'agg-name';
+				  if (skill === 'Weapon Attack') {
+					// For Weapon Attack group, render each effect individually in the order from constants.json
+					// First, get the order from constants.json
+					const weaponAttackOrder = skill_groups['Weapon Attack'];
 					
-					// Add toggle button for uncombinable effects
-					const toggle = document.createElement('span');
-					toggle.className = 'agg-toggle';
-					toggle.textContent = '+';
-					toggle.onclick = function() {
-					  const details = row.querySelector('.agg-details');
-					  if (details.classList.contains('collapsed')) {
-						details.classList.remove('collapsed');
-						details.classList.add('expanded');
-						toggle.textContent = '-';
-					  } else {
-						details.classList.remove('expanded');
-						details.classList.add('collapsed');
-						toggle.textContent = '+';
+					// Render effects in the order they appear in constants.json
+					for (const effectName of weaponAttackOrder) {
+					  const matchingEntries = uncombinableEntries.filter(([, v]) => 
+						v.displayKey.toLowerCase() === effectName.toLowerCase()
+					  );
+					  
+					  if (matchingEntries.length === 0) continue;
+					  
+					  // Render each matching entry individually
+					  for (const [key, v] of matchingEntries) {
+						const row = document.createElement('div');
+						row.className = 'agg-effect';
+
+						const head = document.createElement('div');
+						head.className = 'agg-head';
+
+						const nameEl = document.createElement('div');
+						nameEl.className = 'agg-name';
+						nameEl.appendChild(document.createTextNode(v.displayKey || ''));
+
+						const totalEl = document.createElement('div');
+						totalEl.className = 'agg-total';
+						const totalVal = (v.min === v.max) ? `${v.min}` : `${v.min}-${v.max}`;
+						totalEl.textContent = v.percent ? `${totalVal}%` : totalVal;
+
+						head.appendChild(nameEl);
+						head.appendChild(totalEl);
+						row.appendChild(head);
+
+						const details = document.createElement('div');
+						details.className = 'agg-details muted';
+						details.textContent = v.details.join(' | ');
+						row.appendChild(details);
+						list.appendChild(row);
 					  }
-					};
-					nameEl.appendChild(toggle);
-					nameEl.appendChild(document.createTextNode(`${group.displayKey || ''} (${group.items.length})`));
-
-					const totalEl = document.createElement('div');
-					totalEl.className = 'agg-total';
-					const totalVal = (group.min === group.max) ? `${group.min}` : `${group.min}-${group.max}`;
-					totalEl.textContent = group.percent ? `${totalVal}%` : totalVal;
-
-					head.appendChild(nameEl);
-					head.appendChild(totalEl);
-					row.appendChild(head);
-
-					// Create detailed breakdown for each item
-					const details = document.createElement('div');
-					details.className = 'agg-details collapsed muted';
-					
-					// Sort items by average value (highest first)
-					const sortedItems = [...group.items].sort((a, b) => {
-					  const avgA = (a.min + a.max) / 2;
-					  const avgB = (b.min + b.max) / 2;
-					  return avgB - avgA;
-					});
-					
-					// Create detailed breakdown with proper layout
-					for (const item of sortedItems) {
-					  const itemRow = document.createElement('div');
-					  itemRow.className = 'agg-detail-item';
-					  
-					  const itemName = document.createElement('div');
-					  itemName.className = 'item-name';
-					  itemName.textContent = item.details[0].split(':')[0];
-					  
-					  const itemValue = document.createElement('div');
-					  itemValue.className = 'item-value';
-					  const itemRange = (item.min === item.max) ? `${item.min}` : `${item.min}-${item.max}`;
-					  itemValue.textContent = group.percent ? `${itemRange}%` : itemRange;
-					  
-					  itemRow.appendChild(itemName);
-					  itemRow.appendChild(itemValue);
-					  details.appendChild(itemRow);
 					}
+				  } else {
+					// For other groups, use the original grouping logic
+					const uncombinableGroups = new Map();
 					
-					row.appendChild(details);
-					list.appendChild(row);
+					// Group by displayKey
+					for (const [key, v] of uncombinableEntries) {
+					  const displayKey = v.displayKey;
+					  if (!uncombinableGroups.has(displayKey)) {
+						uncombinableGroups.set(displayKey, {
+						  displayKey: displayKey,
+						  min: 0,
+						  max: 0,
+						  details: [],
+						  percent: false,
+						  items: []
+						});
+					  }
+					  const group = uncombinableGroups.get(displayKey);
+					  group.min += v.min;
+					  group.max += v.max;
+					  group.percent = group.percent || v.percent;
+					  group.items.push(v);
+					}
+
+					// Sort uncombinable groups alphabetically by displayKey
+					const sortedUncombinableGroups = Array.from(uncombinableGroups.entries()).sort(([a], [b]) => a.localeCompare(b));
+					
+					// Render each uncombinable group
+					for (const [displayKey, group] of sortedUncombinableGroups) {
+					  const row = document.createElement('div');
+					  row.className = 'agg-effect';
+
+					  const head = document.createElement('div');
+					  head.className = 'agg-head';
+
+					  const nameEl = document.createElement('div');
+					  nameEl.className = 'agg-name';
+					  
+					  // Add toggle button for uncombinable effects
+					  const toggle = document.createElement('span');
+					  toggle.className = 'agg-toggle';
+					  toggle.textContent = '+';
+					  toggle.onclick = function() {
+						const details = row.querySelector('.agg-details');
+						if (details.classList.contains('collapsed')) {
+						  details.classList.remove('collapsed');
+						  details.classList.add('expanded');
+						  toggle.textContent = '-';
+						} else {
+						  details.classList.remove('expanded');
+						  details.classList.add('collapsed');
+						  toggle.textContent = '+';
+						}
+					  };
+					  nameEl.appendChild(toggle);
+					  nameEl.appendChild(document.createTextNode(`${group.displayKey || ''} (${group.items.length})`));
+
+					  const totalEl = document.createElement('div');
+					  totalEl.className = 'agg-total';
+					  const totalVal = (group.min === group.max) ? `${group.min}` : `${group.min}-${group.max}`;
+					  totalEl.textContent = group.percent ? `${totalVal}%` : totalVal;
+
+					  head.appendChild(nameEl);
+					  head.appendChild(totalEl);
+					  row.appendChild(head);
+
+					  // Create detailed breakdown for each item
+					  const details = document.createElement('div');
+					  details.className = 'agg-details collapsed muted';
+					  
+					  // Sort items by average value (highest first)
+					  const sortedItems = [...group.items].sort((a, b) => {
+						const avgA = (a.min + a.max) / 2;
+						const avgB = (b.min + b.max) / 2;
+						return avgB - avgA;
+					  });
+					  
+					  // Create detailed breakdown with proper layout
+					  for (const item of sortedItems) {
+						const itemRow = document.createElement('div');
+						itemRow.className = 'agg-detail-item';
+						
+						const itemName = document.createElement('div');
+						itemName.className = 'item-name';
+						itemName.textContent = item.details[0].split(':')[0];
+						
+						const itemValue = document.createElement('div');
+						itemValue.className = 'item-value';
+						const itemRange = (item.min === item.max) ? `${item.min}` : `${item.min}-${item.max}`;
+						itemValue.textContent = group.percent ? `${itemRange}%` : itemRange;
+						
+						itemRow.appendChild(itemName);
+						itemRow.appendChild(itemValue);
+						details.appendChild(itemRow);
+					  }
+					  
+					  row.appendChild(details);
+					  list.appendChild(row);
+					}
 				  }
 				}
 			  }
