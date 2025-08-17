@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Item Glossary Viewer</title>
-			<link rel="stylesheet" href="style.css?v=2.8">
+			<link rel="stylesheet" href="style.css?v=2.9">
 
 </head>
 <body>
@@ -86,7 +86,7 @@
 	<script>
 	(function(){
 		const ORDERED_TYPES = [
-			'weapon','head','chest','hands','feet','mount','accessory','retainer','coffin','power','emblem','collection','hex','bait','coin'
+			'weapon','head','chest','hand','feet','mount','accessory','retainer','coffin','power','emblem','collection','hex','bait','coin'
 		];
 		const CACHE_KEY = 'itemGlossaryJsonTextV1';
 		const CONSTANTS_CACHE_KEY = 'constantsJsonTextV1';
@@ -1207,7 +1207,7 @@
 			// Define the grid layout
 			const gridLayout = [
 				['coin', 'head', 'bait', 'hex'],
-				['weapon', 'chest', 'hands'],
+				['weapon', 'chest', 'hand'],
 				['power', 'feet', 'emblem'],
 				['coffin', 'acc1', 'acc2', 'acc3'],
 				['mount', 'ret1', 'ret2', 'ret3']
@@ -1252,7 +1252,7 @@
 					let equippedItem = null;
 					
 					// Debug logging for hands slot
-					if (slotType === 'hands') {
+					if (slotType === 'hand') {
 						console.log(`Hands slot debug:`);
 						console.log(`  actualType: "${actualType}"`);
 						console.log(`  perType:`, perType);

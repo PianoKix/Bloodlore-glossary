@@ -283,7 +283,7 @@ h1 { margin: 0 0 12px; font-size: 20px; }
 
 /* Tooltips on top-left */
 .slot-bait .equipment-tooltip,
-.slot-hands .equipment-tooltip,
+.slot-hand .equipment-tooltip,
 .slot-emblem .equipment-tooltip,
 .slot-acc2 .equipment-tooltip,
 .slot-ret2 .equipment-tooltip,
