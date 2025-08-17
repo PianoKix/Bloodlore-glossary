@@ -2,7 +2,9 @@
 body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 16px; }
 h1 { margin: 0 0 12px; font-size: 20px; }
 #controls { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+#equippedControls { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
 #q { flex: 1 1 420px; padding: 8px 10px; font-size: 14px; }
+#equippedSearch { flex: 1 1 420px; padding: 8px 10px; font-size: 14px; }
 #status { font-size: 12px; opacity: 0.8; }
 .tabs { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; flex-wrap: wrap; }
 .tab { padding: 6px 10px; border: 1px solid #888; border-radius: 6px; cursor: pointer; user-select: none; }
