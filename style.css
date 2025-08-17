@@ -121,8 +121,8 @@ h1 { margin: 0 0 12px; font-size: 20px; }
 
 @media (max-width: 768px) {
 	.equipment-slot {
-		width: 65px;
-		height: 65px;
+		width: 50px;
+		height: 60px;
 	}
 }
 .equipment-slot:hover { 
@@ -291,3 +291,4 @@ h1 { margin: 0 0 12px; font-size: 20px; }
 	color: #fff;
 	margin-left: 8px;
 }
+
