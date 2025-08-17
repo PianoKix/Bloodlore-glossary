@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Item Glossary Viewer</title>
-			<link rel="stylesheet" href="style.css?v=3.4">
+			<link rel="stylesheet" href="style.css?v=3.6">
 
 </head>
 <body>
@@ -540,6 +540,9 @@
 			return true;
 		}
 		function unequip(type, name){
+			if (!confirm('Unequip item?')) {
+				return;
+			}
 			const perType = EQUIPPED.get(type) || new Map();
 			perType.delete(name);
 			EQUIPPED.set(type, perType);
@@ -1287,7 +1290,7 @@
 							<div class="slot-label">${slotLabel}</div>
 							<div class="item-name">${equippedItem.name}</div>
 							<div class="item-region">[${equippedItem.region}]</div>
-							<button class="remove-btn" onclick="unequip('${actualType}', '${equippedItem.name}')">×</button>
+							<button class="remove-btn" data-type="${actualType}" data-name="${equippedItem.name}">×</button>
 							<div class="equipment-tooltip">
 								<div class="tooltip-title">${equippedItem.name}</div>
 								<div class="tooltip-stats">
@@ -1295,6 +1298,13 @@
 								</div>
 							</div>
 						`;
+						
+						// Add event listener to the remove button
+						const removeBtn = slot.querySelector('.remove-btn');
+						removeBtn.addEventListener('click', (e) => {
+							e.stopPropagation(); // Prevent event bubbling
+							unequip(actualType, equippedItem.name);
+						});
 					} else {
 						// Empty slot
 						slot.innerHTML = `
