@@ -608,6 +608,55 @@
 
 
 
+		function generateItemStats(item) {
+			if (!item.effects || Object.keys(item.effects).length === 0) {
+				return '<div class="tooltip-stat">No effects</div>';
+			}
+			
+			let statsHTML = '';
+			
+			// Check for health first (special case)
+			if (item.effects.Health !== undefined) {
+				const healthValue = item.effects.Health;
+				const healthText = Array.isArray(healthValue) ? healthValue.join(', ') : String(healthValue);
+				statsHTML += `<div class="tooltip-stat"><span class="tooltip-stat-name">Health:</span><span class="tooltip-stat-value">${healthText}</span></div>`;
+			}
+			
+			// Process other effects by group
+			for (const [groupName, skills] of Object.entries(skill_groups)) {
+				if (groupName === 'Heal') {
+					// Handle heal group (excluding health which was already handled)
+					const healSkills = skills.filter(skill => skill.toLowerCase() !== 'health');
+					for (const skill of healSkills) {
+						if (item.effects[skill] !== undefined) {
+							const value = item.effects[skill];
+							const valueText = Array.isArray(value) ? value.join(', ') : String(value);
+							statsHTML += `<div class="tooltip-stat"><span class="tooltip-stat-name">${skill}:</span><span class="tooltip-stat-value">${valueText}</span></div>`;
+						}
+					}
+				} else {
+					// Handle other groups
+					for (const skill of skills) {
+						if (item.effects[skill] !== undefined) {
+							const value = item.effects[skill];
+							const valueText = Array.isArray(value) ? value.join(', ') : String(value);
+							statsHTML += `<div class="tooltip-stat"><span class="tooltip-stat-name">${skill}:</span><span class="tooltip-stat-value">${valueText}</span></div>`;
+						}
+					}
+				}
+			}
+			
+			// Add any remaining effects that aren't in skill_groups
+			for (const [effectName, value] of Object.entries(item.effects)) {
+				if (!Object.values(skill_groups).flat().includes(effectName) && effectName !== 'Health') {
+					const valueText = Array.isArray(value) ? value.join(', ') : String(value);
+					statsHTML += `<div class="tooltip-stat"><span class="tooltip-stat-name">${effectName}:</span><span class="tooltip-stat-value">${valueText}</span></div>`;
+				}
+			}
+			
+			return statsHTML || '<div class="tooltip-stat">No effects</div>';
+		}
+
 		function renderAggregatedEffects(){
 		  const agg = aggregateEffectsRanges();
 		  const container = document.getElementById('aggEffects');
@@ -1143,39 +1192,127 @@
 				return;
 			}
 			container.innerHTML = '';
-			let any = false;
 			
-			const typesToShow = categorizeMode && currentCategory !== 'all' ? [currentCategory] : ORDERED_TYPES;
+			// Create the equipment grid
+			const gridContainer = document.createElement('div');
+			gridContainer.className = 'equipment-grid';
 			
-			for (const type of typesToShow){
-				const perType = EQUIPPED.get(type);
-				if (!perType || perType.size === 0) continue;
-				any = true;
-				const sec = document.createElement('div');
-				sec.className = 'section';
-				const title = document.createElement('h2');
-				title.textContent = type.charAt(0).toUpperCase()+type.slice(1);
-				sec.appendChild(title);
-				for (const {it} of perType.values()){
-					const row = document.createElement('div');
-					row.className = 'item';
-					const main = document.createElement('div');
-					const srcTxt = formatSource(it.source);
-					const srcSpan = srcTxt ? ` <span class=\"meta\">src: ${srcTxt}</span>` : '';
-					const wikiLink = generateWikiUrl(it);
-					const wikiSpan = wikiLink ? ` <a href="${wikiLink}" target="_blank" class="meta">Wiki</a>` : '';
-					main.innerHTML = `<strong>${it.name}</strong> <span class=\"meta\">[${it.region}]</span>${srcSpan}${wikiSpan}<div class=\"muted\">${collectEffectDisplayAll(it.effects, [])}</div>`;
-					row.appendChild(main);
-					const ctrls = document.createElement('div');
-					ctrls.className = 'controls-inline';
-					const btnRemove = document.createElement('button'); btnRemove.className='btn'; btnRemove.textContent='remove'; btnRemove.onclick=()=>unequip(type, it.name);
-					ctrls.appendChild(btnRemove);
-					row.appendChild(ctrls);
-					sec.appendChild(row);
+			// Define the grid layout
+			const gridLayout = [
+				['coin', '', 'head', 'bait', 'hex'],
+				['', 'weapon', 'chest', 'hands', ''],
+				['', 'power', 'feet', 'emblem', ''],
+				['coffin', 'acc1', 'acc2', 'acc3', ''],
+				['mount', 'ret1', 'ret2', 'ret3', '']
+			];
+			
+			// Create grid rows
+			for (let rowIndex = 0; rowIndex < gridLayout.length; rowIndex++) {
+				const row = document.createElement('div');
+				row.className = 'equipment-row';
+				
+				for (let colIndex = 0; colIndex < gridLayout[rowIndex].length; colIndex++) {
+					const slotType = gridLayout[rowIndex][colIndex];
+					const slot = document.createElement('div');
+					slot.className = 'equipment-slot';
+					
+					if (slotType === '') {
+						// Empty space
+						slot.className += ' empty-slot';
+					} else {
+						// Equipment slot
+						slot.className += ` slot-${slotType}`;
+						
+						// Handle accessory slots (acc1, acc2, acc3)
+						let actualType = slotType;
+						if (slotType.startsWith('acc')) {
+							const accNum = parseInt(slotType.slice(3));
+							if (accNum === 3 && !allowAccThird) {
+								slot.className += ' disabled-slot';
+								slot.innerHTML = '<div class="slot-label">3rd acc.</div><div class="slot-disabled">Disabled</div>';
+							} else {
+								actualType = 'accessory';
+							}
+						}
+						
+						// Handle retainer slots (ret1, ret2, ret3)
+						if (slotType.startsWith('ret')) {
+							const retNum = parseInt(slotType.slice(3));
+							if (retNum === 3 && !allowRetThird) {
+								slot.className += ' disabled-slot';
+								slot.innerHTML = '<div class="slot-label">3rd ret.</div><div class="slot-disabled">Disabled</div>';
+							} else {
+								actualType = 'retainer';
+							}
+						}
+						
+						// Find equipped item for this slot
+						const perType = EQUIPPED.get(actualType);
+						let equippedItem = null;
+						
+						if (perType && perType.size > 0) {
+							// For accessories and retainers, we need to handle multiple slots
+							if (actualType === 'accessory' && slotType.startsWith('acc')) {
+								const accNum = parseInt(slotType.slice(3));
+								const items = Array.from(perType.values());
+								if (items[accNum - 1]) {
+									equippedItem = items[accNum - 1].it;
+								}
+							} else if (actualType === 'retainer' && slotType.startsWith('ret')) {
+								const retNum = parseInt(slotType.slice(3));
+								const items = Array.from(perType.values());
+								if (items[retNum - 1]) {
+									equippedItem = items[retNum - 1].it;
+								}
+							} else {
+								// Single slot types
+								const items = Array.from(perType.values());
+								if (items[0]) {
+									equippedItem = items[0].it;
+								}
+							}
+						}
+						
+						// Always show slot type at the top
+						const slotLabel = slotType === 'acc1' ? '1st acc.' : 
+										slotType === 'acc2' ? '2nd acc.' : 
+										slotType === 'acc3' ? '3rd acc.' :
+										slotType === 'ret1' ? '1st ret.' : 
+										slotType === 'ret2' ? '2nd ret.' : 
+										slotType === 'ret3' ? '3rd ret.' :
+										slotType.charAt(0).toUpperCase() + slotType.slice(1);
+						
+						if (equippedItem) {
+							// Item is equipped
+							slot.className += ' equipped-slot';
+							slot.innerHTML = `
+								<div class="slot-label">${slotLabel}</div>
+								<div class="item-name">${equippedItem.name}</div>
+								<div class="item-region">[${equippedItem.region}]</div>
+								<button class="remove-btn" onclick="unequip('${actualType}', '${equippedItem.name}')">×</button>
+								<div class="equipment-tooltip">
+									<div class="tooltip-title">${equippedItem.name}</div>
+									<div class="tooltip-stats">
+										${generateItemStats(equippedItem)}
+									</div>
+								</div>
+							`;
+						} else {
+							// Empty slot
+							slot.innerHTML = `
+								<div class="slot-label">${slotLabel}</div>
+								<div class="slot-empty">Empty</div>
+							`;
+						}
+					}
+					
+					row.appendChild(slot);
 				}
-				container.appendChild(sec);
+				
+				gridContainer.appendChild(row);
 			}
-			if (!any) container.innerHTML = '<div class="muted">No items equipped.</div>';
+			
+			container.appendChild(gridContainer);
 			renderAggregatedEffects();
 			renderMissingTypesBanner();
 		}
