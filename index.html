@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Item Glossary Viewer</title>
-	<link rel="stylesheet" href="style.css">
+			<link rel="stylesheet" href="style.css?v=1.4">
 
 </head>
 <body>
@@ -1199,11 +1199,11 @@
 			
 			// Define the grid layout
 			const gridLayout = [
-				['coin', '', 'head', 'bait', 'hex'],
-				['', 'weapon', 'chest', 'hands', ''],
-				['', 'power', 'feet', 'emblem', ''],
-				['coffin', 'acc1', 'acc2', 'acc3', ''],
-				['mount', 'ret1', 'ret2', 'ret3', '']
+				['coin', 'head', 'bait', 'hex'],
+				['weapon', 'chest', 'hands'],
+				['power', 'feet', 'emblem'],
+				['coffin', 'acc1', 'acc2', 'acc3'],
+				['mount', 'ret1', 'ret2', 'ret3']
 			];
 			
 			// Create grid rows
@@ -1215,95 +1215,88 @@
 					const slotType = gridLayout[rowIndex][colIndex];
 					const slot = document.createElement('div');
 					slot.className = 'equipment-slot';
+					slot.className += ` slot-${slotType}`;
 					
-					if (slotType === '') {
-						// Empty space
-						slot.className += ' empty-slot';
-					} else {
-						// Equipment slot
-						slot.className += ` slot-${slotType}`;
-						
-						// Handle accessory slots (acc1, acc2, acc3)
-						let actualType = slotType;
-						if (slotType.startsWith('acc')) {
-							const accNum = parseInt(slotType.slice(3));
-							if (accNum === 3 && !allowAccThird) {
-								slot.className += ' disabled-slot';
-								slot.innerHTML = '<div class="slot-label">3rd acc.</div><div class="slot-disabled">Disabled</div>';
-							} else {
-								actualType = 'accessory';
-							}
-						}
-						
-						// Handle retainer slots (ret1, ret2, ret3)
-						if (slotType.startsWith('ret')) {
-							const retNum = parseInt(slotType.slice(3));
-							if (retNum === 3 && !allowRetThird) {
-								slot.className += ' disabled-slot';
-								slot.innerHTML = '<div class="slot-label">3rd ret.</div><div class="slot-disabled">Disabled</div>';
-							} else {
-								actualType = 'retainer';
-							}
-						}
-						
-						// Find equipped item for this slot
-						const perType = EQUIPPED.get(actualType);
-						let equippedItem = null;
-						
-						if (perType && perType.size > 0) {
-							// For accessories and retainers, we need to handle multiple slots
-							if (actualType === 'accessory' && slotType.startsWith('acc')) {
-								const accNum = parseInt(slotType.slice(3));
-								const items = Array.from(perType.values());
-								if (items[accNum - 1]) {
-									equippedItem = items[accNum - 1].it;
-								}
-							} else if (actualType === 'retainer' && slotType.startsWith('ret')) {
-								const retNum = parseInt(slotType.slice(3));
-								const items = Array.from(perType.values());
-								if (items[retNum - 1]) {
-									equippedItem = items[retNum - 1].it;
-								}
-							} else {
-								// Single slot types
-								const items = Array.from(perType.values());
-								if (items[0]) {
-									equippedItem = items[0].it;
-								}
-							}
-						}
-						
-						// Always show slot type at the top
-						const slotLabel = slotType === 'acc1' ? '1st acc.' : 
-										slotType === 'acc2' ? '2nd acc.' : 
-										slotType === 'acc3' ? '3rd acc.' :
-										slotType === 'ret1' ? '1st ret.' : 
-										slotType === 'ret2' ? '2nd ret.' : 
-										slotType === 'ret3' ? '3rd ret.' :
-										slotType.charAt(0).toUpperCase() + slotType.slice(1);
-						
-						if (equippedItem) {
-							// Item is equipped
-							slot.className += ' equipped-slot';
-							slot.innerHTML = `
-								<div class="slot-label">${slotLabel}</div>
-								<div class="item-name">${equippedItem.name}</div>
-								<div class="item-region">[${equippedItem.region}]</div>
-								<button class="remove-btn" onclick="unequip('${actualType}', '${equippedItem.name}')">×</button>
-								<div class="equipment-tooltip">
-									<div class="tooltip-title">${equippedItem.name}</div>
-									<div class="tooltip-stats">
-										${generateItemStats(equippedItem)}
-									</div>
-								</div>
-							`;
+					// Handle accessory slots (acc1, acc2, acc3)
+					let actualType = slotType;
+					if (slotType.startsWith('acc')) {
+						const accNum = parseInt(slotType.slice(3));
+						if (accNum === 3 && !allowAccThird) {
+							slot.className += ' disabled-slot';
+							slot.innerHTML = '<div class="slot-label">3rd acc.</div><div class="slot-disabled">Disabled</div>';
 						} else {
-							// Empty slot
-							slot.innerHTML = `
-								<div class="slot-label">${slotLabel}</div>
-								<div class="slot-empty">Empty</div>
-							`;
+							actualType = 'accessory';
 						}
+					}
+					
+					// Handle retainer slots (ret1, ret2, ret3)
+					if (slotType.startsWith('ret')) {
+						const retNum = parseInt(slotType.slice(3));
+						if (retNum === 3 && !allowRetThird) {
+							slot.className += ' disabled-slot';
+							slot.innerHTML = '<div class="slot-label">3rd ret.</div><div class="slot-disabled">Disabled</div>';
+						} else {
+							actualType = 'retainer';
+						}
+					}
+					
+					// Find equipped item for this slot
+					const perType = EQUIPPED.get(actualType);
+					let equippedItem = null;
+					
+					if (perType && perType.size > 0) {
+						// For accessories and retainers, we need to handle multiple slots
+						if (actualType === 'accessory' && slotType.startsWith('acc')) {
+							const accNum = parseInt(slotType.slice(3));
+							const items = Array.from(perType.values());
+							if (items[accNum - 1]) {
+								equippedItem = items[accNum - 1].it;
+							}
+						} else if (actualType === 'retainer' && slotType.startsWith('ret')) {
+							const retNum = parseInt(slotType.slice(3));
+							const items = Array.from(perType.values());
+							if (items[retNum - 1]) {
+								equippedItem = items[retNum - 1].it;
+							}
+						} else {
+							// Single slot types
+							const items = Array.from(perType.values());
+							if (items[0]) {
+								equippedItem = items[0].it;
+							}
+						}
+					}
+					
+					// Always show slot type at the top
+					const slotLabel = slotType === 'acc1' ? '1st acc.' : 
+									slotType === 'acc2' ? '2nd acc.' : 
+									slotType === 'acc3' ? '3rd acc.' :
+									slotType === 'ret1' ? '1st ret.' : 
+									slotType === 'ret2' ? '2nd ret.' : 
+									slotType === 'ret3' ? '3rd ret.' :
+									slotType.charAt(0).toUpperCase() + slotType.slice(1);
+					
+					if (equippedItem) {
+						// Item is equipped
+						slot.className += ' equipped-slot';
+						slot.innerHTML = `
+							<div class="slot-label">${slotLabel}</div>
+							<div class="item-name">${equippedItem.name}</div>
+							<div class="item-region">[${equippedItem.region}]</div>
+							<button class="remove-btn" onclick="unequip('${actualType}', '${equippedItem.name}')">×</button>
+							<div class="equipment-tooltip">
+								<div class="tooltip-title">${equippedItem.name}</div>
+								<div class="tooltip-stats">
+									${generateItemStats(equippedItem)}
+								</div>
+							</div>
+						`;
+					} else {
+						// Empty slot
+						slot.innerHTML = `
+							<div class="slot-label">${slotLabel}</div>
+							<div class="slot-empty">Empty</div>
+						`;
 					}
 					
 					row.appendChild(slot);
