@@ -91,6 +91,7 @@
 		const CACHE_KEY = 'itemGlossaryJsonTextV1';
 		const CONSTANTS_CACHE_KEY = 'constantsJsonTextV1';
 		const BUILDS_KEY = 'itemGlossarySavedBuildsV1';
+		const SETTINGS_KEY = 'itemGlossarySettingsV1';
 		let allowAccThird = true;
 		let allowRetThird = true;
 		let categorizeMode = false;
@@ -98,6 +99,46 @@
 		let skill_groups = {};
 		let combineable = [];
 		let type_map = {};
+
+		function loadSettings() {
+			try {
+				const settings = localStorage.getItem(SETTINGS_KEY);
+				if (settings) {
+					const parsed = JSON.parse(settings);
+					allowAccThird = parsed.allowAccThird !== undefined ? parsed.allowAccThird : true;
+					allowRetThird = parsed.allowRetThird !== undefined ? parsed.allowRetThird : true;
+					categorizeMode = parsed.categorizeMode !== undefined ? parsed.categorizeMode : false;
+					
+					// Update checkbox states
+					document.getElementById('toggleAcc3').checked = allowAccThird;
+					document.getElementById('toggleRet3').checked = allowRetThird;
+					document.getElementById('toggleCategorize').checked = categorizeMode;
+					
+					// Apply categorize mode if it was saved as true
+					if (categorizeMode) {
+						const categoryTabs = document.getElementById('categoryTabs');
+						const equippedCategoryTabs = document.getElementById('equippedCategoryTabs');
+						categoryTabs.style.display = 'block';
+						equippedCategoryTabs.style.display = 'block';
+					}
+				}
+			} catch (error) {
+				console.error('Failed to load settings:', error);
+			}
+		}
+
+		function saveSettings() {
+			try {
+				const settings = {
+					allowAccThird,
+					allowRetThird,
+					categorizeMode
+				};
+				localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+			} catch (error) {
+				console.error('Failed to save settings:', error);
+			}
+		}
 
 		async function loadConstants() {
 			try {
@@ -1684,13 +1725,20 @@
 				document.getElementById('helpPanel').style.display = 'none';
 			});
 			document.getElementById('toggleAcc3').addEventListener('change', (e)=>{
-				allowAccThird = e.target.checked; renderEquipped(); onQuery();
+				allowAccThird = e.target.checked; 
+				saveSettings();
+				renderEquipped(); 
+				onQuery();
 			});
 			document.getElementById('toggleRet3').addEventListener('change', (e)=>{
-				allowRetThird = e.target.checked; renderEquipped(); onQuery();
+				allowRetThird = e.target.checked; 
+				saveSettings();
+				renderEquipped(); 
+				onQuery();
 			});
 			document.getElementById('toggleCategorize').addEventListener('change', (e)=>{
 				categorizeMode = e.target.checked;
+				saveSettings();
 				const categoryTabs = document.getElementById('categoryTabs');
 				const equippedCategoryTabs = document.getElementById('equippedCategoryTabs');
 				if (categorizeMode) {
@@ -1747,6 +1795,7 @@
 		}
 
 		initEvents();
+		loadSettings();
 		loadConstants().then(() => {
 			tryFetchJson();
 		});
