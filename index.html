@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Item Glossary Viewer</title>
-			<link rel="stylesheet" href="style.css?v=2.7">
+			<link rel="stylesheet" href="style.css?v=2.8">
 
 </head>
 <body>
@@ -529,11 +529,14 @@
 		}
 		function equip(it){
 			const type = it.type;
+			console.log(`Equipping item: "${it.name}" with type: "${type}"`);
 			const perType = EQUIPPED.get(type) || new Map();
 			const check = canEquip(it);
 			if (!check.ok){ toast(check.reason); return false; }
 			perType.set(it.name, { it });
 			EQUIPPED.set(type, perType);
+			console.log(`After equipping, EQUIPPED keys:`, Array.from(EQUIPPED.keys()));
+			console.log(`EQUIPPED.get("${type}"):`, EQUIPPED.get(type));
 			updateEqCount();
 			renderEquipped();
 			onQuery();
@@ -1248,6 +1251,18 @@
 					const perType = EQUIPPED.get(actualType);
 					let equippedItem = null;
 					
+					// Debug logging for hands slot
+					if (slotType === 'hands') {
+						console.log(`Hands slot debug:`);
+						console.log(`  actualType: "${actualType}"`);
+						console.log(`  perType:`, perType);
+						console.log(`  EQUIPPED keys:`, Array.from(EQUIPPED.keys()));
+						if (perType) {
+							console.log(`  perType.size: ${perType.size}`);
+							console.log(`  perType.values:`, Array.from(perType.values()));
+						}
+					}
+					
 					if (perType && perType.size > 0) {
 						// For accessories and retainers, we need to handle multiple slots
 						if (actualType === 'accessory' && slotType.startsWith('acc')) {
@@ -1654,12 +1669,15 @@
 			const list = getSavedBuilds();
 			const build = list.find(b => b.id===id);
 			if (!build) { toast('Build not found'); return; }
+			console.log(`Loading build: ${build.name}`);
+			console.log(`Build items:`, build.items);
 			clearAll();
 			const typeToEntries = new Map();
 			for (const entry of build.items){
 				if (!typeToEntries.has(entry.type)) typeToEntries.set(entry.type, []);
 				typeToEntries.get(entry.type).push(entry);
 			}
+			console.log(`Type to entries:`, Object.fromEntries(typeToEntries));
 			for (const type of ORDERED_TYPES){
 				const entries = typeToEntries.get(type) || [];
 				if (entries.length===0) continue;
