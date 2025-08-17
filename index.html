@@ -141,6 +141,481 @@
 		let categorizeMode = false;
 		let currentCategory = 'all';
 
+///////////////// 1.Define skill category and combinable skill - I don't know how to add json file here so just defined them directly
+		const skill_groups = {
+			"El Off Buff": [
+				"Carnage",
+				"True Aim",
+				"Whispers of Madness",
+				"Electromancy",
+				"Pyromancy",
+				"Conviction",
+				"Cryomancy",
+				"Thaumaturgy",
+				"Cruelty",
+				"Venomancy",
+				"Focused Mind",
+				"Necromancy",
+				"Curse",
+				"Slow",
+				"Curse of the Old Gods",
+				"Stormcurse",
+				"Firecurse",
+				"Retribution",
+				"Icecurse",
+				"Manacurse",
+				"Weaken",
+				"Poisoncurse",
+				"Paranoia",
+				"Shadowcurse"
+			],
+			"Preemptive Atk": [
+				"Ballistic Charge",
+				"Chaos Charge",
+				"Voltaic Charge",
+				"Blazing Charge",
+				"Righteous Charge",
+				"Ice Charge",
+				"Mystic Charge",
+				"Charge",
+				"Septic Charge",
+				"Mind Charge",
+				"Shadow Charge",
+				"Barrage",
+				"Oblivion",
+				"Discharge",
+				"Inferno",
+				"Angels' Wrath",
+				"Icestorm",
+				"Manastorm",
+				"Devastate",
+				"Envenom",
+				"Breakdown",
+				"Nightfall"
+			],
+			"Inst Atk": [
+				"Snipe",
+				"Stormlash",
+				"Meteor",
+				"Divine Smite",
+				"Ice Spikes",
+				"Eldritch Blast",
+				"Crushing Blow",
+				"Venomous Strike",
+				"Cerebral Strike",
+				"Eclipse Bolt",
+				"Focused Shot",
+				"Eldritch Convergence",
+				"Lightning Bolt",
+				"Fireball",
+				"Judgment",
+				"Icestrike",
+				"Netherbolt",
+				"Powerful Strike",
+				"Plaguetouch",
+				"Mindbolt",
+				"Shadowstrike",
+				"Overload",
+				"Tail Whip"
+			],
+			"DoT Atk": [
+				"Pierce",
+				"Volt Corrosion",
+				"Ignite",
+				"Sacred Flame",
+				"Hypothermia",
+				"Arcane Fire",
+				"Flesh Wound",
+				"Sepsis",
+				"Psychic Drain",
+				"Shadow Decay",
+				"Trauma",
+				"Eldritch Decay",
+				"Shock",
+				"Burn",
+				"Repent",
+				"Frostbite",
+				"Manaburn",
+				"Wound",
+				"Rot",
+				"Fear",
+				"Soulburn",
+				"Touch from Beyond"
+			],
+			"Wpn Atk": [
+				"Retainer Ballistic Weapon Damage",
+				"Retainer Chaos Weapon Damage",
+				"Retainer Electric Weapon Damage",
+				"Retainer Fire Weapon Damage",
+				"Retainer Holy Weapon Damage",
+				"Retainer Ice Weapon Damage",
+				"Retainer Mystic Weapon Damage",
+				"Retainer Physical Weapon Damage",
+				"Retainer Poison Weapon Damage",
+				"Retainer Psychic Weapon Damage",
+				"Retainer Shadow Weapon Damage",
+				"Ballistic Weapon Damage",
+				"Chaos Weapon Damage",
+				"Electric Weapon Damage",
+				"Fire Weapon Damage",
+				"Holy Weapon Damage",
+				"Ice Weapon Damage",
+				"Mystic Weapon Damage",
+				"Physical Weapon Damage",
+				"Poison Weapon Damage",
+				"Psychic Weapon Damage",
+				"Shadow Weapon Damage",
+				"Crit Chance"
+			],
+			"Rac Off Buff": [
+				"Terrorbane",
+				"Angelbane",
+				"Wildbane",
+				"Lifebane",
+				"Demonbane",
+				"Dragonbane",
+				"Eldritchbane",
+				"Spiritbane",
+				"Wolfbane",
+				"Necrobane",
+				"Lightbane",
+				"Techbane",
+				"Bloodbane",
+				"Xenobane"
+			],
+			"Rac Inst Atk": [
+				"Exterminate",
+				"Butchery",
+				"Psyblast",
+				"Exorcise",
+				"Dragonslayer",
+				"Banish",
+				"Silver Strike",
+				"Gravebind",
+				"Seduction",
+				"Short Circuit",
+				"Sunbeam",
+				"Gamma Ray"
+			],
+			"Rac DoT Atk": [
+				"Scorching Ray",
+				"Bloodsport",
+				"Judgement of the Righteous",
+				"Frozen Banishment",
+				"Drakebane Venom",
+				"Ghostbusting",
+				"Silver Bullet",
+				"Bone Grinder",
+				"Paradigm Shift",
+				"Steel Crusher",
+				"Arcane Sunburst",
+				"Stellar Voltage"
+			],
+			"Heal": [
+				"Health",
+				"Lifeleech",
+				"Diableria",
+				"Ancient Blood",
+				"Greater Heal",
+				"Heal",
+				"Healing Touch",
+				"Regeneration"
+			],
+			"El Def Buff & Debuff": [
+				"Toughness",
+				"Blur",
+				"Stormward",
+				"Fireward",
+				"Blasphemy",
+				"Iceward",
+				"Manaward",
+				"Resilience",
+				"Poisonward",
+				"Nerves of Steel",
+				"Nightward",
+				"Shield",
+				"Ballistic Shield",
+				"Lightning Shield",
+				"Fire Shield",
+				"Holy Shield",
+				"Ice Shield",
+				"Mystic Shield",
+				"Physical Shield",
+				"Poison Shield",
+				"Psychic Shield",
+				"Shadow Shield",
+				"Divine Intervention",
+				"Sufferance",
+				"Ballistic Vulnerability",
+				"Electric Vulnerability",
+				"Fire Vulnerability",
+				"Holy Vulnerability",
+				"Ice Vulnerability",
+				"Mystic Vulnerability",
+				"Physical Vulnerability",
+				"Poison Vulnerability",
+				"Psychic Vulnerability",
+				"Shadow Vulnerability"
+			],
+			"Rac Def Buff": [
+				"Terrorward",
+				"Angelward",
+				"Wildward",
+				"Lifeward",
+				"Demonward",
+				"Dragonward",
+				"Eldritchward",
+				"Spiritward",
+				"Wolfward",
+				"Necroward",
+				"Lightward",
+				"Techward",
+				"Bloodward",
+				"Xenoward",
+				"Monster Barrier",
+				"Wilderness Barrier",
+				"Cleansing Barrier",
+				"Infernal Barrier",
+				"Dragonfire Barrier",
+				"Spectral Barrier",
+				"Moonlit Barrier",
+				"Bone Barrier",
+				"Angel Barrier",
+				"Technomancer Barrier",
+				"Nocturnal Barrier",
+				"Nostromo Barrier"
+			],
+			"Ut Atk": [
+				"First Strike",
+				"Attunement",
+				"Kiss of Lilith",
+				"Kiss of Scintilla",
+				"Kiss of Xaylena",
+				"Kiss of Alithia",
+				"Purgatory",
+				"Call Amazonian Archer",
+				"Call Assassin",
+				"Call Barracuda",
+				"Call Battle Droid",
+				"Call Blizzard Beast",
+				"Call Brass Basilisk",
+				"Call Catacombs Sentinel",
+				"Call Crimson Revenant Blademaster",
+				"Call Cursed Crewman",
+				"Call Cyberblade Hellion",
+				"Call Cybermoon Lycan",
+				"Call Darkcrawler Scout",
+				"Call Deformed Mutant",
+				"Call Demonic Enforcer",
+				"Call Dreadnought Leviacornis",
+				"Call Fledgling Vampire",
+				"Call Frost Dragon Whelp",
+				"Call Ghost",
+				"Call Glitch Ghost",
+				"Call Glow Worm of the Depth",
+				"Call Golem",
+				"Call Harvester of Dreams",
+				"Call Infernal Tormentor",
+				"Call Killbot",
+				"Call Lunar Sentinel",
+				"Call Lycan Zealot",
+				"Call Machina Hellspawn",
+				"Call Mistprowler",
+				"Call Monastery Guard Dog",
+				"Call Nether Assassin",
+				"Call Nightstalker",
+				"Call Phantom Steamwalker",
+				"Call Radiation Raptor",
+				"Call Rat Rogue",
+				"Call Scarecrow Sentinel",
+				"Call Scorchhorn Firebeast",
+				"Call Shadow Raven",
+				"Call Shadow Tech Enforcer",
+				"Call Shaitan",
+				"Call Skeletal Netherarcher",
+				"Call Skeleton Knight",
+				"Call Skeleton Warrior",
+				"Call Star Vampire",
+				"Call The Black Thorn",
+				"Call Undead Priest",
+				"Call Vampire Ring Announcer",
+				"Call Vampire-for-hire",
+				"Call Wildcat",
+				"Call Xenoblade Hunter",
+				"Feral Bloodhound",
+				"Apocalypse",
+				"Deathtouch",
+				"Abduction",
+				"Necrosis",
+				"Infectious Bite",
+				"Theft",
+				"Trickery"
+			],
+			"Ut Def": [
+				"Evade",
+				"Incorporal",
+				"Stun",
+				"Flying",
+				"Dodge",
+				"Horrific Visage",
+				"Dispel",
+				"Thick Skin"
+			],
+			"Ut OoC": [
+				"Timewalker",
+				"Blood Craze",
+				"Coffin Capacity",
+				"Coffin Recharge Time",
+				"Restless",
+				"Questing",
+				"Attraction",
+				"Summoning",
+				"Invocation",
+				"Temperance",
+				"Gluttony",
+				"Bloodlust",
+				"Megalomania",
+				"Loot Chance Modifier",
+				"Cloning",
+				"Investment",
+				"XP-losion",
+				"Dominate",
+				"Curator",
+				"Arsenal",
+				"Coolness"
+			]
+		};
+		
+		const combineable = [
+			"Carnage",
+			"True Aim",
+			"Whispers of Madness",
+			"Electromancy",
+			"Pyromancy",
+			"Conviction",
+			"Cryomancy",
+			"Thaumaturgy",
+			"Cruelty",
+			"Venomancy",
+			"Focused Mind",
+			"Necromancy",
+			"Curse",
+			"Slow",
+			"Curse of the Old Gods",
+			"Stormcurse",
+			"Firecurse",
+			"Retribution",
+			"Icecurse",
+			"Manacurse",
+			"Weaken",
+			"Poisoncurse",
+			"Paranoia",
+			"Shadowcurse",
+			"Crit Chance",
+			"Terrorbane",
+			"Angelbane",
+			"Wildbane",
+			"Lifebane",
+			"Demonbane",
+			"Dragonbane",
+			"Eldritchbane",
+			"Spiritbane",
+			"Wolfbane",
+			"Necrobane",
+			"Lightbane",
+			"Techbane",
+			"Bloodbane",
+			"Xenobane",
+			"Health",
+			"Ancient Blood",
+			"Toughness",
+			"Blur",
+			"Stormward",
+			"Fireward",
+			"Blasphemy",
+			"Iceward",
+			"Manaward",
+			"Resilience",
+			"Poisonward",
+			"Nerves of Steel",
+			"Nightward",
+			"Shield",
+			"Ballistic Shield",
+			"Lightning Shield",
+			"Fire Shield",
+			"Holy Shield",
+			"Ice Shield",
+			"Mystic Shield",
+			"Physical Shield",
+			"Poison Shield",
+			"Psychic Shield",
+			"Shadow Shield",
+			"Divine Intervention",
+			"Sufferance",
+			"Ballistic Vulnerability",
+			"Electric Vulnerability",
+			"Fire Vulnerability",
+			"Holy Vulnerability",
+			"Ice Vulnerability",
+			"Mystic Vulnerability",
+			"Physical Vulnerability",
+			"Poison Vulnerability",
+			"Psychic Vulnerability",
+			"Shadow Vulnerability",
+			"Terrorward",
+			"Angelward",
+			"Wildward",
+			"Lifeward",
+			"Demonward",
+			"Dragonward",
+			"Eldritchward",
+			"Spiritward",
+			"Wolfward",
+			"Necroward",
+			"Lightward",
+			"Techward",
+			"Bloodward",
+			"Xenoward",
+			"Monster Barrier",
+			"Wilderness Barrier",
+			"Cleansing Barrier",
+			"Infernal Barrier",
+			"Dragonfire Barrier",
+			"Spectral Barrier",
+			"Moonlit Barrier",
+			"Bone Barrier",
+			"Angel Barrier",
+			"Technomancer Barrier",
+			"Nocturnal Barrier",
+			"Nostromo Barrier",
+			"First Strike",
+			"Attunement",
+			"Necrosis",
+			"Infectious Bite",
+			"Timewalker",
+			"Blood Craze",
+			"Coffin Capacity",
+			"Coffin Recharge Time",
+			"Restless",
+			"Questing",
+			"Attraction",
+			"Summoning",
+			"Invocation",
+			"Temperance",
+			"Gluttony",
+			"Bloodlust",
+			"Megalomania",
+			"Loot Chance Modifier",
+			"Cloning",
+			"Investment",
+			"XP-losion",
+			"Dominate",
+			"Curator",
+			"Arsenal",
+			"Coolness"
+		]
+/////////////////////////////////////////////////////////////
+
 		function normalizeType(raw) {
 			if (!raw) return '';
 			const s = String(raw).trim().toLowerCase();
@@ -512,6 +987,9 @@
 			document.getElementById('eqCount').textContent = total;
 		}
 
+
+////////////////////////////////////////////////////////////////1. Separate skills based combinable list - some skills can be combined (Blood Craze 1% + 2% = 3%), some can't (Evade 1% can't be combined with Evade 2%) 2 RNG will be rolled to check its proc
+
 		function aggregateEffectsRanges(){
 			const totals = new Map();
 			function containsPercentInValue(value){
@@ -519,67 +997,137 @@
 				if (Array.isArray(value)) return value.some(v => containsPercentInValue(v));
 				return String(value).includes('%');
 			}
-			
-			// Filter types based on current category if in categorize mode
-			const typesToProcess = categorizeMode && currentCategory !== 'all' ? [currentCategory] : Array.from(EQUIPPED.keys());
-			
+
+			const typesToProcess = categorizeMode && currentCategory !== 'all'
+				? [currentCategory]
+				: Array.from(EQUIPPED.keys());
+
 			for (const type of typesToProcess){
 				const perType = EQUIPPED.get(type);
 				if (!perType) continue;
+
 				for (const {it} of perType.values()){
 					for (const [effKey, effVal] of Object.entries(it.effects||{})){
 						const r = rangeFromValue(effVal);
-						const rec = totals.get(effKey) || { min: 0, max: 0, details: [], percent: false };
-						rec.min += r.min;
-						rec.max += r.max;
-						rec.percent = rec.percent || containsPercentInValue(effVal);
-						const singleVal = (r.min === r.max) ? `${r.min}` : `${r.min}-${r.max}`;
-						const singleValWithUnit = rec.percent ? `${singleVal}%` : singleVal;
-						rec.details.push(`${it.name}: ${singleValWithUnit}`);
-						totals.set(effKey, rec);
+
+						if (combineable.includes(effKey)) {
+							// normal combine
+							const rec = totals.get(effKey) || { displayKey: effKey, min: 0, max: 0, details: [], percent: false };
+							rec.min += r.min;
+							rec.max += r.max;
+							rec.percent = rec.percent || containsPercentInValue(effVal);
+							const valStr = (r.min===r.max) ? `${r.min}` : `${r.min}-${r.max}`;
+							rec.details.push(`${it.name}: ${rec.percent ? valStr+"%" : valStr}`);
+							totals.set(effKey, rec);
+						} else {
+							// split → unique key, but keep displayKey for sorting/rendering
+							const uniqueKey = effKey + "#" + it.name;
+							const rec = { displayKey: effKey, min: r.min, max: r.max, details: [], percent: false };
+							rec.percent = rec.percent || containsPercentInValue(effVal);
+							const valStr = (r.min===r.max) ? `${r.min}` : `${r.min}-${r.max}`;
+							rec.details.push(`${it.name}: ${rec.percent ? valStr+"%" : valStr}`);
+							totals.set(uniqueKey, rec);
+						}
 					}
 				}
 			}
 			return totals;
 		}
-		function effectSortPriority(name){
-			const n = String(name||'');
-			const low = n.toLowerCase();
-			if (low === 'health') return 0;
-			if (low.includes('weapon') && low.includes('damage')) return 1;
-			return 2;
+
+///////////////////////////////////// 1. Sort based on skill group and add group header, 2. Sort based on highest average for each skill: Ret 10-14, Ret 9-12, Ret 1-2
+		function effectSortPriority2(name) {
+			const low = String(name || '').toLowerCase();
+			let idx = 0;
+			for (const groupKey of Object.keys(skill_groups)) {
+				for (const skill of skill_groups[groupKey]) {
+					if (skill.toLowerCase() === low) return idx;
+					idx++;
+				}
+			}
+			return idx; // unknown goes last
 		}
+
 		function renderAggregatedEffects(){
-			const agg = aggregateEffectsRanges();
-			const container = document.getElementById('aggEffects');
-			container.innerHTML = '';
-			if (agg.size === 0){ container.innerHTML = '<div class="muted">No items equipped.</div>'; return; }
-			const entries = Array.from(agg.entries());
-			entries.sort((a,b)=>{
-				const pa = effectSortPriority(a[0]);
-				const pb = effectSortPriority(b[0]);
-				if (pa !== pb) return pa - pb;
-				return a[0].localeCompare(b[0]);
-			});
-			const list = document.createElement('div');
-			list.className = 'agg-list';
-			for (const [k,v] of entries){
+		  const agg = aggregateEffectsRanges();
+		  const container = document.getElementById('aggEffects');
+		  container.innerHTML = '';
+		  if (agg.size === 0) {
+			container.innerHTML = '<div class="muted">No items equipped.</div>';
+			return;
+		  }
+
+		  // Don't globally sort here; we'll sort per-skill below
+		  const entries = Array.from(agg.entries());
+
+		  const list = document.createElement('div');
+		  list.className = 'agg-list';
+
+		  // Render group by group, skill order is taken from skill_groups
+		  for (const [groupName, skills] of Object.entries(skill_groups)) {
+			const header = document.createElement('div');
+			header.className = 'agg-group-header';
+			header.textContent = groupName;
+			header.style.fontWeight = 'bold';
+			header.style.marginTop = '10px';
+			list.appendChild(header);
+
+			for (const skill of skills) {
+			  // pick rows that belong to this skill (use displayKey from aggregate)
+			  const groupEntries = entries.filter(([, v]) =>
+				(v.displayKey || '').toLowerCase() === skill.toLowerCase()
+			  );
+			  if (groupEntries.length === 0) continue;
+
+			  // split: combinable (key without '#') vs uncombinable (key with '#')
+			  const combinableEntries     = groupEntries.filter(([k]) => !k.includes('#'));
+			  const uncombinableEntries   = groupEntries.filter(([k]) =>  k.includes('#'));
+
+			  // sort ONLY uncombinables by average DESC (highest first)
+			  uncombinableEntries.sort((a, b) => {
+				const avgA = (a[1].min + a[1].max) / 2;
+				const avgB = (b[1].min + b[1].max) / 2;
+				return avgB - avgA;
+			  });
+
+			  // final order: keep combinable as-is, then sorted uncombinables
+			  const ordered = [...combinableEntries, ...uncombinableEntries];
+
+			  // render rows
+			  for (const [, v] of ordered) {
 				const row = document.createElement('div');
 				row.className = 'agg-effect';
+
 				const head = document.createElement('div');
 				head.className = 'agg-head';
-				const nameEl = document.createElement('div'); nameEl.className = 'agg-name'; nameEl.textContent = k;
-				const totalEl = document.createElement('div'); totalEl.className = 'agg-total';
-				const totalVal = (v.min===v.max) ? `${v.min}` : `${v.min}-${v.max}`;
+
+				const nameEl = document.createElement('div');
+				nameEl.className = 'agg-name';
+				nameEl.textContent = v.displayKey || ''; // show the skill name
+
+				const totalEl = document.createElement('div');
+				totalEl.className = 'agg-total';
+				const totalVal = (v.min === v.max) ? `${v.min}` : `${v.min}-${v.max}`;
 				totalEl.textContent = v.percent ? `${totalVal}%` : totalVal;
-				head.appendChild(nameEl); head.appendChild(totalEl);
+
+				head.appendChild(nameEl);
+				head.appendChild(totalEl);
 				row.appendChild(head);
-				const details = document.createElement('div'); details.className = 'agg-details muted'; details.textContent = v.details.join(' | ');
+
+				const details = document.createElement('div');
+				details.className = 'agg-details muted';
+				details.textContent = v.details.join(' | ');
 				row.appendChild(details);
+
 				list.appendChild(row);
+			  }
 			}
-			container.appendChild(list);
+		  }
+
+		  container.appendChild(list);
 		}
+//////////////////////////////////////////////
+
+
 
 		function renderMissingTypesBanner(){
 			const banner = document.getElementById('missingTypes');
@@ -1296,4 +1844,3 @@
 	</script>
 </body>
 </html>
-
