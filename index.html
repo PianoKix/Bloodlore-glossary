@@ -15,6 +15,9 @@
 		<label id="fallback" class="muted">or open file: <input id="fileInput" type="file" accept="application/json,.json" /></label>
 		<label id="constantsFallback" class="muted" style="display:none">or open constants: <input id="constantsFileInput" type="file" accept="application/json,.json" /></label>
 	</div>
+	<div id="equippedControls" style="display:none">
+		<input id="equippedSearch" type="search" placeholder="Search equipped effects..." autocomplete="off" />
+	</div>
 	<div class="tabs">
 		<div id="tabBrowse" class="tab active">Browse</div>
 		<div id="tabEquipped" class="tab">Equipped <span id="eqCount" class="badge">0</span></div>
@@ -580,10 +583,26 @@
 		  }
 
 		  const entries = Array.from(agg.entries());
+		  
+		  // Filter entries based on equipped search query
+		  const equippedSearchQuery = document.getElementById('equippedSearch').value.trim().toLowerCase();
+		  let filteredEntries = entries;
+		  if (equippedSearchQuery) {
+			filteredEntries = entries.filter(([, v]) => {
+				const displayKey = (v.displayKey || '').toLowerCase();
+				const details = v.details.join(' ').toLowerCase();
+				return displayKey.includes(equippedSearchQuery) || details.includes(equippedSearchQuery);
+			});
+		  }
+		  
+		  if (filteredEntries.length === 0) {
+			container.innerHTML = equippedSearchQuery ? '<div class="muted">No equipped effects match your search.</div>' : '<div class="muted">No items equipped.</div>';
+			return;
+		  }
 		  const list = document.createElement('div');
 		  list.className = 'agg-list';
 
-		  const healthEntries = entries.filter(([, v]) => 
+		  const healthEntries = filteredEntries.filter(([, v]) => 
 			(v.displayKey || '').toLowerCase() === 'health'
 		  );
 		  if (healthEntries.length > 0) {
@@ -638,7 +657,7 @@
 			  const sortedHealSkills = [...healSkills].sort((a, b) => a.localeCompare(b));
 			  
 			  for (const skill of sortedHealSkills) {
-				const groupEntries = entries.filter(([, v]) =>
+				const groupEntries = filteredEntries.filter(([, v]) =>
 				  (v.displayKey || '').toLowerCase() === skill.toLowerCase()
 				);
 				if (groupEntries.length === 0) continue;
@@ -834,7 +853,7 @@
 			  for (const skill of sortedSkills) {
 				if (skill.toLowerCase() === 'health') continue;
 				
-				const groupEntries = entries.filter(([, v]) =>
+				const groupEntries = filteredEntries.filter(([, v]) =>
 				  (v.displayKey || '').toLowerCase() === skill.toLowerCase()
 				);
 				if (groupEntries.length === 0) continue;
@@ -1205,6 +1224,10 @@
 			}
 		}
 
+		function onEquippedSearch() {
+			renderAggregatedEffects();
+		}
+
 		function renderCategories() {
 			const container = document.getElementById('results');
 			container.innerHTML = '';
@@ -1562,6 +1585,8 @@
 			} else {
 				equippedCategoryTabs.style.display = 'none';
 			}
+			// Clear equipped search when switching to equipped tab
+			document.getElementById('equippedSearch').value = '';
 			renderAggregatedEffects();
 			renderSavedBuilds();
 			document.getElementById('missingTypes').style.display='none';
@@ -1576,10 +1601,14 @@
 			} else {
 				categoryTabs.style.display = 'none';
 			}
+			// Clear main search when switching to browse tab
+			document.getElementById('q').value = '';
+			onQuery();
 		}
 
 		function initEvents(){
 			document.getElementById('q').addEventListener('input', onQuery);
+			document.getElementById('equippedSearch').addEventListener('input', onEquippedSearch);
 			document.getElementById('fileInput').addEventListener('change', async (ev)=>{
 				const file = ev.target.files && ev.target.files[0];
 				if (!file) return;
@@ -1619,6 +1648,7 @@
 				document.getElementById('tabEquipped').classList.remove('active');
 				document.getElementById('browseView').style.display='block';
 				document.getElementById('equippedView').style.display='none';
+				document.getElementById('equippedControls').style.display='none';
 				onBrowseTabShown();
 			});
 			document.getElementById('tabEquipped').addEventListener('click', ()=>{
@@ -1626,6 +1656,7 @@
 				document.getElementById('tabBrowse').classList.remove('active');
 				document.getElementById('browseView').style.display='none';
 				document.getElementById('equippedView').style.display='block';
+				document.getElementById('equippedControls').style.display='flex';
 				onEquipTabShown();
 			});
 			document.getElementById('clearAll').addEventListener('click', clearAll);
