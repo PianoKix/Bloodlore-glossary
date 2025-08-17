@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Item Glossary Viewer</title>
-			<link rel="stylesheet" href="style.css?v=1.6">
+			<link rel="stylesheet" href="style.css?v=1.8">
 
 </head>
 <body>
@@ -657,35 +657,7 @@
 			return statsHTML || '<div class="tooltip-stat">No effects</div>';
 		}
 
-		function positionTooltip(tooltip, event) {
-			// Reset positioning to default
-			tooltip.style.bottom = '100%';
-			tooltip.style.right = '0';
-			tooltip.style.left = 'auto';
-			tooltip.style.top = 'auto';
-			
-			// Get tooltip dimensions and position
-			const tooltipRect = tooltip.getBoundingClientRect();
-			const slotRect = tooltip.parentElement.getBoundingClientRect();
-			
-			// Check if tooltip goes off the left side
-			if (tooltipRect.left < 0) {
-				tooltip.style.right = 'auto';
-				tooltip.style.left = '0';
-			}
-			
-			// Check if tooltip goes off the right side
-			if (tooltipRect.right > window.innerWidth) {
-				tooltip.style.right = '0';
-				tooltip.style.left = 'auto';
-			}
-			
-			// Check if tooltip goes off the top
-			if (tooltipRect.top < 0) {
-				tooltip.style.bottom = 'auto';
-				tooltip.style.top = '100%';
-			}
-		}
+
 
 		function renderAggregatedEffects(){
 		  const agg = aggregateEffectsRanges();
@@ -1314,7 +1286,7 @@
 							<div class="item-name">${equippedItem.name}</div>
 							<div class="item-region">[${equippedItem.region}]</div>
 							<button class="remove-btn" onclick="unequip('${actualType}', '${equippedItem.name}')">×</button>
-							<div class="equipment-tooltip" onmouseenter="positionTooltip(this, event)">
+							<div class="equipment-tooltip">
 								<div class="tooltip-title">${equippedItem.name}</div>
 								<div class="tooltip-stats">
 									${generateItemStats(equippedItem)}
