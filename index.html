@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Item Glossary Viewer</title>
-			<link rel="stylesheet" href="style.css?v=2.5">
+			<link rel="stylesheet" href="style.css?v=2.7">
 
 </head>
 <body>
@@ -156,7 +156,7 @@
 			}
 			
 			try {
-				const response = await fetch('constants.json', { cache: 'no-store' });
+				const response = await fetch('constants.json?v=' + Date.now(), { cache: 'no-store' });
 				if (!response.ok) throw new Error('HTTP ' + response.status);
 				const text = await response.text();
 				localStorage.setItem(CONSTANTS_CACHE_KEY, text);
@@ -176,7 +176,9 @@
 		function normalizeType(raw) {
 			if (!raw) return '';
 			const s = String(raw).trim().toLowerCase();
-			return type_map[s] || s;
+			const result = type_map[s] || s;
+			console.log(`normalizeType: "${raw}" -> "${s}" -> "${result}"`);
+			return result;
 		}
 
 		function normalizeKey(k){ return String(k||'').toLowerCase(); }
@@ -1890,7 +1892,7 @@
 		async function tryFetchJson(){
 			const status = document.getElementById('status');
 			try {
-				const res = await fetch('item_glossary.json', { cache: 'no-store' });
+				const res = await fetch('item_glossary.json?v=' + Date.now(), { cache: 'no-store' });
 				if (!res.ok) throw new Error('HTTP '+res.status);
 				const text = await res.text();
 				localStorage.setItem(CACHE_KEY, text);
