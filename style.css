@@ -2,6 +2,7 @@
 body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 16px; }
 h1 { margin: 0 0 12px; font-size: 20px; }
 #controls { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+.top-bar { display: flex !important; justify-content: flex-end !important; margin-bottom: 8px; width: 100%; text-align: right; }
 #equippedControls { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
 #q { flex: 1 1 420px; padding: 8px 10px; font-size: 14px; }
 #equippedSearch { flex: 1 1 420px; padding: 8px 10px; font-size: 14px; }
@@ -79,7 +80,9 @@ h1 { margin: 0 0 12px; font-size: 20px; }
 
 /* Help bubble */
 .help-btn { position: fixed; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 50%; background: rgba(128,128,128,0.2); border: 1px solid #888; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; }
+.theme-toggle { height: 28px; padding: 0 10px; border-radius: 6px; border: 1px solid #888; background: rgba(128,128,128,0.2); cursor: pointer; font-weight: 600; }
 .help-panel { position: fixed; top: 50px; right: 12px; width: min(480px, 92vw); max-height: 70vh; overflow:auto; padding: 12px 14px; border: 1px solid #888; border-radius: 12px; background: rgba(0,0,0,0.9); color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+.theme-toggle { z-index: 1; }
 .help-panel h3 { margin: 0 0 8px; font-size: 16px; }
 .help-panel p, .help-panel li { font-size: 13px; line-height: 1.35; }
 .help-close { float: right; margin-left: 8px; }
@@ -329,3 +332,74 @@ h1 { margin: 0 0 12px; font-size: 20px; }
 }
 
 
+/* Default (dark) theme header colors */
+#savedBuildsHeader { color: #B9DAA7; }
+#aggEffectsHeader { color: #91CDBE; }
+.agg-group-header { color: #F4E5B7; }
+
+/* Light mode (system preference) */
+@media (prefers-color-scheme: light) {
+	:root { color-scheme: light; }
+	body { background: #ffffff; color: #111111; }
+	.muted { color: #475569; }
+	.meta, a.meta { color: #1f2937; }
+	/* Aggregated effects readability in light mode */
+	.agg-group-header { color: #D4D059 !important; }
+	#savedBuildsHeader { color: #369E59 !important; }
+	#aggEffectsHeader { color: #496898 !important; }
+	.agg-details { color: #1f2937; background: #F8FAFC; border: 1px solid #E2E8F0; }
+	.agg-detail-item .item-name, .agg-detail-item .item-value { color: #111111; }
+	.agg-name, .agg-total { color: #111111; }
+	/* Tooltip contrast in light mode */
+	.equipment-tooltip { background: #ffffff; color: #111111; border: 1px solid rgba(0,0,0,0.15); }
+	.tooltip-stat-value { color: #1f2937; }
+	/* Equipment grid item names */
+	.equipment-slot .item-name { color: #000000; }
+}
+
+/* Forced light theme (via toggle) */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="light"] body { background: #ffffff; color: #111111; }
+:root[data-theme="light"] .muted { color: #475569; }
+:root[data-theme="light"] .meta, :root[data-theme="light"] a.meta { color: #1f2937; }
+:root[data-theme="light"] .agg-group-header { color: #D4D059 !important; }
+:root[data-theme="light"] #savedBuildsHeader { color: #369E59 !important; }
+:root[data-theme="light"] #aggEffectsHeader { color: #496898 !important; }
+:root[data-theme="light"] .agg-details { color: #1f2937; background: #F8FAFC; border: 1px solid #E2E8F0; }
+:root[data-theme="light"] .agg-detail-item .item-name, :root[data-theme="light"] .agg-detail-item .item-value { color: #111111; }
+:root[data-theme="light"] .agg-name, :root[data-theme="light"] .agg-total { color: #111111; }
+:root[data-theme="light"] .equipment-tooltip { background: #ffffff; color: #111111; border: 1px solid rgba(0,0,0,0.15); }
+:root[data-theme="light"] .tooltip-stat-value { color: #1f2937; }
+:root[data-theme="light"] .equipment-slot .item-name { color: #000000; }
+
+/* Forced dark theme (via toggle) */
+:root[data-theme="dark"] { color-scheme: dark; }
+:root[data-theme="dark"] body { background: #0b0f14; color: #e5e7eb; }
+:root[data-theme="dark"] .muted { color: #9aa4b2; }
+:root[data-theme="dark"] .meta, :root[data-theme="dark"] a.meta { color: #cbd5e1; }
+:root[data-theme="dark"] .tabs .tab { border-color: #6b7280; }
+:root[data-theme="dark"] .tab.active { background: rgba(255,255,255,0.08); }
+:root[data-theme="dark"] .badge { border-color: #6b7280; }
+:root[data-theme="dark"] .section h2 { border-bottom-color: #374151; }
+:root[data-theme="dark"] .item { border-bottom-color: rgba(148,163,184,0.3); }
+:root[data-theme="dark"] .agg-list .agg-effect { border-color: rgba(148,163,184,0.35); }
+:root[data-theme="dark"] .agg-group-header { color: #F4E5B7 !important; }
+:root[data-theme="dark"] #savedBuildsHeader { color: #B9DAA7 !important; }
+:root[data-theme="dark"] #aggEffectsHeader { color: #91CDBE !important; }
+:root[data-theme="dark"] .agg-details { color: #e5e7eb; background: rgba(255,255,255,0.04); border: 1px solid #374151; }
+:root[data-theme="dark"] .agg-detail-item { border-bottom-color: rgba(148,163,184,0.2); }
+:root[data-theme="dark"] .agg-detail-item .item-name, :root[data-theme="dark"] .agg-detail-item .item-value { color: #e5e7eb; }
+:root[data-theme="dark"] .agg-name, :root[data-theme="dark"] .agg-total { color: #ffffff; }
+:root[data-theme="dark"] .equipment-grid { background: rgba(255,255,255,0.06); border-color: rgba(148,163,184,0.3); }
+:root[data-theme="dark"] .equipment-slot { background: rgba(255,255,255,0.06); border-color: #94a3b8; }
+:root[data-theme="dark"] .equipment-slot:hover { background: rgba(255,255,255,0.12); border-color: #cbd5e1; }
+:root[data-theme="dark"] .slot-label { color: #94a3b8; }
+:root[data-theme="dark"] .slot-empty { color: #9ca3af; }
+:root[data-theme="dark"] .item-region { color: #9ca3af; }
+:root[data-theme="dark"] .equipped-slot { border-color: #4CAF50; background: rgba(76,175,80,0.12); }
+:root[data-theme="dark"] .equipped-slot:hover { border-color: #45a049; background: rgba(76,175,80,0.22); }
+:root[data-theme="dark"] .equipment-tooltip { background: rgba(0,0,0,0.95); color: #ffffff; border: 1px solid #666; }
+:root[data-theme="dark"] .tooltip-title { border-bottom-color: #666; }
+:root[data-theme="dark"] .tooltip-stat-name { color: #E2BF4E; }
+:root[data-theme="dark"] .tooltip-stat-value { color: #ffffff; }
+:root[data-theme="dark"] .equipment-slot .item-name { color: #ffffff; }

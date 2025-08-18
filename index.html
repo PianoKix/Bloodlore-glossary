@@ -4,11 +4,14 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Item Glossary Viewer</title>
-			<link rel="stylesheet" href="style.css?v=3.6">
+			<link rel="stylesheet" href="style.css?v=3.7">
+
+			<!-- moved all theme styles to style.css -->
 
 </head>
 <body>
 	<h1>Item Glossary Viewer</h1>
+	<div class="top-bar"><button id="themeToggle" class="theme-toggle">Light Mode</button></div>
 	<div id="controls">
 		<input id="q" type="search" placeholder="Search: effect, name, region (e.g. R01), source (e.g. Purchase). Comma-separated. Use -term to exclude by region/source or -event to exclude events; use event to include only events; use &lt;region to search up to region." autocomplete="off" />
 		<span id="status" class="muted">Loading item_glossary.json…</span>
@@ -44,13 +47,13 @@
 			<span class="muted">Click item to equip/unequip. Use remove buttons to unequip from list.</span>
 		</div>
 		<div class="section">
-			<h2 style="color: #B9DAA7;">Saved Builds</h2>
+			<h2 id="savedBuildsHeader" style="color: #B9DAA7;">Saved Builds</h2>
 			<div id="savedBuilds" class="saved-builds"></div>
 		</div>
 		<div id="missingTypes" style="display:none" class="missing-banner"></div>
 		<div id="equippedLists" data-hidden="1" style="display:none"></div>
 		<div class="section">
-			<h2 style="color: #91CDBE;">Aggregated Effects</h2>
+			<h2 id="aggEffectsHeader" style="color: #91CDBE;">Aggregated Effects</h2>
 			<div id="aggEffects"></div>
 		</div>
 	</div>
@@ -92,6 +95,7 @@
 		const CONSTANTS_CACHE_KEY = 'constantsJsonTextV1';
 		const BUILDS_KEY = 'itemGlossarySavedBuildsV1';
 		const SETTINGS_KEY = 'itemGlossarySettingsV1';
+        const THEME_KEY = 'itemGlossaryThemeV1';
 		let allowAccThird = true;
 		let allowRetThird = true;
 		let categorizeMode = false;
@@ -127,6 +131,16 @@
 			} catch (error) {
 				console.error('Failed to load settings:', error);
 			}
+
+            // Load saved theme before wiring events
+            try {
+                const savedTheme = localStorage.getItem(THEME_KEY);
+                if (savedTheme === 'light' || savedTheme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', savedTheme);
+                } else {
+                    document.documentElement.removeAttribute('data-theme');
+                }
+            } catch (e) {}
 		}
 
 		function saveSettings() {
@@ -1876,6 +1890,27 @@
 			document.getElementById('helpClose').addEventListener('click', ()=>{
 				document.getElementById('helpPanel').style.display = 'none';
 			});
+			const themeBtn = document.getElementById('themeToggle');
+			function refreshThemeButtonLabel(){
+				const explicit = document.documentElement.getAttribute('data-theme');
+				if (explicit === 'light') { themeBtn.textContent = 'Dark Mode'; return; }
+				if (explicit === 'dark') { themeBtn.textContent = 'Light Mode'; return; }
+				const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+				themeBtn.textContent = prefersLight ? 'Dark Mode' : 'Light Mode';
+			}
+			refreshThemeButtonLabel();
+			themeBtn.addEventListener('click', ()=>{
+				const current = document.documentElement.getAttribute('data-theme');
+				let next;
+				if (current === 'light') next = 'dark'; else if (current === 'dark') next = 'light'; else {
+					// No explicit theme; infer and flip
+					const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+					next = prefersLight ? 'dark' : 'light';
+				}
+				document.documentElement.setAttribute('data-theme', next);
+				try { localStorage.setItem(THEME_KEY, next); } catch(e) {}
+				refreshThemeButtonLabel();
+			});
 			document.getElementById('toggleAcc3').addEventListener('change', (e)=>{
 				allowAccThird = e.target.checked; 
 				saveSettings();
@@ -1946,8 +1981,8 @@
 			document.getElementById('fallback').style.display = 'inline';
 		}
 
-		initEvents();
 		loadSettings();
+		initEvents();
 		loadConstants().then(() => {
 			tryFetchJson();
 		});
