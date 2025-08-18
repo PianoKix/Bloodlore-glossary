@@ -375,7 +375,7 @@ h1 { margin: 0 0 12px; font-size: 20px; }
 
 /* Forced dark theme (via toggle) */
 :root[data-theme="dark"] { color-scheme: dark; }
-:root[data-theme="dark"] body { background: #0b0f14; color: #e5e7eb; }
+:root[data-theme="dark"] body { background: #1b1c1d; color: #e5e7eb; }
 :root[data-theme="dark"] .muted { color: #9aa4b2; }
 :root[data-theme="dark"] .meta, :root[data-theme="dark"] a.meta { color: #cbd5e1; }
 :root[data-theme="dark"] .tabs .tab { border-color: #6b7280; }
