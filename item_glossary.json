@@ -501,6 +501,14 @@
                                                   }
                              },
                 "Chest":  {
+                              "Blood Knight Armour":  {
+                                                      "effects":  {
+                                                                      "Health":  "370+",
+                                                                      "Bloodward":  "10%",
+                                                                      "Heal":  "23-28"
+                                                                  },
+                                                      "source":  "Drop"
+                                                  },
                               "Vampire Knight Tunic":  {
                                                            "effects":  {
                                                                            "Moonlit Barrier":  "10%",
@@ -653,6 +661,20 @@
                                                           },
                                               "source":  "Drop"
                                           },
+                                "Blood Knight Blade":  {
+                                                      "effects":  {
+                                                                      "Barrage":  "120-150",
+                                                                      "Lifebane":  "10%",
+                                                                      "Wolfbane":  "10%",
+                                                                      "Sufferance":  "10%",
+                                                                      "Investment":  "11%",
+                                                                      "Physical Weapon Damage":  "56-62",
+                                                                      "Blood Craze":  "4%",
+                                                                      "Trauma":  "27-31",
+                                                                      "Lifeleech":  "35-40"
+                                                                  },
+                                                      "source":  "Drop"
+                                                  },
                                 "Estake":  {
                                               "effects":  {
                                                               "Crit Chance":  "3%",
