@@ -362,13 +362,14 @@ h1 { margin: 0 0 12px; font-size: 20px; }
 :root[data-theme="light"] body { background: #ffffff; color: #111111; }
 :root[data-theme="light"] .muted { color: #475569; }
 :root[data-theme="light"] .meta, :root[data-theme="light"] a.meta { color: #1f2937; }
-:root[data-theme="light"] .agg-group-header { color: #D4D059 !important; }
+:root[data-theme="light"] .agg-group-header { color: #a39f2f !important; }
 :root[data-theme="light"] #savedBuildsHeader { color: #369E59 !important; }
 :root[data-theme="light"] #aggEffectsHeader { color: #496898 !important; }
 :root[data-theme="light"] .agg-details { color: #1f2937; background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 10px; }
 :root[data-theme="light"] .agg-detail-item .item-name, :root[data-theme="light"] .agg-detail-item .item-value { color: #111111; }
 :root[data-theme="light"] .agg-name, :root[data-theme="light"] .agg-total { color: #111111; }
 :root[data-theme="light"] .equipment-tooltip { background: #ffffff; color: #111111; border: 1px solid rgba(0,0,0,0.15); }
+:root[data-theme="light"] .tooltip-stat-name { color: #b49327; }
 :root[data-theme="light"] .tooltip-stat-value { color: #1f2937; }
 :root[data-theme="light"] .equipment-slot .item-name { color: #000000; }
 

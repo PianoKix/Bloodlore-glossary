@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Item Glossary Viewer</title>
-			<link rel="stylesheet" href="style.css?v=3.7">
+			<link rel="stylesheet" href="style.css?v=3.8">
 
 			<!-- moved all theme styles to style.css -->
 
@@ -311,6 +311,7 @@
 			return cleanOne(val);
 		}
 		function collectEffectDisplayAll(effects, effectTokens){
+			if (!effects || Object.keys(effects).length === 0) return '';
 			const tokens = (effectTokens||[]).map(normalizeKey);
 			const matchedByToken = tokens.map(()=>[]);
 			const matchedOther = [];
@@ -553,9 +554,11 @@
 			onQuery();
 			return true;
 		}
-		function unequip(type, name){
-			if (!confirm('Unequip item?')) {
-				return;
+		function unequip(type, name, requireConfirm){
+			if (requireConfirm) {
+				if (!confirm('Unequip item?')) {
+					return;
+				}
 			}
 			const perType = EQUIPPED.get(type) || new Map();
 			perType.delete(name);
@@ -1317,7 +1320,7 @@
 						const removeBtn = slot.querySelector('.remove-btn');
 						removeBtn.addEventListener('click', (e) => {
 							e.stopPropagation(); // Prevent event bubbling
-							unequip(actualType, equippedItem.name);
+							unequip(actualType, equippedItem.name, true);
 						});
 					} else {
 						// Empty slot
@@ -1382,7 +1385,7 @@
 					if (isEquipped) div.classList.add('equipped');
 					if (row.negAny) div.classList.add('neg-item');
 					div.onclick = ()=>{
-						if (isEquipped) unequip(row.it.type, row.it.name); else equip(row.it);
+						if (isEquipped) unequip(row.it.type, row.it.name, false); else equip(row.it);
 					};
 					const main = document.createElement('div');
 					const srcTxt = formatSource(row.it.source);
@@ -1480,7 +1483,7 @@
 						if (isEquipped) div.classList.add('equipped');
 						if (itemData.negAny) div.classList.add('neg-item');
 						div.onclick = ()=>{
-							if (isEquipped) unequip(item.type, item.name); else equip(item);
+							if (isEquipped) unequip(item.type, item.name, false); else equip(item);
 						};
 						const main = document.createElement('div');
 						const srcTxt = formatSource(item.source);
@@ -1530,7 +1533,7 @@
 					if (isEquipped) div.classList.add('equipped');
 					if (itemData.negAny) div.classList.add('neg-item');
 					div.onclick = ()=>{
-						if (isEquipped) unequip(item.type, item.name); else equip(item);
+						if (isEquipped) unequip(item.type, item.name, false); else equip(item);
 					};
 					const main = document.createElement('div');
 					const srcTxt = formatSource(item.source);
