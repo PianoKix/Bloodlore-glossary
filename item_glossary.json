@@ -661,7 +661,7 @@
                                                           },
                                               "source":  "Drop"
                                           },
-                                "Blood Knight Blade":  {
+                                "Vampire Musket":  {
                                                       "effects":  {
                                                                       "Barrage":  "120-150",
                                                                       "Lifebane":  "10%",
@@ -9077,6 +9077,7 @@
                          }
             }
 }
+
 
 
 
