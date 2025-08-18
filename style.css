@@ -347,7 +347,7 @@ h1 { margin: 0 0 12px; font-size: 20px; }
 	.agg-group-header { color: #D4D059 !important; }
 	#savedBuildsHeader { color: #369E59 !important; }
 	#aggEffectsHeader { color: #496898 !important; }
-	.agg-details { color: #1f2937; background: #F8FAFC; border: 1px solid #E2E8F0; }
+	.agg-details { color: #1f2937; background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 10px; }
 	.agg-detail-item .item-name, .agg-detail-item .item-value { color: #111111; }
 	.agg-name, .agg-total { color: #111111; }
 	/* Tooltip contrast in light mode */
@@ -365,7 +365,7 @@ h1 { margin: 0 0 12px; font-size: 20px; }
 :root[data-theme="light"] .agg-group-header { color: #D4D059 !important; }
 :root[data-theme="light"] #savedBuildsHeader { color: #369E59 !important; }
 :root[data-theme="light"] #aggEffectsHeader { color: #496898 !important; }
-:root[data-theme="light"] .agg-details { color: #1f2937; background: #F8FAFC; border: 1px solid #E2E8F0; }
+:root[data-theme="light"] .agg-details { color: #1f2937; background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 10px; }
 :root[data-theme="light"] .agg-detail-item .item-name, :root[data-theme="light"] .agg-detail-item .item-value { color: #111111; }
 :root[data-theme="light"] .agg-name, :root[data-theme="light"] .agg-total { color: #111111; }
 :root[data-theme="light"] .equipment-tooltip { background: #ffffff; color: #111111; border: 1px solid rgba(0,0,0,0.15); }
@@ -386,7 +386,7 @@ h1 { margin: 0 0 12px; font-size: 20px; }
 :root[data-theme="dark"] .agg-group-header { color: #F4E5B7 !important; }
 :root[data-theme="dark"] #savedBuildsHeader { color: #B9DAA7 !important; }
 :root[data-theme="dark"] #aggEffectsHeader { color: #91CDBE !important; }
-:root[data-theme="dark"] .agg-details { color: #e5e7eb; background: rgba(255,255,255,0.04); border: 1px solid #374151; }
+:root[data-theme="dark"] .agg-details { color: #e5e7eb; background: rgba(255,255,255,0.04); border: 1px solid #374151; padding: 8px 10px; }
 :root[data-theme="dark"] .agg-detail-item { border-bottom-color: rgba(148,163,184,0.2); }
 :root[data-theme="dark"] .agg-detail-item .item-name, :root[data-theme="dark"] .agg-detail-item .item-value { color: #e5e7eb; }
 :root[data-theme="dark"] .agg-name, :root[data-theme="dark"] .agg-total { color: #ffffff; }
