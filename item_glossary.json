@@ -456,7 +456,18 @@
                                                       }
                            },
                 "Retainer":  {
-                                 "Her Royal Highness Princess Muffin, Best in Dungeon":  {
+                                "Lycan Howler":  {
+                                                      "effects":  {
+                                                                              "Retainer Mystic Weapon Damage":  "16-21",
+                                                                              "Sunbeam":  "16-22",
+                                                                              "Bloodbane":  "10%",
+                                                                              "XP-losion":  "8%",
+                                                                              "Call Ghost":  "35%",
+                                                                              "Healing Touch":  "16-20"
+                                                                          },
+                                                      "source":  "Drop"
+                                                  }, 
+                                "Her Royal Highness Princess Muffin, Best in Dungeon":  {
                                                               "effects":  {
                                                                               "Healing Touch":  "8-11",
                                                                               "Greater Heal":  "26-31",
