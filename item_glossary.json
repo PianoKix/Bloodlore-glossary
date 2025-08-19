@@ -565,10 +565,17 @@
                                              }
                           },
                 "Accessory":  {
+                                  "Victorian Crest":  {
+                                                                    "effects":  {
+                                                                                    "Demonbane":  "10%",
+                                                                                    "Nerves of Steel":  "10"
+                                                                                },
+                                                                    "source":  "Drop"
+                                                                },
                                   "Ornate Candelabra":  {
                                                                     "effects":  {
                                                                                     "Summoning":  "3%",
-                                                                                    "Health":  "14+%",
+                                                                                    "Health":  "14+",
                                                                                     "Ignite":  "38-44"
                                                                                 },
                                                                     "source":  "Drop"
