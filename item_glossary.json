@@ -659,7 +659,17 @@
                                              }
                          },
                 "Weapon":  {
-                               "Lifestealer":  {
+                                "Blade of Frozen Shadows":  {
+                                              "effects":  {
+                                                              "Shadow Weapon Damage":  "33-38",
+                                                              "Soulburn":  "27-31",
+                                                              "Frostbite":  "27-31",
+                                                              "Crit Chance":  "5%",
+                                                              "Cleansing Barrier":  "10%"
+                                                          },
+                                              "source":  "Drop"
+                                          },
+                                "Lifestealer":  {
                                               "effects":  {
                                                               "Shadow Weapon Damage":  "68-73",
                                                               "Lifeleech":  "32-38",
