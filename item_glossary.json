@@ -1807,6 +1807,19 @@
                                                                        },
                                                            "source":  "Purchase"
                                                        },
+                                  "Enchanted Vampire Coffin":  {
+                                                         "effects":  {
+                                                                         "Coffin Capacity":  "7",
+                                                                         "Coffin Recharge Time":  "50 Minutes",
+                                                                         "Health":  "23+",
+                                                                         "Shield":  "10%",
+                                                                         "XP-losion":  "9%",
+                                                                         "Blood Craze":  "5%",
+                                                                         "Megalomania":  "6%",
+                                                                         "Bloodward":  "10%"
+                                                                     },
+                                                         "source":  "Purchase"
+                                                     },
                                   "Vampire Coffin":  {
                                                          "effects":  {
                                                                          "Coffin Recharge Time":  "60 Minutes",
@@ -2454,6 +2467,23 @@
                                                               }
                             },
                    "Mount":  {
+                                 "Umbral Nightclaw":  {
+                                                 "effects":  {
+                                                                 "Charge":  "32-36",
+                                                                 "First Strike":  "100%",
+                                                                 "Health":  "75+",
+                                                                 "Flesh Wound":  "32-36",
+                                                                 "Resilience":  "10%",
+                                                                 "Nerves of Steel":  "10%",
+                                                                 "Bloodward":  "10%",
+                                                                 "Terrorbane":  "10%",
+                                                                 "Evade":  "10%",
+                                                                 "Megalomania":  "8%",
+                                                                 "Summoning":  "4%",
+                                                                 "Weaken":  "10%"
+                                                             },
+                                                 "source":  "Purchase"
+                                             },
                                  "Doombus":  {
                                                  "effects":  {
                                                                  "Deathtouch":  "2",
@@ -2706,6 +2736,21 @@
                                                         }
                                  },
                    "Retainer":  {
+                                    "Occult Summoner":  {
+                                                             "effects":  {
+                                                                             "Retainer Mystic Weapon Damage":  "7-11",
+                                                                             "Burn":  "7-11",
+                                                                             "Manaburn":  "7-11",
+                                                                             "Fireball":  "12-15",
+                                                                             "Summoning":  "4%",
+                                                                             "Megalomania":  "4%",
+                                                                             "Questing":  "6%",
+                                                                             "Loot Chance Modifier":  "10%",
+                                                                             "Demonbane":  "10%",
+                                                                             "Demonward":  "10%"
+                                                                         },
+                                                             "source":  "Purchase"
+                                                         },
                                     "Sun Dragon Whelp":  {
                                                              "effects":  {
                                                                              "Retainer Fire Weapon Damage":  "6-9",
@@ -2869,6 +2914,15 @@
                                                  }
                                 },
                    "Power":  {
+                                 "Midnight Severance":  {
+                                                          "effects":  {
+                                                                          "Carnage":  "3%",
+                                                                          "Bloodlust":  "5%",
+                                                                          "Questing":  "10%",
+                                                                          "Cloning":  "5%"
+                                                                      },
+                                                          "source":  "Purchase"
+                                                      },
                                  "Raise Skeletons":  {
                                                          "effects":  {
                                                                          "Questing":  "7%",
@@ -2903,6 +2957,20 @@
                                                        }
                              },
                    "Chest":  {
+                                 "Phantom Embrace Chestplace": {
+                                                            "effects":  {
+                                                                           "Health":  "390+",
+                                                                           "Iceward":  "10%",
+                                                                           "Lifeward":  "10%",
+                                                                           "Heal":  "33-37",
+                                                                           "Lifebane":  "10%",
+                                                                           "Bloodbane":  "10%",
+                                                                           "Dodge":  "10%",
+                                                                           "Blood Craze":  "4%",
+                                                                           "Manaward":  "10%"
+                                                                       },
+                                                           "source":  "Purchase"
+                                                       },
                                  "Aegis of Ice Protection":  {
                                                            "effects":  {
                                                                            "Health":  "395+",
@@ -3080,6 +3148,20 @@
                                                     }
                               },
                    "Hands":  {
+                                 "Phantombind Gauntlets":  {
+                                                     "effects":  {
+                                                                     "Health":  "59+",
+                                                                     "Manastorm":  "56-65",
+                                                                     "Gravebind":  "24-30",
+                                                                     "Banish":  "24-30",
+                                                                     "Fireward":  "10%",
+                                                                     "Nerves of Steel":  "10%",
+                                                                     "Wildbane":  "10%",
+                                                                     "Summoning":  "4%",
+                                                                     "Stun":  "5%"
+                                                                 },
+                                                     "source":  "Purchase"
+                                                 },
                                  "Chaos Claws":  {
                                                      "effects":  {
                                                                      "Crit Chance":  "4%",
