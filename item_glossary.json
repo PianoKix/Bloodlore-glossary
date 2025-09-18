@@ -2736,7 +2736,19 @@
                                                         }
                                  },
                    "Retainer":  {
-                                    "Occult Summoner":  {
+                                    "Mamba Marconi":  {
+                                                             "effects":  {
+                                                                             "Retainer Ballistic Weapon Damage":  "18-22",
+																 			 "True Aim":  "10%",
+																 			 "Xenobane":  "10%",
+																 			 "Shield":  "10%",
+																 			 "Poisonward":  "10%",
+																 			 "Blur":  "10%",
+																 			 "Loot Chance Modifier":  "20%"
+                                                                         },
+                                                             "source":  "Purchase"
+                                                         },
+					   				"Occult Summoner":  {
                                                              "effects":  {
                                                                              "Retainer Mystic Weapon Damage":  "7-11",
                                                                              "Burn":  "7-11",
@@ -3460,7 +3472,20 @@
                                                               }
                            },
                    "Feet":  {
-                                "EBM Stompers":  {
+                                "Phantom Walkers":  {
+                                                     "effects":  {
+                                                                     "Health":  "61+",
+														 			 "Healing Touch":  "18-24",
+														 			 "Blur": "10%",
+														 			 "Bloodward":  "10%",
+														 			 "Summoning":  "3%",
+														 			 "Blood Craze":  "4%",
+														 			 "Necrosis":  "15%",
+														 			 "Call Ghost":  "40%"
+                                                                 },
+                                                     "source":  "Purchase"
+                                                 },
+					   			"EBM Stompers":  {
                                                      "effects":  {
                                                                      "Wildward":  "10%",
                                                                      "Resilience":  "10%",
@@ -6791,7 +6816,8 @@
                                                                     "Terrorbane":  "10%",
                                                                     "Xenobane":  "10%",
                                                                     "Physical Weapon Damage":  "42-50",
-                                                                    "Megalomania":  "8%"
+                                                                    "Megalomania":  "8%",
+																	"Kaijubane":  "10%"
                                                                 },
                                                     "source":  "VCOM"
                                                 },
@@ -9195,6 +9221,7 @@
                          }
             }
 }
+
 
 
 
