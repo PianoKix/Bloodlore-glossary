@@ -138,7 +138,8 @@
       "Lightbane",
       "Techbane",
       "Bloodbane",
-      "Xenobane"
+      "Xenobane",
+      "Kaijubane"
     ],
     "Racial Instant Attack": [
       "Exterminate",
@@ -507,3 +508,4 @@
     "coins": "coin"
   }
 }
+
