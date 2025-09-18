@@ -122,7 +122,8 @@
       "Rot",
       "Fear",
       "Soulburn",
-      "Touch from Beyond"
+      "Touch from Beyond",
+      "Go Pouncy!"
     ],
     "Racial Offense Buff": [
       "Terrorbane",
@@ -508,4 +509,5 @@
     "coins": "coin"
   }
 }
+
 
