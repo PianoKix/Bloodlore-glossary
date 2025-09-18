@@ -475,7 +475,7 @@
                                                                               "Terrorbane":  "10%",
                                                                               "Loot Chance Modifier":  "20%",
                                                                               "Megalomania":  "9%",
-                                                                              "Call Pouncy":  "40%",
+                                                                              "Go Pouncy!":  "22-27",
                                                                               "Coolness":  "5 !",
                                                                               "Retainer Shadow Weapon Damage":  "7-11",
                                                                               "Netherbolt":  "35-45",
@@ -9221,6 +9221,7 @@
                          }
             }
 }
+
 
 
 
