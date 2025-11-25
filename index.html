@@ -1182,6 +1182,72 @@
 			}
 		  }
 
+		  // Fallback: if any Loot Hunter entries exist but weren't rendered into their category,
+		  // add them under the 'Utility Out of Combat' header so they're visible.
+		  try {
+			const lootEntries = entries.filter(([, v]) => (v.displayKey || '').toLowerCase() === 'loot hunter');
+			if (lootEntries.length > 0) {
+			  // find existing Utility Out of Combat header in list
+			  const headers = Array.from(list.querySelectorAll('.agg-group-header'));
+			  const targetHeader = headers.find(h => (h.textContent || '').trim() === 'Utility Out of Combat');
+			  // build a small subtree for the loot hunter grouped view
+			  const lootContainer = document.createElement('div');
+			  lootContainer.className = 'agg-list-loothunter';
+			  const matsMap = new Map();
+			  for (const [, v] of lootEntries) {
+				const mat = v.subKey || (v.origKey || '').split(':').slice(1).join(':').trim() || v.origKey;
+				if (!matsMap.has(mat)) matsMap.set(mat, []);
+				matsMap.get(mat).push(v);
+			  }
+			  const sortedMats = Array.from(matsMap.entries()).sort((a,b)=> a[0].localeCompare(b[0]));
+			  for (const [mat, items] of sortedMats) {
+				const matRow = document.createElement('div');
+				matRow.className = 'agg-effect';
+				const head = document.createElement('div');
+				head.className = 'agg-head';
+				const nameEl = document.createElement('div');
+				nameEl.className = 'agg-name';
+				nameEl.appendChild(document.createTextNode(`Loot Hunter: ${mat} (${items.length})`));
+				const totalEl = document.createElement('div');
+				totalEl.className = 'agg-total';
+				const mins = items.reduce((s,it)=> s+it.min,0);
+				const maxs = items.reduce((s,it)=> s+it.max,0);
+				totalEl.textContent = (mins===maxs) ? `${mins}` : `${mins}-${maxs}`;
+				head.appendChild(nameEl);
+				head.appendChild(totalEl);
+				matRow.appendChild(head);
+				const details = document.createElement('div');
+				details.className = 'agg-details collapsed muted';
+				for (const it of items) {
+				  const itemRow = document.createElement('div');
+				  itemRow.className = 'agg-detail-item';
+				  const itemName = document.createElement('div');
+				  itemName.className = 'item-name';
+				  itemName.textContent = it.details[0].split(':')[0];
+				  const itemVal = document.createElement('div');
+				  itemVal.className = 'item-value';
+				  const itemRange = (it.min===it.max) ? `${it.min}` : `${it.min}-${it.max}`;
+				  itemVal.textContent = it.percent ? `${itemRange}%` : itemRange;
+				  itemRow.appendChild(itemName);
+				  itemRow.appendChild(itemVal);
+				  details.appendChild(itemRow);
+				}
+				matRow.appendChild(details);
+				lootContainer.appendChild(matRow);
+			  }
+			  if (targetHeader && targetHeader.parentNode) {
+				// insert after header
+				let insertBeforeNode = targetHeader.nextSibling;
+				while (insertBeforeNode && insertBeforeNode.classList && insertBeforeNode.classList.contains('agg-group-header')) {
+				  insertBeforeNode = insertBeforeNode.nextSibling;
+				}
+				targetHeader.parentNode.insertBefore(lootContainer, insertBeforeNode);
+			  } else {
+				list.appendChild(lootContainer);
+			  }
+			}
+		  } catch (e) { console.error('Loot Hunter fallback failed', e); }
+
 		  container.appendChild(list);
 		}
 
