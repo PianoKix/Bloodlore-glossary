@@ -604,7 +604,8 @@
 
 				for (const {it} of perType.values()){
 					for (const [effKey, effVal] of Object.entries(it.effects||{})){
-						const r = rangeFromValue(effVal);
+						const sanitized = sanitizeEffectValue(effKey, effVal);
+						const r = rangeFromValue(sanitized);
 
 						if (combineable.includes(effKey)) {
 							const rec = totals.get(effKey) || { displayKey: effKey, min: 0, max: 0, details: [], percent: false };
