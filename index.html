@@ -762,122 +762,7 @@
 			list.appendChild(row);
 		  }
 
-		  // Special handling for Loot Hunter before processing other skill_groups
-		  const lootHunterEntries = filteredEntries.filter(([, v]) =>
-			(v.displayKey || '').toLowerCase() === 'loot hunter'
-		  );
-		  if (lootHunterEntries.length > 0) {
-			const uncombinableGroups = new Map();
-			
-			for (const [key, v] of lootHunterEntries) {
-			  const displayKey = v.displayKey;
-			  if (!uncombinableGroups.has(displayKey)) {
-				uncombinableGroups.set(displayKey, {
-				  displayKey: displayKey,
-				  min: 0,
-				  max: 0,
-				  details: [],
-				  percent: false,
-				  items: []
-				});
-			  }
-			  const group = uncombinableGroups.get(displayKey);
-			  group.min += v.min;
-			  group.max += v.max;
-			  group.percent = group.percent || v.percent;
-			  group.items.push(v);
-			}
 
-			for (const [displayKey, group] of uncombinableGroups.entries()) {
-			  const row = document.createElement('div');
-			  row.className = 'agg-effect';
-
-			  const head = document.createElement('div');
-			  head.className = 'agg-head';
-
-			  const nameEl = document.createElement('div');
-			  nameEl.className = 'agg-name';
-			  
-			  const toggle = document.createElement('span');
-			  toggle.className = 'agg-toggle';
-			  toggle.textContent = '+';
-			  toggle.onclick = function() {
-				const details = row.querySelector('.agg-details');
-				if (details.classList.contains('collapsed')) {
-				  details.classList.remove('collapsed');
-				  details.classList.add('expanded');
-				  toggle.textContent = '-';
-				} else {
-				  details.classList.remove('expanded');
-				  details.classList.add('collapsed');
-				  toggle.textContent = '+';
-				}
-			  };
-			  nameEl.appendChild(toggle);
-			  nameEl.appendChild(document.createTextNode(`${group.displayKey || ''} (${group.items.length})`));
-
-			  const totalEl = document.createElement('div');
-			  totalEl.className = 'agg-total';
-			  const totalVal = (group.min === group.max) ? `${group.min}` : `${group.min}-${group.max}`;
-			  totalEl.textContent = group.percent ? `${totalVal}%` : totalVal;
-
-			  head.appendChild(nameEl);
-			  head.appendChild(totalEl);
-			  row.appendChild(head);
-
-			  const details = document.createElement('div');
-			  details.className = 'agg-details collapsed muted';
-
-			  // Group items by material (subKey)
-			  const matMap = new Map();
-			  for (const it of group.items) {
-				const mat = it.subKey || (it.origKey || '').split(':').slice(1).join(':').trim() || it.origKey;
-				if (!matMap.has(mat)) matMap.set(mat, { min: 0, max: 0, percent: it.percent, items: [] });
-				const entry = matMap.get(mat);
-				entry.min += it.min;
-				entry.max += it.max;
-				entry.percent = entry.percent || it.percent;
-				entry.items.push(it);
-			  }
-
-			  const sortedMats = Array.from(matMap.entries()).sort((a,b) => a[0].localeCompare(b[0]));
-			  for (const [mat, matGroup] of sortedMats) {
-				const matRow = document.createElement('div');
-				matRow.className = 'agg-detail-item nested-material';
-
-				const matToggle = document.createElement('span');
-				matToggle.className = 'agg-subtoggle';
-				matToggle.textContent = '+';
-				matToggle.onclick = function() {
-				  const matDetails = matRow.querySelector('.mat-details');
-				  if (!matDetails) return;
-				  if (matDetails.classList.contains('collapsed')) {
-					matDetails.classList.remove('collapsed');
-					matDetails.classList.add('expanded');
-					matToggle.textContent = '-';
-				  } else {
-					matDetails.classList.remove('expanded');
-					matDetails.classList.add('collapsed');
-					matToggle.textContent = '+';
-				  }
-				};
-
-				const matName = document.createElement('div');
-				matName.className = 'item-name';
-				matName.textContent = mat + ` (${matGroup.items.length})`;
-
-				const matVal = document.createElement('div');
-				matVal.className = 'item-value';
-				const mVal = (matGroup.min === matGroup.max) ? `${matGroup.min}` : `${matGroup.min}-${matGroup.max}`;
-				matVal.textContent = matGroup.percent ? `${mVal}%` : mVal;
-
-				matRow.appendChild(matToggle);
-				matRow.appendChild(matName);
-				matRow.appendChild(matVal);
-
-				// mat details (instances)
-				const matDetails = document.createElement('div');
-				matDetails.className = 'mat-details collapsed muted';
 				const sortedItems = [...matGroup.items].sort((a,b)=> { const avgA=(a.min+a.max)/2; const avgB=(b.min+b.max)/2; return avgB-avgA; });
 				for (const item of sortedItems) {
 				  const itemRow = document.createElement('div');
@@ -1061,8 +946,78 @@
 										const details = document.createElement('div');
 										details.className = 'agg-details collapsed muted';
 
-										const sortedItems = [...group.items].sort((a, b) => {
-											const avgA = (a.min + a.max) / 2;
+										// Special handling for Loot Hunter with material grouping
+										if ((group.displayKey || '').toLowerCase() === 'loot hunter') {
+											// Group items by material (subKey)
+											const matMap = new Map();
+											for (const it of group.items) {
+												const mat = it.subKey || (it.origKey || '').split(':').slice(1).join(':').trim() || it.origKey;
+												if (!matMap.has(mat)) matMap.set(mat, { min: 0, max: 0, percent: it.percent, items: [] });
+												const entry = matMap.get(mat);
+												entry.min += it.min;
+												entry.max += it.max;
+												entry.percent = entry.percent || it.percent;
+												entry.items.push(it);
+											}
+
+											const sortedMats = Array.from(matMap.entries()).sort((a,b) => a[0].localeCompare(b[0]));
+											for (const [mat, matGroup] of sortedMats) {
+												const matRow = document.createElement('div');
+												matRow.className = 'agg-detail-item nested-material';
+
+												const matToggle = document.createElement('span');
+												matToggle.className = 'agg-subtoggle';
+												matToggle.textContent = '+';
+												
+												const matDetails = document.createElement('div');
+												matDetails.className = 'mat-details collapsed muted';
+												const sortedItems = [...matGroup.items].sort((a,b)=> { const avgA=(a.min+a.max)/2; const avgB=(b.min+b.max)/2; return avgB-avgA; });
+												for (const item of sortedItems) {
+													const itemRow = document.createElement('div');
+													itemRow.className = 'agg-detail-item';
+													const itemName = document.createElement('div');
+													itemName.className = 'item-name';
+													itemName.textContent = item.details[0].split(':')[0];
+													const itemValue = document.createElement('div');
+													itemValue.className = 'item-value';
+													const itemRange = (item.min === item.max) ? `${item.min}` : `${item.min}-${item.max}`;
+													itemValue.textContent = matGroup.percent ? `${itemRange}%` : itemRange;
+													itemRow.appendChild(itemName);
+													itemRow.appendChild(itemValue);
+													matDetails.appendChild(itemRow);
+												}
+												
+												matToggle.onclick = function() {
+													if (matDetails.classList.contains('collapsed')) {
+														matDetails.classList.remove('collapsed');
+														matDetails.classList.add('expanded');
+														matToggle.textContent = '-';
+													} else {
+														matDetails.classList.remove('expanded');
+														matDetails.classList.add('collapsed');
+														matToggle.textContent = '+';
+													}
+												};
+
+												const matName = document.createElement('div');
+												matName.className = 'item-name';
+												matName.textContent = mat + ` (${matGroup.items.length})`;
+
+												const matVal = document.createElement('div');
+												matVal.className = 'item-value';
+												const mVal = (matGroup.min === matGroup.max) ? `${matGroup.min}` : `${matGroup.min}-${matGroup.max}`;
+												matVal.textContent = matGroup.percent ? `${mVal}%` : mVal;
+
+												matRow.appendChild(matToggle);
+												matRow.appendChild(matName);
+												matRow.appendChild(matVal);
+
+												details.appendChild(matRow);
+												details.appendChild(matDetails);
+											}
+										} else {
+											const sortedItems = [...group.items].sort((a, b) => {
+												const avgA = (a.min + a.max) / 2;
 											const avgB = (b.min + b.max) / 2;
 											return avgB - avgA;
 										});
@@ -1082,6 +1037,7 @@
 											itemRow.appendChild(itemName);
 											itemRow.appendChild(itemValue);
 											details.appendChild(itemRow);
+										}
 										}
 
 										row.appendChild(details);
