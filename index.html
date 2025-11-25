@@ -1190,61 +1190,104 @@
 			  // find existing Utility Out of Combat header in list
 			  const headers = Array.from(list.querySelectorAll('.agg-group-header'));
 			  const targetHeader = headers.find(h => (h.textContent || '').trim() === 'Utility Out of Combat');
-			  // build a small subtree for the loot hunter grouped view
-			  const lootContainer = document.createElement('div');
-			  lootContainer.className = 'agg-list-loothunter';
-			  const matsMap = new Map();
+							// build a top-level Loot Hunter row that expands into material rows
+							const matsMap = new Map();
 			  for (const [, v] of lootEntries) {
 				const mat = v.subKey || (v.origKey || '').split(':').slice(1).join(':').trim() || v.origKey;
 				if (!matsMap.has(mat)) matsMap.set(mat, []);
 				matsMap.get(mat).push(v);
 			  }
 			  const sortedMats = Array.from(matsMap.entries()).sort((a,b)=> a[0].localeCompare(b[0]));
-			  for (const [mat, items] of sortedMats) {
-				const matRow = document.createElement('div');
-				matRow.className = 'agg-effect';
-				const head = document.createElement('div');
-				head.className = 'agg-head';
-				const nameEl = document.createElement('div');
-				nameEl.className = 'agg-name';
-				nameEl.appendChild(document.createTextNode(`Loot Hunter: ${mat} (${items.length})`));
-				const totalEl = document.createElement('div');
-				totalEl.className = 'agg-total';
-				const mins = items.reduce((s,it)=> s+it.min,0);
-				const maxs = items.reduce((s,it)=> s+it.max,0);
-				totalEl.textContent = (mins===maxs) ? `${mins}` : `${mins}-${maxs}`;
-				head.appendChild(nameEl);
-				head.appendChild(totalEl);
-				matRow.appendChild(head);
-				const details = document.createElement('div');
-				details.className = 'agg-details collapsed muted';
-				for (const it of items) {
-				  const itemRow = document.createElement('div');
-				  itemRow.className = 'agg-detail-item';
-				  const itemName = document.createElement('div');
-				  itemName.className = 'item-name';
-				  itemName.textContent = it.details[0].split(':')[0];
-				  const itemVal = document.createElement('div');
-				  itemVal.className = 'item-value';
-				  const itemRange = (it.min===it.max) ? `${it.min}` : `${it.min}-${it.max}`;
-				  itemVal.textContent = it.percent ? `${itemRange}%` : itemRange;
-				  itemRow.appendChild(itemName);
-				  itemRow.appendChild(itemVal);
-				  details.appendChild(itemRow);
-				}
-				matRow.appendChild(details);
-				lootContainer.appendChild(matRow);
-			  }
-			  if (targetHeader && targetHeader.parentNode) {
-				// insert after header
-				let insertBeforeNode = targetHeader.nextSibling;
-				while (insertBeforeNode && insertBeforeNode.classList && insertBeforeNode.classList.contains('agg-group-header')) {
-				  insertBeforeNode = insertBeforeNode.nextSibling;
-				}
-				targetHeader.parentNode.insertBefore(lootContainer, insertBeforeNode);
-			  } else {
-				list.appendChild(lootContainer);
-			  }
+							// create top-level Loot Hunter row
+							const topRow = document.createElement('div');
+							topRow.className = 'agg-effect';
+							const topHead = document.createElement('div');
+							topHead.className = 'agg-head';
+							const topNameEl = document.createElement('div');
+							topNameEl.className = 'agg-name';
+							const topToggle = document.createElement('span');
+							topToggle.className = 'agg-toggle';
+							topToggle.textContent = '+';
+							topNameEl.appendChild(topToggle);
+							topNameEl.appendChild(document.createTextNode(`Loot Hunter (${lootEntries.length})`));
+							const topTotal = document.createElement('div');
+							topTotal.className = 'agg-total';
+							// sum mins as a simple display (not strictly meaningful for proc chances)
+							const totalMin = lootEntries.reduce((s,[,v])=> s+v.min,0);
+							const totalMax = lootEntries.reduce((s,[,v])=> s+v.max,0);
+							topTotal.textContent = (totalMin===totalMax) ? `${totalMin}` : `${totalMin}-${totalMax}`;
+							topHead.appendChild(topNameEl);
+							topHead.appendChild(topTotal);
+							topRow.appendChild(topHead);
+							const topDetails = document.createElement('div');
+							topDetails.className = 'agg-details collapsed muted';
+
+							// build material rows inside topDetails
+							for (const [mat, items] of sortedMats) {
+								const matRow = document.createElement('div');
+								matRow.className = 'agg-detail-item nested-material';
+
+								const matToggle = document.createElement('span');
+								matToggle.className = 'agg-subtoggle';
+								matToggle.textContent = '+';
+
+								const matName = document.createElement('div');
+								matName.className = 'item-name';
+								matName.textContent = `Loot Hunter: ${mat} (${items.length})`;
+
+								const matVal = document.createElement('div');
+								matVal.className = 'item-value';
+								const mMin = items.reduce((s,it)=> s+it.min,0);
+								const mMax = items.reduce((s,it)=> s+it.max,0);
+								matVal.textContent = (mMin===mMax) ? `${mMin}` : `${mMin}-${mMax}`;
+
+								const matDetails = document.createElement('div');
+								matDetails.className = 'mat-details collapsed muted';
+								const sortedItems = [...items].sort((a,b)=> { const avgA=(a.min+a.max)/2; const avgB=(b.min+b.max)/2; return avgB-avgA; });
+								for (const it of sortedItems) {
+									const itemRow = document.createElement('div');
+									itemRow.className = 'agg-detail-item';
+									const itemName = document.createElement('div');
+									itemName.className = 'item-name';
+									itemName.textContent = it.details[0].split(':')[0];
+									const itemVal = document.createElement('div');
+									itemVal.className = 'item-value';
+									const itemRange = (it.min===it.max) ? `${it.min}` : `${it.min}-${it.max}`;
+									itemVal.textContent = it.percent ? `${itemRange}%` : itemRange;
+									itemRow.appendChild(itemName);
+									itemRow.appendChild(itemVal);
+									matDetails.appendChild(itemRow);
+								}
+
+								matToggle.onclick = function(){
+									if (matDetails.classList.contains('collapsed')){ matDetails.classList.remove('collapsed'); matDetails.classList.add('expanded'); matToggle.textContent='-'; }
+									else { matDetails.classList.remove('expanded'); matDetails.classList.add('collapsed'); matToggle.textContent='+'; }
+								};
+
+								matRow.appendChild(matToggle);
+								matRow.appendChild(matName);
+								matRow.appendChild(matVal);
+								topDetails.appendChild(matRow);
+								topDetails.appendChild(matDetails);
+							}
+
+							topToggle.onclick = function(){
+								if (topDetails.classList.contains('collapsed')){ topDetails.classList.remove('collapsed'); topDetails.classList.add('expanded'); topToggle.textContent='-'; }
+								else { topDetails.classList.remove('expanded'); topDetails.classList.add('collapsed'); topToggle.textContent='+'; }
+							};
+
+							topRow.appendChild(topDetails);
+
+							if (targetHeader && targetHeader.parentNode) {
+								// insert after header
+								let insertBeforeNode = targetHeader.nextSibling;
+								while (insertBeforeNode && insertBeforeNode.classList && insertBeforeNode.classList.contains('agg-group-header')) {
+									insertBeforeNode = insertBeforeNode.nextSibling;
+								}
+								targetHeader.parentNode.insertBefore(topRow, insertBeforeNode);
+							} else {
+								list.appendChild(topRow);
+							}
 			}
 		  } catch (e) { console.error('Loot Hunter fallback failed', e); }
 
