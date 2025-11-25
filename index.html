@@ -615,8 +615,16 @@
 							rec.details.push(`${it.name}: ${rec.percent ? valStr+"%" : valStr}`);
 							totals.set(effKey, rec);
 						} else {
+							// Special handling for Loot Hunter effects
+							let displayKey = effKey;
+							let subKey = null;
+							if (typeof effKey === 'string' && effKey.startsWith('Loot Hunter:')) {
+								displayKey = 'Loot Hunter';
+								subKey = effKey.split(':').slice(1).join(':').trim();
+							}
+							
 							const uniqueKey = effKey + "#" + it.name;
-							const rec = { displayKey: effKey, min: r.min, max: r.max, details: [], percent: false };
+							const rec = { displayKey: displayKey, subKey: subKey, origKey: effKey, min: r.min, max: r.max, details: [], percent: false };
 							rec.percent = rec.percent || containsPercentInValue(effVal);
 							const valStr = (r.min===r.max) ? `${r.min}` : `${r.min}-${r.max}`;
 							rec.details.push(`${it.name}: ${rec.percent ? valStr+"%" : valStr}`);
