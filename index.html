@@ -302,6 +302,8 @@
 			const k = normalizeKey(key);
 			function cleanOne(v){
 				let out = String(v);
+				// Remove HTML entities (e.g. &#160; or &nbsp;) which can contain digits
+				out = out.replace(/&[#A-Za-z0-9]+;/g, ' ');
 				if (k.includes('timewalker')) out = out.replace(/\s*-s\s*$/i, '');
 				if (k.includes('coolness')) out = out.replace(/\s*!+\s*$/i, '');
 				if (k.includes('health')) out = out.replace(/\+\s*$/i, '');
