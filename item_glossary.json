@@ -5143,7 +5143,7 @@
           "Loot Hunter: Moonstone": "1",
           "Loot Hunter: Fell Wood": "1",
 		  "Loot Hunter: Lunar Stone": "1",
-		  "Health": "11+",
+		  "Health": "11+"
         },
         "source": "Craft"
       }
@@ -10432,4 +10432,5 @@
       }
     }
   }
+
 }
