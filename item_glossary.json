@@ -992,6 +992,16 @@
           "Loot Hunter: Vial of Vampire Blood": "1"
         },
         "source": "Craft"
+      },
+	  "Conquering The Vangoth Castle": {
+        "effects": {
+          "Coolness": "5&#160;!",
+		  "Loot Hunter: Fell Wood": "1",
+          "Loot Hunter: Pile of Bats": "1",
+          "Loot Hunter: Vial of Vampire Blood": "1",
+		  "Bloodbane": "10%"
+        },
+        "source": "Craft"
       }
     },
     "Key": {
@@ -4599,6 +4609,16 @@
           "Loot Hunter: Hex of Summoning": "1"
         },
         "source": "Drop"
+      },
+	  "Conquering The Abyssal Depths": {
+        "effects": {
+          "Coolness": "5&#160;!",
+          "Loot Hunter: Pile of Corals": "1",
+		  "Loot Hunter: Pile of Seashells": "1",
+          "Loot Hunter: Coral Orb": "1",
+		  "Eldritchbane": "5%"
+        },
+        "source": "Craft"
       }
     }
   },
@@ -5113,6 +5133,17 @@
           "Coolness": "2&#160;!",
           "Loot Hunter: Pile of Wolves' Heads": "1",
           "Loot Hunter: Moonstone": "1"
+        },
+        "source": "Craft"
+      },
+	  "Conquering The Dark Forest": {
+        "effects": {
+          "Coolness": "5&#160;!",
+		  "Loot Hunter: Pile of Wolves' Heads": "1",
+          "Loot Hunter: Moonstone": "1",
+          "Loot Hunter: Fell Wood": "1",
+		  "Loot Hunter: Lunar Stone": "1",
+		  "Health": "11+",
         },
         "source": "Craft"
       }
@@ -6041,6 +6072,17 @@
           "Loot Hunter: Hex of Summoning": "1"
         },
         "source": "Drop"
+      },
+	  "Conquering The Underground Sewers": {
+        "effects": {
+          "Coolness": "5&#160;!",
+          "Loot Hunter: Corrupted Leather": "1",
+          "Loot Hunter: Space Stone": "1",
+		  "Loot Hunter: Pile of Scales": "1",
+          "Loot Hunter: Alien Jewel": "1",
+		  "Loot Hunter: Puddle of Xeno Blood": "1"
+        },
+		"source": "Craft"
       }
     }
   },
@@ -6577,6 +6619,16 @@
           "Coolness": "2&#160;!",
           "Loot Hunter: Pile of Scarab Shells": "1",
           "Loot Hunter: Ankh": "1"
+        },
+        "source": "Craft"
+      },
+	  "Conquering The Dust Devil Desert": {
+        "effects": {
+          "Coolness": "5&#160;!",
+		  "Loot Hunter: Devil Steel": "1",
+          "Loot Hunter: Pile of Scarab Shells": "1",
+          "Loot Hunter: Ankh": "1",
+		  "Megalomania": "5%"
         },
         "source": "Craft"
       }
@@ -7230,6 +7282,16 @@
           "Loot Hunter: Hex of Summoning": "1"
         },
         "source": "Drop"
+      },
+	  "Conquering The Infernal Planes": {
+        "effects": {
+          "Coolness": "5&#160;!",
+          "Loot Hunter: Pile of Burning Embers": "1",
+		  "Loot Hunter: Angel Wings": "1",
+          "Loot Hunter: Hell Pearl": "1",
+		  "Demonbane": "10%"
+        },
+        "source": "Craft"
       }
     }
   },
@@ -7740,6 +7802,16 @@
           "Loot Hunter: Pile of Polymers": "1",
           "Loot Hunter: Pile of Feathers": "1",
           "Loot Hunter: Jade Pearl": "1"
+        },
+        "source": "Craft"
+      },
+	  "Conquering Neo Kyoto": {
+        "effects": {
+          "Coolness": "5&#160;!",
+          "Loot Hunter: Pile of Polymers": "1",
+          "Loot Hunter: Pile of Feathers": "1",
+          "Loot Hunter: Jade Pearl": "1",
+		  "Lifebane": "10%"
         },
         "source": "Craft"
       }
@@ -8782,6 +8854,16 @@
           "Loot Hunter: Icy Sapphire": "1"
         },
         "source": "Craft"
+      },
+	  "Conquering The Frostlands": {
+        "effects": {
+          "Coolness": "5&#160;!",
+		  "Loot Hunter: Tainted Cloth": "1",
+          "Loot Hunter: Pile of Ice": "1",
+          "Loot Hunter: Icy Sapphire": "1",
+		  "Spiritbane": "10%"
+        },
+        "source": "Craft"
       }
     }
   },
@@ -9247,6 +9329,16 @@
           "Coolness": "2&#160;!",
           "Loot Hunter: Pile of Radioactive Material": "1",
           "Loot Hunter: Plutonium Core": "1"
+        },
+        "source": "Craft"
+      },
+	  "Conquering The Abandoned Industrial Complex": {
+        "effects": {
+          "Coolness": "5&#160;!",
+          "Loot Hunter: Pile of Radioactive Material": "1",
+		  "Loot Hunter: Pile of Metal Scraps": "1",
+          "Loot Hunter: Plutonium Core": "1",
+		  "Cloning": "5%"
         },
         "source": "Craft"
       }
@@ -9856,6 +9948,16 @@
           "Coolness": "2&#160;!",
           "Loot Hunter: Crypt Stone": "1",
           "Loot Hunter: Golden Skull": "1"
+        },
+        "source": "Craft"
+      },
+	  "Conquering Crows Hill": {
+        "effects": {
+          "Coolness": "5&#160;!",
+		  "Loot Hunter: Devil Steel": "1",
+          "Loot Hunter: Crypt Stone": "1",
+          "Loot Hunter: Golden Skull": "1",
+		  "Necrobane": "10%"
         },
         "source": "Craft"
       }
