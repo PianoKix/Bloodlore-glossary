@@ -340,7 +340,8 @@
       "Dominate",
       "Curator",
       "Arsenal",
-      "Coolness"
+      "Coolness",
+	  "Loot Hunter"
     ]
   },
   "combineable": [
@@ -506,7 +507,9 @@
     "hex": "hex",
     "bait": "bait",
     "coin": "coin",
-    "coins": "coin"
+    "coins": "coin",
+	"achievement": "achievement",
+	"achievements": "achievement"
   }
 }
 

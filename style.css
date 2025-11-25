@@ -65,6 +65,23 @@ h1 { margin: 0 0 12px; font-size: 20px; }
 	border-bottom: 1px solid rgba(128,128,128,0.2); 
 	font-size: 12px;
 }
+.nested-material { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:4px 0; border-bottom: 1px solid rgba(128,128,128,0.08); }
+.agg-subtoggle {
+	cursor: pointer;
+	font-weight: bold;
+	margin-right: 8px;
+	user-select: none;
+	color: #0066cc;
+	font-size: 13px;
+	width: 18px;
+	height: 18px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 3px;
+}
+.mat-details.collapsed { display: none; }
+.mat-details.expanded { display: block; padding-left: 10px; }
 .agg-detail-item:last-child { border-bottom: none; }
 .agg-detail-item .item-name { opacity: 0.8; }
 .agg-detail-item .item-value { 
