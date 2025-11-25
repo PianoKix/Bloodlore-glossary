@@ -89,7 +89,7 @@
 	<script>
 	(function(){
 		const ORDERED_TYPES = [
-			'weapon','head','chest','hand','feet','mount','accessory','retainer','coffin','power','emblem','collection','hex','bait','coin'
+			'weapon','head','chest','hand','feet','mount','accessory','retainer','coffin','power','emblem','collection','achievement','hex','bait','coin'
 		];
 		const CACHE_KEY = 'itemGlossaryJsonTextV1';
 		const CONSTANTS_CACHE_KEY = 'constantsJsonTextV1';
@@ -527,7 +527,7 @@
 			const type = it.type;
 			const perType = EQUIPPED.get(type) || new Map();
 			if (perType.has(it.name)) return {ok:false,reason:'Already equipped'};
-			if (type === 'collection') return {ok:true};
+			if (type === 'collection' || type === 'achievement') return {ok:true};
 			if (type === 'accessory') {
 				const limit = allowAccThird ? 3 : 2;
 				if (perType.size >= limit) return {ok:false,reason:`Max ${limit} accessories`};
@@ -1121,7 +1121,7 @@
 			
 			const parts = [];
 			for (const t of ORDERED_TYPES){
-				if (t === 'collection' || t === 'accessory' || t === 'retainer') continue;
+				if (t === 'collection' || t === 'achievement' || t === 'accessory' || t === 'retainer') continue;
 				const perType = EQUIPPED.get(t) || new Map();
 				const missing = Math.max(0, 1 - perType.size);
 				if (missing > 0){
@@ -1146,6 +1146,9 @@
 			
 			if (item.type === 'hex') {
 				return `https://the-bloodlore-chronicles.fandom.com/wiki/Hex_Overhaul#${itemName}`;
+			}
+			if (item.type === 'achievement') {
+				return `https://the-bloodlore-chronicles.fandom.com/wiki/Achievement#${itemName}`;
 			}
 			if (item.type === 'collection') {
 				const itemNameLower = item.name.toLowerCase();
@@ -1716,7 +1719,7 @@
 						seen.add(e.name);
 						added++;
 					}
-				} else if (type === 'collection'){
+				} else if (type === 'collection' || type === 'achievement'){
 					const seen = new Set();
 					for (const e of entries) {
 						if (seen.has(e.name)) continue;
