@@ -82,7 +82,7 @@ Access your Windows PC remotely from your Android tablet:
 For advanced users, you can run a VS Code server on your Android device:
 
 ### Steps:
-1. Install Termux from F-Droid (not Google Play - the Play version is outdated)
+1. Install Termux from F-Droid (recommended for the most up-to-date version)
 2. Install code-server in Termux:
    ```bash
    pkg update && pkg upgrade
