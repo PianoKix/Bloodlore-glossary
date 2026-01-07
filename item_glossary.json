@@ -1,4 +1,4 @@
-﻿{
+{
   "R12": {
     "Collection": {
       "Squirrel Collection II": {
@@ -418,6 +418,41 @@
           "Investment": "6%"
         },
         "source": "Drop"
+      },
+      "Red Santa Hat": {
+        "effects": {
+          "Health": "8+",
+          "Heal": "9-11",
+          "Shield": "10%",
+          "Attraction": "1",
+          "XP-losion": "7%"
+        },
+        "source": "Special"
+      }
+    },
+    "Coffin": {
+      "Christmas Coffin": {
+        "effects": {
+          "Health": "13+",
+          "Terrorward": "5%",
+          "Demonward": "5%",
+          "Dispel": "10%",
+          "Coffin Capacity": "5",
+          "Coffin Recharge Time": "60 Minutes",
+          "Summoning": "2%",
+          "Bloodlust": "6%"
+        },
+        "source": "Special"
+      }
+    },
+    "Emblem": {
+      "Everfrost Emblem": {
+        "effects": {
+          "Frostbite": "11-16",
+          "Iceward": "5%",
+          "XP-losion": "6%"
+        },
+        "source": "Craft"
       }
     }
   },
@@ -993,13 +1028,13 @@
         },
         "source": "Craft"
       },
-	  "Conquering The Vangoth Castle": {
+      "Conquering The Vangoth Castle": {
         "effects": {
           "Coolness": "5&#160;!",
-		  "Loot Hunter: Fell Wood": "1",
+          "Loot Hunter: Fell Wood": "1",
           "Loot Hunter: Pile of Bats": "1",
           "Loot Hunter: Vial of Vampire Blood": "1",
-		  "Bloodbane": "10%"
+          "Bloodbane": "10%"
         },
         "source": "Craft"
       }
@@ -1007,7 +1042,7 @@
     "Key": {
       "Ballroom Key": {
         "effects": {
-          "—": "—"
+          "\u2014": "\u2014"
         },
         "source": "Craft"
       }
@@ -1391,7 +1426,7 @@
       }
     },
     "Emblem": {
-      "All Hallow’s Eve Emblem": {
+      "All Hallow\u2019s Eve Emblem": {
         "effects": {
           "Fire Shield": "10%",
           "Terrorward": "5%",
@@ -2386,6 +2421,17 @@
           "Investment": "8%"
         },
         "source": "Purchase"
+      },
+      "Blood-Red Snowflake": {
+        "effects": {
+          "Bloodbane": "5%",
+          "Lifeleech": "18-23",
+          "Bloodward": "5%",
+          "Blood Craze": "3%",
+          "Bloodlust": "10%",
+          "Loot Hunter: Hex of Summoning": "1"
+        },
+        "source": "Purchase"
       }
     },
     "Weapon": {
@@ -2588,6 +2634,20 @@
           "XP-losion": "10%"
         },
         "source": "Purchase"
+      },
+      "Guns of the Eternal Barricade": {
+        "effects": {
+          "Terminate": "1000000",
+          "True Aim": "10%",
+          "Focused Shot": "110-132",
+          "Ballistic Weapon Damage": "80-87",
+          "Crit Chance": "10%",
+          "Deathtouch": "1",
+          "Bloodlust": "4%",
+          "Megalomania": "11%",
+          "Cloning": "6%"
+        },
+        "source": "Purchase"
       }
     },
     "Head": {
@@ -2737,6 +2797,33 @@
           "Bloodlust": "7%"
         },
         "source": "Purchase"
+      },
+      "Enchanted Vampire Knight Helmet": {
+        "effects": {
+          "Silver Strike": "31-38",
+          "Health": "66+",
+          "Lifeleech": "32-38",
+          "Iceward": "10%",
+          "Resilience": "10%",
+          "Nerves of Steel": "10%",
+          "Shield": "10%",
+          "Bloodward": "10%",
+          "Bloodlust": "9%"
+        },
+        "source": "Craft"
+      },
+      "Gravetide Crown": {
+        "effects": {
+          "Shadowcurse": "10%",
+          "Shadowstrike": "48-55",
+          "Health": "69+",
+          "Stormward": "10%",
+          "Iceward": "10%",
+          "Deathtouch": "1",
+          "Loot Chance Modifier": "20%",
+          "Cloning": "4%"
+        },
+        "source": "Purchase"
       }
     },
     "Mount": {
@@ -2803,6 +2890,22 @@
           "Megalomania": "11%"
         },
         "source": "Craft"
+      },
+      "Grand Eagle-Lion": {
+        "effects": {
+          "First Strike": "100%",
+          "Charge": "36-45",
+          "Powerful Strike": "49-56",
+          "Terrorbane": "10%",
+          "Xenobane": "10%",
+          "Health": "72+",
+          "Stormward": "10%",
+          "Nightward": "10%",
+          "Flying": "15%",
+          "Blood Craze": "3%",
+          "Questing": "11%"
+        },
+        "source": "Purchase"
       }
     },
     "Accessory": {
@@ -3051,6 +3154,48 @@
           "XP-losion": "8%"
         },
         "source": "Purchase"
+      },
+      "Cross of the Ghost Hunter": {
+        "effects": {
+          "Attunement": "2%",
+          "Conviction": "10%",
+          "Demonbane": "10%",
+          "Spiritbane": "10%",
+          "Necrobane": "10%",
+          "Sunbeam": "28-33",
+          "Ghostbusting": "26-36",
+          "Nightward": "10%",
+          "Temperance": "-1",
+          "Loot Chance Modifier": "20%",
+          "XP-losion": "9%"
+        },
+        "source": "Purchase"
+      },
+      "Gravpack Harness": {
+        "effects": {
+          "Theft": "2500-4000 VGC",
+          "Evade": "5%",
+          "Flying": "10%",
+          "Timewalker": "30 -s",
+          "Megalomania": "8%",
+          "Investment": "10%"
+        },
+        "source": "Purchase"
+      },
+      "Stitchglass Locket": {
+        "effects": {
+          "Attunement": "2%",
+          "Eldritch Decay": "29-34",
+          "Paradigm Shift": "29-31",
+          "Nerves of Steel": "10%",
+          "Terrorward": "10%",
+          "Summoning": "4%",
+          "Loot Hunter: Demonic Stockings": "1",
+          "Loot Hunter: Frostvein Shard": "1",
+          "Loot Hunter: Pile of Snow": "1",
+          "Cloning": "6%"
+        },
+        "source": "Purchase"
       }
     },
     "Retainer": {
@@ -3289,6 +3434,51 @@
           "Cloning": "7%"
         },
         "source": "Purchase"
+      },
+      "Christmas Cat": {
+        "effects": {
+          "Repent": "25-32",
+          "Retainer Holy Weapon Damage": "5-8",
+          "Terrorbane": "10%",
+          "Demonbane": "10%",
+          "Ancient Blood": "10%",
+          "Iceward": "10%",
+          "Spiritward": "10%",
+          "Summoning": "4%",
+          "Loot Chance Modifier": "20%",
+          "Loot Hunter: Demonic Stockings": "1",
+          "Loot Hunter: Frostvein Shard": "1",
+          "Loot Hunter: Pile of Snow": "1",
+          "Cloning": "7%"
+        },
+        "source": "Purchase"
+      },
+      "Mamba Marconi": {
+        "effects": {
+          "True Aim": "10%",
+          "Retainer Ballistic Weapon Damage": "18-22",
+          "Xenobane": "10%",
+          "Blur": "10%",
+          "Poisonward": "10%",
+          "Shield": "10%",
+          "Loot Chance Modifier": "20%"
+        },
+        "source": "Purchase"
+      },
+      "Robotcat": {
+        "effects": {
+          "Attunement": "2%",
+          "Stormcurse": "10%",
+          "Shock": "18-25",
+          "Retainer Electric Weapon Damage": "19-24",
+          "Fireward": "10%",
+          "Wildward": "10%",
+          "Techward": "10%",
+          "Temperance": "-1",
+          "Loot Chance Modifier": "20%",
+          "Investment": "12%"
+        },
+        "source": "Purchase"
       }
     },
     "Power": {
@@ -3339,6 +3529,18 @@
           "Call Skeleton Warrior": "40%",
           "Call Undead Priest": "40%",
           "Loot Hunter: Sinstone": "1"
+        },
+        "source": "Purchase"
+      },
+      "Crimson Carol": {
+        "effects": {
+          "Psychic Drain": "21-28",
+          "Seduction": "10-14",
+          "Stun": "4%",
+          "Summoning": "3%",
+          "Loot Hunter: Demonic Stockings": "1",
+          "Loot Hunter: Frostvein Shard": "1",
+          "Loot Hunter: Pile of Snow": "1"
         },
         "source": "Purchase"
       }
@@ -3532,6 +3734,35 @@
           "Blood Craze": "4%"
         },
         "source": "Purchase"
+      },
+      "Midnight Archive": {
+        "effects": {
+          "Nightfall": "100-120",
+          "Lifebane": "10%",
+          "Lightbane": "10%",
+          "Health": "400+",
+          "Heal": "33-38",
+          "Nightward": "10%",
+          "Coffin Capacity": "1",
+          "Loot Chance Modifier": "10%",
+          "Investment": "9%"
+        },
+        "source": "Purchase"
+      },
+      "Shadow Penguin Hoodie": {
+        "effects": {
+          "Carnage": "5%",
+          "Demonbane": "10%",
+          "Bloodbane": "10%",
+          "Necrosis": "20%",
+          "Health": "405+",
+          "Iceward": "10%",
+          "Nightward": "10%",
+          "Dodge": "10%",
+          "Blood Craze": "4%",
+          "Bloodlust": "8%"
+        },
+        "source": "Craft"
       }
     },
     "Key": {
@@ -3554,6 +3785,19 @@
           "Spiritward": "5%",
           "Coffin Capacity": "5",
           "Loot Chance Modifier": "20%"
+        },
+        "source": "Purchase"
+      },
+      "Candy Cane Coffin": {
+        "effects": {
+          "Necrosis": "10%",
+          "Health": "21+",
+          "Manaward": "5%",
+          "Poisonward": "5%",
+          "Coffin Capacity": "3",
+          "Coffin Recharge Time": "30 Minutes",
+          "Bloodlust": "6%",
+          "Cloning": "4%"
         },
         "source": "Purchase"
       }
@@ -3761,6 +4005,35 @@
           "XP-losion": "8%"
         },
         "source": "Purchase"
+      },
+      "Enchanted Shardfinger Gauntlets": {
+        "effects": {
+          "Cruelty": "10%",
+          "Wildbane": "10%",
+          "Steel Crusher": "18-24",
+          "Call Frost Dragon Whelp": "40%",
+          "Health": "58+",
+          "Penance": "10%",
+          "Iceward": "10%",
+          "Resilience": "10%",
+          "Megalomania": "8%",
+          "XP-losion": "8%"
+        },
+        "source": "Craft"
+      },
+      "Pale Weavers": {
+        "effects": {
+          "Mindbolt": "54-59",
+          "Health": "67+",
+          "Iceward": "10%",
+          "Manaward": "10%",
+          "Demonward": "10%",
+          "Spiritward": "10%",
+          "Dispel": "15%",
+          "Summoning": "4%",
+          "Investment": "8%"
+        },
+        "source": "Purchase"
       }
     },
     "Hex": {
@@ -3884,6 +4157,18 @@
           "Timewalker": "30 -s"
         },
         "source": "Craft"
+      },
+      "Hex of Supreme Summoning": {
+        "effects": {
+          "Attunement": "1%",
+          "Carnage": "10%",
+          "Toughness": "10%",
+          "Timewalker": "30 -s",
+          "Summoning": "30%",
+          "Invocation": "1bool",
+          "Loot Chance Modifier": "50%"
+        },
+        "source": "Purchase"
       }
     },
     "Feet": {
@@ -3949,6 +4234,34 @@
           "Questing": "12%",
           "Bloodlust": "7%",
           "Megalomania": "6%"
+        },
+        "source": "Purchase"
+      },
+      "Drowned Path Boots": {
+        "effects": {
+          "Curse of the Old Gods": "10%",
+          "Demonbane": "10%",
+          "Eldritchbane": "10%",
+          "Health": "71+",
+          "Stormward": "10%",
+          "Nerves of Steel": "10%",
+          "Eldritchward": "10%",
+          "Evade": "15%",
+          "Blood Craze": "4%",
+          "Restless": "10%"
+        },
+        "source": "Purchase"
+      },
+      "Phantom Walkers": {
+        "effects": {
+          "Call Ghost": "40%",
+          "Necrosis": "15%",
+          "Health": "61+",
+          "Healing Touch": "18-24",
+          "Blur": "10%",
+          "Bloodward": "10%",
+          "Blood Craze": "4%",
+          "Summoning": "3%"
         },
         "source": "Purchase"
       }
@@ -4068,6 +4381,34 @@
         "effects": {
           "Coolness": "3&#160;!",
           "Loot Chance Modifier": "10%"
+        },
+        "source": "Purchase"
+      },
+      "Avatar Collection Rotation III": {
+        "effects": {
+          "Coolness": "1&#160;!",
+          "Loot Hunter: Fel Wood": "1"
+        },
+        "source": "Purchase"
+      },
+      "Avatar Collection Rotation IV": {
+        "effects": {
+          "Coolness": "1&#160;!",
+          "Loot Hunter: Corrupted Leather": "1"
+        },
+        "source": "Purchase"
+      },
+      "Avatar Collection XMAS 2025 II": {
+        "effects": {
+          "Coolness": "1&#160;!",
+          "Loot Hunter: Frostvein Shard": "1"
+        },
+        "source": "Purchase"
+      },
+      "Avatar Deal Collection VI": {
+        "effects": {
+          "Coolness": "2&#160;!",
+          "Loot Hunter: Tainted Cloth": "1"
         },
         "source": "Purchase"
       }
@@ -4610,13 +4951,13 @@
         },
         "source": "Drop"
       },
-	  "Conquering The Abyssal Depths": {
+      "Conquering The Abyssal Depths": {
         "effects": {
           "Coolness": "5&#160;!",
           "Loot Hunter: Pile of Corals": "1",
-		  "Loot Hunter: Pile of Seashells": "1",
+          "Loot Hunter: Pile of Seashells": "1",
           "Loot Hunter: Coral Orb": "1",
-		  "Eldritchbane": "5%"
+          "Eldritchbane": "5%"
         },
         "source": "Craft"
       }
@@ -4705,7 +5046,7 @@
         },
         "source": "Drop"
       },
-      "GÃ¶tterdÃ¤mmerung": {
+      "G\u00c3\u00b6tterd\u00c3\u00a4mmerung": {
         "effects": {
           "Crit Chance": "2%",
           "Stun": "20%",
@@ -5136,14 +5477,14 @@
         },
         "source": "Craft"
       },
-	  "Conquering The Dark Forest": {
+      "Conquering The Dark Forest": {
         "effects": {
           "Coolness": "5&#160;!",
-		  "Loot Hunter: Pile of Wolves' Heads": "1",
+          "Loot Hunter: Pile of Wolves' Heads": "1",
           "Loot Hunter: Moonstone": "1",
           "Loot Hunter: Fell Wood": "1",
-		  "Loot Hunter: Lunar Stone": "1",
-		  "Health": "11+"
+          "Loot Hunter: Lunar Stone": "1",
+          "Health": "11+"
         },
         "source": "Craft"
       }
@@ -6073,16 +6414,16 @@
         },
         "source": "Drop"
       },
-	  "Conquering The Underground Sewers": {
+      "Conquering The Underground Sewers": {
         "effects": {
           "Coolness": "5&#160;!",
           "Loot Hunter: Corrupted Leather": "1",
           "Loot Hunter: Space Stone": "1",
-		  "Loot Hunter: Pile of Scales": "1",
+          "Loot Hunter: Pile of Scales": "1",
           "Loot Hunter: Alien Jewel": "1",
-		  "Loot Hunter: Puddle of Xeno Blood": "1"
+          "Loot Hunter: Puddle of Xeno Blood": "1"
         },
-		"source": "Craft"
+        "source": "Craft"
       }
     }
   },
@@ -6622,13 +6963,13 @@
         },
         "source": "Craft"
       },
-	  "Conquering The Dust Devil Desert": {
+      "Conquering The Dust Devil Desert": {
         "effects": {
           "Coolness": "5&#160;!",
-		  "Loot Hunter: Devil Steel": "1",
+          "Loot Hunter: Devil Steel": "1",
           "Loot Hunter: Pile of Scarab Shells": "1",
           "Loot Hunter: Ankh": "1",
-		  "Megalomania": "5%"
+          "Megalomania": "5%"
         },
         "source": "Craft"
       }
@@ -7283,13 +7624,13 @@
         },
         "source": "Drop"
       },
-	  "Conquering The Infernal Planes": {
+      "Conquering The Infernal Planes": {
         "effects": {
           "Coolness": "5&#160;!",
           "Loot Hunter: Pile of Burning Embers": "1",
-		  "Loot Hunter: Angel Wings": "1",
+          "Loot Hunter: Angel Wings": "1",
           "Loot Hunter: Hell Pearl": "1",
-		  "Demonbane": "10%"
+          "Demonbane": "10%"
         },
         "source": "Craft"
       }
@@ -7805,13 +8146,13 @@
         },
         "source": "Craft"
       },
-	  "Conquering Neo Kyoto": {
+      "Conquering Neo Kyoto": {
         "effects": {
           "Coolness": "5&#160;!",
           "Loot Hunter: Pile of Polymers": "1",
           "Loot Hunter: Pile of Feathers": "1",
           "Loot Hunter: Jade Pearl": "1",
-		  "Lifebane": "10%"
+          "Lifebane": "10%"
         },
         "source": "Craft"
       }
@@ -8855,13 +9196,13 @@
         },
         "source": "Craft"
       },
-	  "Conquering The Frostlands": {
+      "Conquering The Frostlands": {
         "effects": {
           "Coolness": "5&#160;!",
-		  "Loot Hunter: Tainted Cloth": "1",
+          "Loot Hunter: Tainted Cloth": "1",
           "Loot Hunter: Pile of Ice": "1",
           "Loot Hunter: Icy Sapphire": "1",
-		  "Spiritbane": "10%"
+          "Spiritbane": "10%"
         },
         "source": "Craft"
       }
@@ -9332,13 +9673,13 @@
         },
         "source": "Craft"
       },
-	  "Conquering The Abandoned Industrial Complex": {
+      "Conquering The Abandoned Industrial Complex": {
         "effects": {
           "Coolness": "5&#160;!",
           "Loot Hunter: Pile of Radioactive Material": "1",
-		  "Loot Hunter: Pile of Metal Scraps": "1",
+          "Loot Hunter: Pile of Metal Scraps": "1",
           "Loot Hunter: Plutonium Core": "1",
-		  "Cloning": "5%"
+          "Cloning": "5%"
         },
         "source": "Craft"
       }
@@ -9951,13 +10292,13 @@
         },
         "source": "Craft"
       },
-	  "Conquering Crows Hill": {
+      "Conquering Crows Hill": {
         "effects": {
           "Coolness": "5&#160;!",
-		  "Loot Hunter: Devil Steel": "1",
+          "Loot Hunter: Devil Steel": "1",
           "Loot Hunter: Crypt Stone": "1",
           "Loot Hunter: Golden Skull": "1",
-		  "Necrobane": "10%"
+          "Necrobane": "10%"
         },
         "source": "Craft"
       }
@@ -10000,7 +10341,7 @@
         },
         "source": "Craft"
       },
-      "Serpent’s Promise": {
+      "Serpent\u2019s Promise": {
         "effects": {
           "Venomous Strike": "42-52",
           "Health": "19+",
@@ -10042,7 +10383,7 @@
         },
         "source": "Craft"
       },
-      "Widow’s Thorn": {
+      "Widow\u2019s Thorn": {
         "effects": {
           "Wound": "9-13",
           "Crit Chance": "3%",
@@ -10380,7 +10721,7 @@
   },
   "R02.1": {
     "Weapon": {
-      "Götterdämmerung": {
+      "G\u00f6tterd\u00e4mmerung": {
         "effects": {
           "Physical Weapon Damage": "26-30",
           "Crit Chance": "2%",
@@ -10431,6 +10772,996 @@
         "source": "Drop"
       }
     }
+  },
+  "R02.4": {
+    "Accessory": {
+      "Cindercoil Pendant": {
+        "effects": {
+          "Pyromancy": "10%",
+          "Burn": "12-15",
+          "Gluttony": "1",
+          "Loot Chance Modifier": "15%",
+          "Investment": "12%"
+        },
+        "source": "Craft"
+      },
+      "Ghostfire Lantern": {
+        "effects": {
+          "Spiritbane": "10%",
+          "Health": "16+",
+          "Mystic Shield": "10%",
+          "Spiritward": "10%",
+          "Summoning": "2%"
+        },
+        "source": "Craft"
+      },
+      "Mourning Band": {
+        "effects": {
+          "Paranoia": "10%",
+          "Psychic Drain": "31-34",
+          "Call Ghost": "30%",
+          "Blood Craze": "4%",
+          "Megalomania": "-4%"
+        },
+        "source": "Craft"
+      },
+      "Raven\u2019s Eye": {
+        "effects": {
+          "Shadowcurse": "10%",
+          "Lifebane": "10%",
+          "Lightbane": "10%",
+          "Wildward": "10%",
+          "Deathtouch": "1",
+          "Megalomania": "6%"
+        },
+        "source": "Craft"
+      },
+      "Sanguine Motherruby": {
+        "effects": {
+          "Timewalker": "15 -s",
+          "Blood Craze": "4%",
+          "Attraction": "1",
+          "Bloodlust": "7%",
+          "Loot Chance Modifier": "10%",
+          "Investment": "10%"
+        },
+        "source": "Craft"
+      }
+    },
+    "Chest": {
+      "Ashveil Burial Wraps": {
+        "effects": {
+          "Terrorbane": "10%",
+          "Health": "290+",
+          "Fire Vulnerability": "20%",
+          "Evade": "10%",
+          "Dodge": "10%",
+          "Questing": "9%",
+          "Loot Chance Modifier": "15%"
+        },
+        "source": "Craft"
+      },
+      "Heartglass Aegis": {
+        "effects": {
+          "Health": "240+",
+          "Ancient Blood": "10%",
+          "Resilience": "10%",
+          "Attraction": "1",
+          "Investment": "8%"
+        },
+        "source": "Craft"
+      },
+      "Shroud of the Forgotten Cleric": {
+        "effects": {
+          "Retribution": "10%",
+          "Health": "380+",
+          "Healing Touch": "19-24",
+          "Penance": "10%",
+          "Nightward": "10%",
+          "Psychic Vulnerability": "20%"
+        },
+        "source": "Craft"
+      }
+    },
+    "Coffin": {
+      "Christmas Spirit Coffin": {
+        "effects": {
+          "Health": "18+",
+          "Terrorward": "5%",
+          "Demonward": "5%",
+          "Dispel": "10%",
+          "Coffin Capacity": "6",
+          "Coffin Recharge Time": "50 Minutes",
+          "Summoning": "2%",
+          "Bloodlust": "6%"
+        },
+        "source": "Craft"
+      },
+      "Coffin of the Velvet Pact": {
+        "effects": {
+          "Health": "16+",
+          "Coffin Capacity": "6",
+          "Coffin Recharge Time": "80 Minutes",
+          "Attraction": "1",
+          "Loot Chance Modifier": "10%",
+          "Investment": "17%",
+          "XP-losion": "14%"
+        },
+        "source": "Craft"
+      },
+      "Thorncradle": {
+        "effects": {
+          "Weaken": "10%",
+          "Wound": "12-18",
+          "Health": "18+",
+          "Sufferance": "10%",
+          "Coffin Capacity": "8",
+          "Coffin Recharge Time": "60 Minutes",
+          "Bloodlust": "5%"
+        },
+        "source": "Craft"
+      }
+    },
+    "Collection": {
+      "Wraithlight Market Collection I": {
+        "effects": {
+          "XP-losion": "4%"
+        },
+        "source": "Drop"
+      },
+      "Wraithlight Market Collection II": {
+        "effects": {
+          "Ancient Blood": "10%"
+        },
+        "source": "Drop"
+      },
+      "Wraithlight Market Collection III": {
+        "effects": {
+          "Megalomania": "4%"
+        },
+        "source": "Drop"
+      }
+    },
+    "Emblem": {
+      "Unholy Beacon": {
+        "effects": {
+          "Lifeward": "5%",
+          "Lightward": "5%",
+          "Attraction": "-2"
+        },
+        "source": "VCOM"
+      }
+    },
+    "Feet": {
+      "Dirgemarch Treads": {
+        "effects": {
+          "Shadowcurse": "10%",
+          "Health": "16+",
+          "Iceward": "10%",
+          "Poisonward": "10%",
+          "Bloodlust": "5%"
+        },
+        "source": "Craft"
+      },
+      "Gravetreader Sabatons": {
+        "effects": {
+          "Demonbane": "10%",
+          "Spiritbane": "10%",
+          "Gravebind": "14-21",
+          "Call Ghost": "30%",
+          "Health": "58+",
+          "Blur": "10%",
+          "Fireward": "10%",
+          "Questing": "14%"
+        },
+        "source": "Craft"
+      },
+      "Steps of the Hollow Wind": {
+        "effects": {
+          "Rot": "15-18",
+          "Health": "34+",
+          "Manaward": "10%",
+          "Resilience": "10%",
+          "Holy Vulnerability": "10%",
+          "Summoning": "4%"
+        },
+        "source": "Craft"
+      }
+    },
+    "Hands": {
+      "Emberclutch Gauntlets": {
+        "effects": {
+          "Firecurse": "10%",
+          "Health": "37+",
+          "Resilience": "10%",
+          "Ice Vulnerability": "10%",
+          "Dragonfire Barrier": "10%",
+          "Megalomania": "4%"
+        },
+        "source": "Craft"
+      },
+      "Grasps of the Severed Oath": {
+        "effects": {
+          "Health": "20+",
+          "Heal": "16-21",
+          "Fireward": "10%",
+          "Cleansing Barrier": "10%",
+          "Investment": "6%"
+        },
+        "source": "Craft"
+      },
+      "Grimroot Clasps": {
+        "effects": {
+          "Wildbane": "10%",
+          "Lifebane": "10%",
+          "Necrosis": "10%",
+          "Health": "54+",
+          "Lifeleech": "26-32",
+          "Restless": "5%",
+          "XP-losion": "-7%"
+        },
+        "source": "Craft"
+      }
+    },
+    "Head": {
+      "Hood of Hollow Sight": {
+        "effects": {
+          "Health": "17+",
+          "Nerves of Steel": "10%",
+          "Nightward": "10%",
+          "Stun": "10%",
+          "Investment": "5%"
+        },
+        "source": "Craft"
+      },
+      "Mask of the Gloamspeaker": {
+        "effects": {
+          "Fear": "19-25",
+          "Lifebane": "10%",
+          "Health": "32+",
+          "Necroward": "10%",
+          "Bloodlust": "6%"
+        },
+        "source": "Craft"
+      },
+      "Warden\u2019s Visage": {
+        "effects": {
+          "Health": "58+",
+          "Blur": "10%",
+          "Nerves of Steel": "10%",
+          "Shield": "10%",
+          "Terrorward": "10%",
+          "Wildward": "10%",
+          "Stun": "5%",
+          "Investment": "6%"
+        },
+        "source": "Craft"
+      }
+    },
+    "Mount": {
+      "Brine-Crowned Dreadnought": {
+        "effects": {
+          "First Strike": "100%",
+          "Chaos Charge": "22-25",
+          "Eldritch Convergence": "37-42",
+          "Eldritchbane": "5%",
+          "Health": "59+",
+          "Stormward": "10%",
+          "Fire Shield": "10%",
+          "Physical Shield": "10%",
+          "Megalomania": "8%"
+        },
+        "source": "Craft"
+      },
+      "Nyxmaw, the Pale Howler": {
+        "effects": {
+          "First Strike": "100%",
+          "Shadow Charge": "24-30",
+          "Health": "38+",
+          "Wildward": "10%",
+          "Bloodward": "10%",
+          "Evade": "5%",
+          "Summoning": "4%",
+          "Bloodlust": "6%"
+        },
+        "source": "Craft"
+      }
+    },
+    "Power": {
+      "Aura of Dread": {
+        "effects": {
+          "Soulburn": "5-8",
+          "Necrosis": "10%",
+          "Attraction": "-3"
+        },
+        "source": "VCOM"
+      }
+    },
+    "Retainer": {
+      "Eldritch Jester": {
+        "effects": {
+          "Paranoia": "10%",
+          "Mindbolt": "8-14",
+          "Retainer Psychic Weapon Damage": "8-14",
+          "Theft": "1500-2500 VGC",
+          "Eldritchward": "5%"
+        },
+        "source": "Craft"
+      },
+      "Hollowed Butcher": {
+        "effects": {
+          "Wound": "8-10",
+          "Retainer Physical Weapon Damage": "7-11",
+          "Deathtouch": "1",
+          "Questing": "11%",
+          "Bloodlust": "7%"
+        },
+        "source": "Craft"
+      }
+    },
+    "Weapon": {
+      "Echochain Whip": {
+        "effects": {
+          "Fear": "15-18",
+          "Psychic Weapon Damage": "42-47",
+          "Lifebane": "10%",
+          "Terrorward": "10%"
+        },
+        "source": "Craft"
+      },
+      "Silvermirror Blade": {
+        "effects": {
+          "Conviction": "10%",
+          "Divine Smite": "72-79",
+          "Repent": "31-36",
+          "Holy Weapon Damage": "58-64",
+          "Crit Chance": "30%",
+          "Wolfbane": "10%",
+          "Exorcise": "28-35",
+          "Stun": "5%",
+          "Dispel": "20%",
+          "Gluttony": "1",
+          "Investment": "-9%",
+          "XP-losion": "8%"
+        },
+        "source": "Craft"
+      },
+      "Soulpiercer Dagger": {
+        "effects": {
+          "Powerful Strike": "53-58",
+          "Flesh Wound": "43-48",
+          "Physical Weapon Damage": "33-37",
+          "Lifebane": "10%",
+          "Necrosis": "20%",
+          "XP-losion": "7%"
+        },
+        "source": "Craft"
+      },
+      "Veilpiercer Rapier": {
+        "effects": {
+          "Manacurse": "20%",
+          "Arcane Fire": "37-42",
+          "Manaburn": "20-24",
+          "Mystic Weapon Damage": "12-15",
+          "Bloodlust": "-6%"
+        },
+        "source": "Craft"
+      }
+    }
+  },
+  "R02.5": {
+    "Achievement": {
+      "Avatar Collection XMAS 2025 I": {
+        "effects": {
+          "Coolness": "1&#160;!",
+          "Loot Hunter: Demonic Stockings": "1"
+        },
+        "source": "Craft"
+      }
+    },
+    "Collection": {
+      "Chapel of Shadows Collection I": {
+        "effects": {
+          "Holy Shield": "10%"
+        },
+        "source": "Drop"
+      },
+      "Chapel of Shadows Collection II": {
+        "effects": {
+          "Bloodward": "5%"
+        },
+        "source": "Drop"
+      },
+      "Chapel of Shadows Collection III": {
+        "effects": {
+          "Attunement": "1%"
+        },
+        "source": "Drop"
+      }
+    },
+    "Retainer": {
+      "Bloodmoon Packleader": {
+        "effects": {
+          "Cruelty": "10%",
+          "Retainer Physical Weapon Damage": "11-17",
+          "Lifebane": "10%",
+          "Blur": "10%",
+          "Bloodward": "10%",
+          "Megalomania": "6%"
+        },
+        "source": "Craft"
+      },
+      "Void Harlequin": {
+        "effects": {
+          "Paranoia": "10%",
+          "Void Gaze": "75-85",
+          "Retainer Psychic Weapon Damage": "16-21",
+          "Voidbane": "10%",
+          "Evade": "10%",
+          "Stun": "5%",
+          "Blood Craze": "4%"
+        },
+        "source": "Craft"
+      },
+      "Voidwhisper Acolyte": {
+        "effects": {
+          "Eldritch Decay": "11-13",
+          "Retainer Chaos Weapon Damage": "13-16",
+          "Iceward": "10%",
+          "Nerves of Steel": "10%",
+          "Blood Craze": "3%",
+          "Summoning": "2%"
+        },
+        "source": "Craft"
+      }
+    }
+  },
+  "R11": {
+    "Accessory": {
+      "Cybernetic Implant": {
+        "effects": {
+          "True Aim": "10%",
+          "Silver Bullet": "34-41",
+          "Health": "15+",
+          "Blood Craze": "-3%"
+        },
+        "source": "Drop"
+      },
+      "Echo Node Companion": {
+        "effects": {
+          "Shock": "21-28",
+          "Heal": "23-27",
+          "Lightning Shield": "10%",
+          "Physical Shield": "10%",
+          "Investment": "12%"
+        },
+        "source": "Craft"
+      },
+      "Robotic Bug": {
+        "effects": {
+          "Techbane": "10%",
+          "Xenobane": "10%",
+          "Short Circuit": "25-29",
+          "Blur": "10%",
+          "Cloning": "5%",
+          "Investment": "8%"
+        },
+        "source": "Drop"
+      }
+    },
+    "Achievement": {
+      "Avatar Collection Cyberlabs Inc.": {
+        "effects": {
+          "Coolness": "2&#160;!",
+          "Loot Hunter: Pile of Cybernetic Material": "1",
+          "Loot Hunter: Cyberlabs CPU": "1"
+        },
+        "source": "Craft"
+      },
+      "Conquering Cyberlabs Inc.": {
+        "effects": {
+          "Coolness": "5&#160;!",
+          "Loot Hunter: Devil Steel": "1",
+          "Loot Hunter: Pile of Cybernetic Material": "1",
+          "Loot Hunter: Cyberlabs CPU": "1",
+          "Techbane": "10%"
+        },
+        "source": "Craft"
+      }
+    },
+    "Bait": {
+      "Bleached Robotic Pearl": {
+        "effects": {
+          "Carnage": "2%",
+          "Timewalker": "180 -s",
+          "Attraction": "-15",
+          "Summoning": "3%",
+          "Loot Chance Modifier": "20%",
+          "Cloning": "3%"
+        },
+        "source": "Craft"
+      },
+      "Imbued Robotic Pearl": {
+        "effects": {
+          "Carnage": "2%",
+          "Timewalker": "180 -s",
+          "Attraction": "5",
+          "Summoning": "3%",
+          "Loot Chance Modifier": "20%",
+          "Cloning": "3%"
+        },
+        "source": "Craft"
+      },
+      "Infused Robotic Pearl": {
+        "effects": {
+          "Attraction": "3",
+          "Cloning": "1%",
+          "XP-losion": "5%"
+        },
+        "source": "Craft"
+      },
+      "Purified Robotic Pearl": {
+        "effects": {
+          "Attraction": "-15"
+        },
+        "source": "Craft"
+      },
+      "Robotic Pearl": {
+        "effects": {
+          "\u2014": "\u2014"
+        },
+        "source": "Special"
+      }
+    },
+    "Chest": {
+      "Robotic Torso": {
+        "effects": {
+          "Health": "390+",
+          "Healing Touch": "13-18",
+          "Blur": "10%",
+          "Resilience": "10%",
+          "Fire Shield": "10%",
+          "Techward": "10%",
+          "Dispel": "10%"
+        },
+        "source": "Craft"
+      },
+      "Synthoflex Matrix": {
+        "effects": {
+          "Shock": "31-36",
+          "Health": "405+",
+          "Healing Touch": "18-23",
+          "Shield": "10%",
+          "Electric Vulnerability": "10%",
+          "Megalomania": "6%"
+        },
+        "source": "Drop"
+      },
+      "TechGuard Coreplate": {
+        "effects": {
+          "Health": "365+",
+          "Blur": "10%",
+          "Stormward": "10%"
+        },
+        "source": "VGC"
+      }
+    },
+    "Coffin": {
+      "Cybernetic Coffin": {
+        "effects": {
+          "Health": "24+",
+          "Stormward": "5%",
+          "Coffin Capacity": "7",
+          "Coffin Recharge Time": "45 Minutes",
+          "Cloning": "5%",
+          "XP-losion": "7%"
+        },
+        "source": "Craft"
+      }
+    },
+    "Collection": {
+      "Cyberlabs Inc. Collection I": {
+        "effects": {
+          "Techward": "10%"
+        },
+        "source": "Drop"
+      },
+      "Cyberlabs Inc. Collection II": {
+        "effects": {
+          "Techbane": "10%"
+        },
+        "source": "Drop"
+      },
+      "Cyberlabs Inc. Collection III": {
+        "effects": {
+          "Electromancy": "10%"
+        },
+        "source": "Drop"
+      },
+      "Cyberlabs Inc. Collection IV": {
+        "effects": {
+          "Health": "15+"
+        },
+        "source": "Drop"
+      },
+      "Cyberlabs Inc. Collection V": {
+        "effects": {
+          "Megalomania": "3%"
+        },
+        "source": "Drop"
+      }
+    },
+    "Emblem": {
+      "Robotic Emblem": {
+        "effects": {
+          "Techward": "5%",
+          "Stun": "5%"
+        },
+        "source": "Craft"
+      }
+    },
+    "Feet": {
+      "Cyberstriders": {
+        "effects": {
+          "Techbane": "10%",
+          "Health": "65+"
+        },
+        "source": "VGC"
+      },
+      "NeoStride Enhancers": {
+        "effects": {
+          "Health": "75+",
+          "Heal": "33-39",
+          "Shield": "10%",
+          "Ballistic Shield": "10%",
+          "Ice Shield": "10%",
+          "Evade": "15%"
+        },
+        "source": "Drop"
+      },
+      "Robotic Feet": {
+        "effects": {
+          "Techbane": "10%",
+          "Health": "80+",
+          "Ballistic Shield": "10%",
+          "Wildward": "10%",
+          "Evade": "5%",
+          "Stun": "5%",
+          "XP-losion": "-4%"
+        },
+        "source": "Craft"
+      }
+    },
+    "Hands": {
+      "Mechgrip Prodigits": {
+        "effects": {
+          "Short Circuit": "38-45",
+          "Health": "55+"
+        },
+        "source": "VGC"
+      },
+      "Nanoflex Handlink": {
+        "effects": {
+          "Slow": "10%",
+          "Terrorbane": "10%",
+          "Dragonbane": "10%",
+          "Health": "75+",
+          "Resilience": "10%",
+          "Ice Shield": "10%",
+          "Mystic Shield": "10%",
+          "Bloodlust": "4%"
+        },
+        "source": "Drop"
+      },
+      "Robotic Hands": {
+        "effects": {
+          "Focused Shot": "52-59",
+          "Short Circuit": "48-65",
+          "Health": "65+",
+          "Resilience": "10%",
+          "Ice Shield": "10%",
+          "Megalomania": "10%"
+        },
+        "source": "Craft"
+      }
+    },
+    "Head": {
+      "Quantum Sync Visor": {
+        "effects": {
+          "Health": "70+",
+          "Heal": "21-26",
+          "Blur": "10%",
+          "Iceward": "10%",
+          "Dispel": "20%",
+          "Blood Craze": "-3%",
+          "Loot Chance Modifier": "20%"
+        },
+        "source": "Drop"
+      },
+      "Robotic Head": {
+        "effects": {
+          "Short Circuit": "28-33",
+          "Call Battle Droid": "40%",
+          "Health": "80+",
+          "Nerves of Steel": "10%",
+          "Physical Shield": "10%",
+          "Poison Shield": "10%"
+        },
+        "source": "Craft"
+      },
+      "TechVisor": {
+        "effects": {
+          "Health": "65+",
+          "Resilience": "10%"
+        },
+        "source": "VGC"
+      }
+    },
+    "Key": {
+      "Hi-Tech Security Key Card": {
+        "effects": {
+          "\u2014": "\u2014"
+        },
+        "source": "Craft"
+      }
+    },
+    "Mount": {
+      "CyberSteed": {
+        "effects": {
+          "First Strike": "100%",
+          "Stormcurse": "10%",
+          "Charge": "34-39",
+          "Health": "80+",
+          "Resilience": "10%",
+          "Ballistic Shield": "10%",
+          "Lightning Shield": "10%",
+          "Evade": "5%",
+          "Summoning": "3%",
+          "Investment": "9%"
+        },
+        "source": "Craft"
+      }
+    },
+    "Power": {
+      "Countermeasures": {
+        "effects": {
+          "Stormcurse": "10%",
+          "Discharge": "110-115"
+        },
+        "source": "Craft"
+      }
+    },
+    "Retainer": {
+      "'Rocko'": {
+        "effects": {
+          "Retainer Physical Weapon Damage": "21",
+          "Healing Touch": "19-25",
+          "Resilience": "10%",
+          "Techward": "10%",
+          "Voidward": "10%",
+          "Stun": "10%",
+          "Dispel": "10%",
+          "Loot Chance Modifier": "10%",
+          "Cloning": "5%",
+          "Investment": "8-7%"
+        },
+        "source": "Craft"
+      },
+      "Cerberus CLI 3000": {
+        "effects": {
+          "Stormcurse": "10%",
+          "Shock": "17-23",
+          "Retainer Electric Weapon Damage": "18-24",
+          "Wildbane": "10%",
+          "Wolfbane": "10%",
+          "Blur": "10%",
+          "Penance": "10%",
+          "Lightning Shield": "10%",
+          "XP-losion": "8%"
+        },
+        "source": "Craft"
+      },
+      "Cyborg": {
+        "effects": {
+          "Powerful Strike": "24-29",
+          "Retainer Physical Weapon Damage": "17-21",
+          "Ballistic Shield": "10%",
+          "Techward": "10%"
+        },
+        "source": "Craft"
+      },
+      "Oculus Spawn": {
+        "effects": {
+          "Curse of the Old Gods": "10%",
+          "Eldritch Convergence": "37-44",
+          "Retainer Chaos Weapon Damage": "2-4",
+          "Xenobane": "10%",
+          "Eldritchward": "10%",
+          "Questing": "9%",
+          "Summoning": "4%",
+          "Cloning": "7%"
+        },
+        "source": "Craft"
+      },
+      "Robotic Stinger": {
+        "effects": {
+          "Retainer Ballistic Weapon Damage": "15-23",
+          "Flying": "10%",
+          "Cloning": "3%",
+          "Investment": "11%"
+        },
+        "source": "Craft"
+      }
+    },
+    "Weapon": {
+      "Circuit Breaker": {
+        "effects": {
+          "Discharge": "200-250",
+          "Electric Weapon Damage": "37-43",
+          "Short Circuit": "32-40",
+          "Ballistic Shield": "10%",
+          "Technomancer Barrier": "10%"
+        },
+        "source": "Craft"
+      },
+      "Cybernetic Katana": {
+        "effects": {
+          "Shock": "35-40",
+          "Physical Weapon Damage": "68-74",
+          "Technomancer Barrier": "10%"
+        },
+        "source": "VGC"
+      },
+      "Phase Sword": {
+        "effects": {
+          "Stormcurse": "10%",
+          "Shock": "31-35",
+          "Electric Weapon Damage": "84-96",
+          "Crit Chance": "6%",
+          "Necrosis": "30%",
+          "Lightning Shield": "10%",
+          "Evade": "5%",
+          "Megalomania": "8%",
+          "XP-losion": "12%"
+        },
+        "source": "Craft"
+      },
+      "Pulse Cannon": {
+        "effects": {
+          "Stormlash": "140-160",
+          "Lightning Bolt": "95-110",
+          "Electric Weapon Damage": "1-2",
+          "Kaijubane": "10%",
+          "Xenobane": "10%",
+          "Ghostbusting": "31-37",
+          "Deathtouch": "1",
+          "Blood Craze": "8%"
+        },
+        "source": "Drop"
+      },
+      "Pulse Gun": {
+        "effects": {
+          "Discharge": "180-225",
+          "Electric Weapon Damage": "61-66",
+          "Techbane": "10%"
+        },
+        "source": "VGC"
+      },
+      "Raygun": {
+        "effects": {
+          "Snipe": "140-160",
+          "Focused Shot": "61-66",
+          "Ballistic Weapon Damage": "61-66",
+          "Wildbane": "10%",
+          "Techbane": "10%",
+          "Blood Craze": "-3%",
+          "Cloning": "8%"
+        },
+        "source": "Craft"
+      },
+      "Stormblade": {
+        "effects": {
+          "Stormcurse": "10%",
+          "Electric Weapon Damage": "95-105",
+          "Crit Chance": "4%",
+          "Necrosis": "30%",
+          "XP-losion": "7%"
+        },
+        "source": "Drop"
+      }
+    }
+  },
+  "PS2026": {
+    "Chest": {
+      "Aetherforge Exosuit Chestplate": {
+        "effects": {
+          "Manastorm": "110-125",
+          "Health": "405+",
+          "Blur": "10%",
+          "Manaward": "10%",
+          "Spiritward": "10%",
+          "Techward": "10%",
+          "Bloodlust": "7%",
+          "Loot Chance Modifier": "20%",
+          "Cloning": "4%"
+        },
+        "source": "Purchase"
+      }
+    },
+    "Achievement": {
+      "Avatar Collection Rotation V": {
+        "effects": {
+          "Coolness": "1&#160;!",
+          "Loot Hunter: Sanguine Ruby": 1
+        },
+        "source": "Purchase"
+      }
+    },
+    "Hands": {
+      "Chitin Weave Claws": {
+        "effects": {
+          "Focused Mind": "10%",
+          "Fear": "22-26",
+          "Terrorbane": "10%",
+          "Dragonbane": "10%",
+          "Health": "62+",
+          "Healing Touch": "23-29",
+          "Xenoward": "10%",
+          "Blood Craze": "4%"
+        },
+        "source": "Purchase"
+      }
+    },
+    "Feet": {
+      "Hemoflux Striders": {
+        "effects": {
+          "Lifebane": "10%",
+          "Bloodsport": "29-35",
+          "Health": "69+",
+          "Lifeleech": "34-42",
+          "Ancient Blood": "10%",
+          "Poisonward": "10%",
+          "Terrorward": "10%",
+          "Bloodward": "10%",
+          "Evade": "10%",
+          "Bloodlust": "5%"
+        },
+        "source": "Purchase"
+      }
+    },
+    "Accessory": {
+      "Ion Storm Conductor": {
+        "effects": {
+          "Disintegrate": 1000000,
+          "Stormlash": "108-134",
+          "Volt Corrosion": "49-57",
+          "Lightbane": "10%",
+          "Ghostbusting": "27-34",
+          "Stormward": "10%",
+          "Sufferance": "10%",
+          "Stun": "10%",
+          "Deathtouch": 1,
+          "Bloodlust": "-7%"
+        },
+        "source": "Craft"
+      }
+    },
+    "Retainer": {
+      "Pouncy": {
+        "effects": {
+          "Weaken": "10%",
+          "Charge": "52-57",
+          "Retainer Physical Weapon Damage": "21-25",
+          "Terrorbane": "10%",
+          "Wildbane": "10%",
+          "Lifebane": "10%",
+          "Dodge": "7%",
+          "Questing": "16%",
+          "Bloodlust": "8%",
+          "Megalomania": "6%"
+        },
+        "source": "Purchase"
+      }
+    }
   }
-
 }
