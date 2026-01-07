@@ -26,7 +26,13 @@
 		<div id="tabEquipped" class="tab">Equipped <span id="eqCount" class="badge">0</span></div>
 		<div class="toggles">
 			<label><input type="checkbox" id="toggleAcc3" checked /> 3rd acc.</label>
+			<label><input type="checkbox" id="toggleAcc4" /> 4th acc.</label>
+			<label><input type="checkbox" id="toggleAcc5" /> 5th acc.</label>
 			<label><input type="checkbox" id="toggleRet3" checked /> 3rd ret.</label>
+			<label><input type="checkbox" id="toggleEmb2" /> 2nd emb.</label>
+			<label><input type="checkbox" id="toggleEmb3" /> 3rd emb.</label>
+			<label><input type="checkbox" id="togglePow2" /> 2nd pow.</label>
+			<label><input type="checkbox" id="togglePow3" /> 3rd pow.</label>
 			<label><input type="checkbox" id="toggleCategorize" /> Categorize</label>
 		</div>
 	</div>
@@ -77,7 +83,10 @@
 		<h3>Equip rules</h3>
 		<ul>
 			<li>Click on an item to equip it. Click again to unequip. (Don't forget to equip all of your collections!)</li>
-			<li>Check the "3rd acc." and/or "3rd ret." boxes to allow 3rd slots of accessory and/or retainer.</li>
+			<li>Check the accessory checkboxes (3rd/4th/5th acc.) to allow additional accessory slots.</li>
+			<li>Check the "3rd ret." checkbox to allow 3rd retainer slot.</li>
+			<li>Check the emblem checkboxes (2nd/3rd emb.) to allow additional emblem slots.</li>
+			<li>Check the power checkboxes (2nd/3rd pow.) to allow additional power slots.</li>
 			<li>Show/hide equipped items with the button on top.</li>
 			<li>When equipped items are shown, it says what equipped items are missing.</li>
 			<li>Save your loadout using the "Save current build" button.</li>
@@ -97,7 +106,13 @@
 		const SETTINGS_KEY = 'itemGlossarySettingsV1';
         const THEME_KEY = 'itemGlossaryThemeV1';
 		let allowAccThird = true;
+		let allowAccFourth = false;
+		let allowAccFifth = false;
 		let allowRetThird = true;
+		let allowEmbSecond = false;
+		let allowEmbThird = false;
+		let allowPowSecond = false;
+		let allowPowThird = false;
 		let categorizeMode = false;
 		let currentCategory = 'all';
 		let skill_groups = {};
@@ -112,12 +127,24 @@
 				if (settings) {
 					const parsed = JSON.parse(settings);
 					allowAccThird = parsed.allowAccThird !== undefined ? parsed.allowAccThird : true;
+					allowAccFourth = parsed.allowAccFourth !== undefined ? parsed.allowAccFourth : false;
+					allowAccFifth = parsed.allowAccFifth !== undefined ? parsed.allowAccFifth : false;
 					allowRetThird = parsed.allowRetThird !== undefined ? parsed.allowRetThird : true;
+					allowEmbSecond = parsed.allowEmbSecond !== undefined ? parsed.allowEmbSecond : false;
+					allowEmbThird = parsed.allowEmbThird !== undefined ? parsed.allowEmbThird : false;
+					allowPowSecond = parsed.allowPowSecond !== undefined ? parsed.allowPowSecond : false;
+					allowPowThird = parsed.allowPowThird !== undefined ? parsed.allowPowThird : false;
 					categorizeMode = parsed.categorizeMode !== undefined ? parsed.categorizeMode : false;
 					
 					// Update checkbox states
 					document.getElementById('toggleAcc3').checked = allowAccThird;
+					document.getElementById('toggleAcc4').checked = allowAccFourth;
+					document.getElementById('toggleAcc5').checked = allowAccFifth;
 					document.getElementById('toggleRet3').checked = allowRetThird;
+					document.getElementById('toggleEmb2').checked = allowEmbSecond;
+					document.getElementById('toggleEmb3').checked = allowEmbThird;
+					document.getElementById('togglePow2').checked = allowPowSecond;
+					document.getElementById('togglePow3').checked = allowPowThird;
 					document.getElementById('toggleCategorize').checked = categorizeMode;
 					
 					// Apply categorize mode if it was saved as true
@@ -147,7 +174,13 @@
 			try {
 				const settings = {
 					allowAccThird,
+					allowAccFourth,
+					allowAccFifth,
 					allowRetThird,
+					allowEmbSecond,
+					allowEmbThird,
+					allowPowSecond,
+					allowPowThird,
 					categorizeMode
 				};
 				localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
@@ -531,13 +564,30 @@
 			if (perType.has(it.name)) return {ok:false,reason:'Already equipped'};
 			if (type === 'collection' || type === 'achievement') return {ok:true};
 			if (type === 'accessory') {
-				const limit = allowAccThird ? 3 : 2;
+				let limit = 2;
+				if (allowAccFifth) limit = 5;
+				else if (allowAccFourth) limit = 4;
+				else if (allowAccThird) limit = 3;
 				if (perType.size >= limit) return {ok:false,reason:`Max ${limit} accessories`};
 				return {ok:true};
 			}
 			if (type === 'retainer') {
 				const limit = allowRetThird ? 3 : 2;
 				if (perType.size >= limit) return {ok:false,reason:`Max ${limit} retainers`};
+				return {ok:true};
+			}
+			if (type === 'emblem') {
+				let limit = 1;
+				if (allowEmbThird) limit = 3;
+				else if (allowEmbSecond) limit = 2;
+				if (perType.size >= limit) return {ok:false,reason:`Max ${limit} emblem${limit > 1 ? 's' : ''}`};
+				return {ok:true};
+			}
+			if (type === 'power') {
+				let limit = 1;
+				if (allowPowThird) limit = 3;
+				else if (allowPowSecond) limit = 2;
+				if (perType.size >= limit) return {ok:false,reason:`Max ${limit} power${limit > 1 ? 's' : ''}`};
 				return {ok:true};
 			}
 			// all other types: only 1
@@ -1312,7 +1362,7 @@
 			
 			const parts = [];
 			for (const t of ORDERED_TYPES){
-				if (t === 'collection' || t === 'achievement' || t === 'accessory' || t === 'retainer') continue;
+				if (t === 'collection' || t === 'achievement' || t === 'accessory' || t === 'retainer' || t === 'emblem' || t === 'power') continue;
 				const perType = EQUIPPED.get(t) || new Map();
 				const missing = Math.max(0, 1 - perType.size);
 				if (missing > 0){
@@ -1320,12 +1370,29 @@
 					parts.push(label + (missing===1 ? '' : ` x${missing}`));
 				}
 			}
-			const accLimit = allowAccThird ? 3 : 2;
-			const retLimit = allowRetThird ? 3 : 2;
+			// Accessory slots
+			let accLimit = 2;
+			if (allowAccFifth) accLimit = 5;
+			else if (allowAccFourth) accLimit = 4;
+			else if (allowAccThird) accLimit = 3;
 			const accMissing = Math.max(0, accLimit - (EQUIPPED.get('accessory')||new Map()).size);
 			if (accMissing>0) parts.push('Accessory' + (accMissing===1?'':` x${accMissing}`));
+			// Retainer slots
+			const retLimit = allowRetThird ? 3 : 2;
 			const retMissing = Math.max(0, retLimit - (EQUIPPED.get('retainer')||new Map()).size);
 			if (retMissing>0) parts.push('Retainer' + (retMissing===1?'':` x${retMissing}`));
+			// Emblem slots
+			let embLimit = 1;
+			if (allowEmbThird) embLimit = 3;
+			else if (allowEmbSecond) embLimit = 2;
+			const embMissing = Math.max(0, embLimit - (EQUIPPED.get('emblem')||new Map()).size);
+			if (embMissing>0) parts.push('Emblem' + (embMissing===1?'':` x${embMissing}`));
+			// Power slots
+			let powLimit = 1;
+			if (allowPowThird) powLimit = 3;
+			else if (allowPowSecond) powLimit = 2;
+			const powMissing = Math.max(0, powLimit - (EQUIPPED.get('power')||new Map()).size);
+			if (powMissing>0) parts.push('Power' + (powMissing===1?'':` x${powMissing}`));
 			if (parts.length === 0){ banner.style.display='none'; banner.textContent=''; return; }
 			banner.textContent = 'Missing types: ' + parts.join(', ');
 			banner.style.display = 'block';
@@ -1419,9 +1486,12 @@
 			const gridLayout = [
 				['coin', 'head', 'bait', 'hex'],
 				['weapon', 'chest', 'hand'],
-				['power', 'feet', 'emblem'],
-				['coffin', 'acc1', 'acc2', 'acc3'],
-				['mount', 'ret1', 'ret2', 'ret3']
+				['coffin', 'feet', 'mount'],
+				['emb1', 'emb2', 'emb3'],
+				['pow1', 'pow2', 'pow3'],
+				['ret1', 'ret2', 'ret3'],
+				['acc1', 'acc2', 'acc3'],
+				['acc4', 'acc5']
 			];
 			
 			// Create grid rows
@@ -1435,13 +1505,23 @@
 					slot.className = 'equipment-slot';
 					slot.className += ` slot-${slotType}`;
 					
-					// Handle accessory slots (acc1, acc2, acc3)
+					// Handle accessory slots (acc1, acc2, acc3, acc4, acc5)
 					let actualType = slotType;
+					let isDisabled = false;
 					if (slotType.startsWith('acc')) {
 						const accNum = parseInt(slotType.slice(3));
 						if (accNum === 3 && !allowAccThird) {
+							isDisabled = true;
 							slot.className += ' disabled-slot';
 							slot.innerHTML = '<div class="slot-label">3rd acc.</div><div class="slot-disabled">Disabled</div>';
+						} else if (accNum === 4 && !allowAccFourth) {
+							isDisabled = true;
+							slot.className += ' disabled-slot';
+							slot.innerHTML = '<div class="slot-label">4th acc.</div><div class="slot-disabled">Disabled</div>';
+						} else if (accNum === 5 && !allowAccFifth) {
+							isDisabled = true;
+							slot.className += ' disabled-slot';
+							slot.innerHTML = '<div class="slot-label">5th acc.</div><div class="slot-disabled">Disabled</div>';
 						} else {
 							actualType = 'accessory';
 						}
@@ -1451,6 +1531,7 @@
 					if (slotType.startsWith('ret')) {
 						const retNum = parseInt(slotType.slice(3));
 						if (retNum === 3 && !allowRetThird) {
+							isDisabled = true;
 							slot.className += ' disabled-slot';
 							slot.innerHTML = '<div class="slot-label">3rd ret.</div><div class="slot-disabled">Disabled</div>';
 						} else {
@@ -1458,70 +1539,124 @@
 						}
 					}
 					
-					// Find equipped item for this slot
-					const perType = EQUIPPED.get(actualType);
-					let equippedItem = null;
-					
-					if (perType && perType.size > 0) {
-						// For accessories and retainers, we need to handle multiple slots
-						if (actualType === 'accessory' && slotType.startsWith('acc')) {
-							const accNum = parseInt(slotType.slice(3));
-							const items = Array.from(perType.values());
-							if (items[accNum - 1]) {
-								equippedItem = items[accNum - 1].it;
-							}
-						} else if (actualType === 'retainer' && slotType.startsWith('ret')) {
-							const retNum = parseInt(slotType.slice(3));
-							const items = Array.from(perType.values());
-							if (items[retNum - 1]) {
-								equippedItem = items[retNum - 1].it;
-							}
+					// Handle emblem slots (emb1, emb2, emb3)
+					if (slotType.startsWith('emb')) {
+						const embNum = parseInt(slotType.slice(3));
+						if (embNum === 2 && !allowEmbSecond) {
+							isDisabled = true;
+							slot.className += ' disabled-slot';
+							slot.innerHTML = '<div class="slot-label">2nd emb.</div><div class="slot-disabled">Disabled</div>';
+						} else if (embNum === 3 && !allowEmbThird) {
+							isDisabled = true;
+							slot.className += ' disabled-slot';
+							slot.innerHTML = '<div class="slot-label">3rd emb.</div><div class="slot-disabled">Disabled</div>';
 						} else {
-							// Single slot types
-							const items = Array.from(perType.values());
-							if (items[0]) {
-								equippedItem = items[0].it;
-							}
+							actualType = 'emblem';
 						}
 					}
 					
-					// Always show slot type at the top
-					const slotLabel = slotType === 'acc1' ? '1st acc.' : 
-									slotType === 'acc2' ? '2nd acc.' : 
-									slotType === 'acc3' ? '3rd acc.' :
-									slotType === 'ret1' ? '1st ret.' : 
-									slotType === 'ret2' ? '2nd ret.' : 
-									slotType === 'ret3' ? '3rd ret.' :
-									slotType.charAt(0).toUpperCase() + slotType.slice(1);
+					// Handle power slots (pow1, pow2, pow3)
+					if (slotType.startsWith('pow')) {
+						const powNum = parseInt(slotType.slice(3));
+						if (powNum === 2 && !allowPowSecond) {
+							isDisabled = true;
+							slot.className += ' disabled-slot';
+							slot.innerHTML = '<div class="slot-label">2nd pow.</div><div class="slot-disabled">Disabled</div>';
+						} else if (powNum === 3 && !allowPowThird) {
+							isDisabled = true;
+							slot.className += ' disabled-slot';
+							slot.innerHTML = '<div class="slot-label">3rd pow.</div><div class="slot-disabled">Disabled</div>';
+						} else {
+							actualType = 'power';
+						}
+					}
 					
-					if (equippedItem) {
-						// Item is equipped
-						slot.className += ' equipped-slot';
-						slot.innerHTML = `
-							<div class="slot-label">${slotLabel}</div>
-							<div class="item-name">${equippedItem.name}</div>
-							<div class="item-region">[${equippedItem.region}]</div>
-							<button class="remove-btn" data-type="${actualType}" data-name="${equippedItem.name}">×</button>
-							<div class="equipment-tooltip">
-								<div class="tooltip-title">${equippedItem.name}</div>
-								<div class="tooltip-stats">
-									${generateItemStats(equippedItem)}
-								</div>
-							</div>
-						`;
+					if (!isDisabled) {
+						// Find equipped item for this slot
+						const perType = EQUIPPED.get(actualType);
+						let equippedItem = null;
 						
-						// Add event listener to the remove button
-						const removeBtn = slot.querySelector('.remove-btn');
-						removeBtn.addEventListener('click', (e) => {
-							e.stopPropagation(); // Prevent event bubbling
-							unequip(actualType, equippedItem.name, true);
-						});
-					} else {
-						// Empty slot
-						slot.innerHTML = `
-							<div class="slot-label">${slotLabel}</div>
-							<div class="slot-empty">Empty</div>
-						`;
+						if (perType && perType.size > 0) {
+							// For accessories, retainers, emblems, and powers, we need to handle multiple slots
+							if (actualType === 'accessory' && slotType.startsWith('acc')) {
+								const accNum = parseInt(slotType.slice(3));
+								const items = Array.from(perType.values());
+								if (items[accNum - 1]) {
+									equippedItem = items[accNum - 1].it;
+								}
+							} else if (actualType === 'retainer' && slotType.startsWith('ret')) {
+								const retNum = parseInt(slotType.slice(3));
+								const items = Array.from(perType.values());
+								if (items[retNum - 1]) {
+									equippedItem = items[retNum - 1].it;
+								}
+							} else if (actualType === 'emblem' && slotType.startsWith('emb')) {
+								const embNum = parseInt(slotType.slice(3));
+								const items = Array.from(perType.values());
+								if (items[embNum - 1]) {
+									equippedItem = items[embNum - 1].it;
+								}
+							} else if (actualType === 'power' && slotType.startsWith('pow')) {
+								const powNum = parseInt(slotType.slice(3));
+								const items = Array.from(perType.values());
+								if (items[powNum - 1]) {
+									equippedItem = items[powNum - 1].it;
+								}
+							} else {
+								// Single slot types
+								const items = Array.from(perType.values());
+								if (items[0]) {
+									equippedItem = items[0].it;
+								}
+							}
+						}
+						
+						// Always show slot type at the top
+						const slotLabel = slotType === 'acc1' ? '1st acc.' : 
+										slotType === 'acc2' ? '2nd acc.' : 
+										slotType === 'acc3' ? '3rd acc.' :
+										slotType === 'acc4' ? '4th acc.' :
+										slotType === 'acc5' ? '5th acc.' :
+										slotType === 'ret1' ? '1st ret.' : 
+										slotType === 'ret2' ? '2nd ret.' : 
+										slotType === 'ret3' ? '3rd ret.' :
+										slotType === 'emb1' ? '1st emb.' :
+										slotType === 'emb2' ? '2nd emb.' :
+										slotType === 'emb3' ? '3rd emb.' :
+										slotType === 'pow1' ? '1st pow.' :
+										slotType === 'pow2' ? '2nd pow.' :
+										slotType === 'pow3' ? '3rd pow.' :
+										slotType.charAt(0).toUpperCase() + slotType.slice(1);
+						
+						if (equippedItem) {
+							// Item is equipped
+							slot.className += ' equipped-slot';
+							slot.innerHTML = `
+								<div class="slot-label">${slotLabel}</div>
+								<div class="item-name">${equippedItem.name}</div>
+								<div class="item-region">[${equippedItem.region}]</div>
+								<button class="remove-btn" data-type="${actualType}" data-name="${equippedItem.name}">×</button>
+								<div class="equipment-tooltip">
+									<div class="tooltip-title">${equippedItem.name}</div>
+									<div class="tooltip-stats">
+										${generateItemStats(equippedItem)}
+									</div>
+								</div>
+							`;
+							
+							// Add event listener to the remove button
+							const removeBtn = slot.querySelector('.remove-btn');
+							removeBtn.addEventListener('click', (e) => {
+								e.stopPropagation(); // Prevent event bubbling
+								unequip(actualType, equippedItem.name, true);
+							});
+						} else {
+							// Empty slot
+							slot.innerHTML = `
+								<div class="slot-label">${slotLabel}</div>
+								<div class="slot-empty">Empty</div>
+							`;
+						}
 					}
 					
 					row.appendChild(slot);
@@ -2114,8 +2249,44 @@
 				renderEquipped(); 
 				onQuery();
 			});
+			document.getElementById('toggleAcc4').addEventListener('change', (e)=>{
+				allowAccFourth = e.target.checked; 
+				saveSettings();
+				renderEquipped(); 
+				onQuery();
+			});
+			document.getElementById('toggleAcc5').addEventListener('change', (e)=>{
+				allowAccFifth = e.target.checked; 
+				saveSettings();
+				renderEquipped(); 
+				onQuery();
+			});
 			document.getElementById('toggleRet3').addEventListener('change', (e)=>{
 				allowRetThird = e.target.checked; 
+				saveSettings();
+				renderEquipped(); 
+				onQuery();
+			});
+			document.getElementById('toggleEmb2').addEventListener('change', (e)=>{
+				allowEmbSecond = e.target.checked; 
+				saveSettings();
+				renderEquipped(); 
+				onQuery();
+			});
+			document.getElementById('toggleEmb3').addEventListener('change', (e)=>{
+				allowEmbThird = e.target.checked; 
+				saveSettings();
+				renderEquipped(); 
+				onQuery();
+			});
+			document.getElementById('togglePow2').addEventListener('change', (e)=>{
+				allowPowSecond = e.target.checked; 
+				saveSettings();
+				renderEquipped(); 
+				onQuery();
+			});
+			document.getElementById('togglePow3').addEventListener('change', (e)=>{
+				allowPowThird = e.target.checked; 
 				saveSettings();
 				renderEquipped(); 
 				onQuery();
